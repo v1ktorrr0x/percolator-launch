@@ -1,0 +1,70 @@
+{
+  "name": "percolator-launch",
+  "version": "0.1.0",
+  "private": true,
+  "license": "MIT",
+  "type": "module",
+  "scripts": {
+    "build": "pnpm -r build",
+    "dev": "pnpm --filter @percolator/app dev",
+    "build:app": "pnpm --filter @percolator/app build",
+    "build:core": "pnpm --filter @percolator/sdk build",
+    "pretest": "pnpm --filter @percolator/shared build",
+    "test": "pnpm -r test",
+    "test:app": "cd app && pnpm test",
+    "test:core": "cd packages/core && pnpm test",
+    "test:hooks": "cd app && pnpm vitest run __tests__/hooks/",
+    "test:unit": "pnpm -r test:unit",
+    "test:e2e": "playwright test",
+    "test:coverage": "pnpm -r test:coverage",
+    "lint": "eslint packages/*/src/**/*.ts",
+    "format": "prettier --write packages/*/src/**/*.ts",
+    "format:check": "prettier --check packages/*/src/**/*.ts",
+    "start": "pnpm --filter @percolator/app start",
+    "maker": "tsx scripts/floating-maker.ts",
+    "maker:dry": "DRY_RUN=true tsx scripts/floating-maker.ts",
+    "fleet": "tsx scripts/mm-fleet.ts",
+    "fleet:dry": "DRY_RUN=true tsx scripts/mm-fleet.ts",
+    "fleet:keygen": "tsx scripts/generate-keeper-wallets.ts --airdrop",
+    "fleet:keygen:dry": "tsx scripts/generate-keeper-wallets.ts",
+    "fleet:deploy": "bash scripts/deploy-mm-fleet.sh",
+    "fleet:deploy:dry": "bash scripts/deploy-mm-fleet.sh --dry-run"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.58.2",
+    "@typescript-eslint/eslint-plugin": "^6.21.0",
+    "@typescript-eslint/parser": "^6.21.0",
+    "eslint": "^8.56.0",
+    "msw": "^2.12.10",
+    "playwright": "^1.58.2",
+    "prettier": "^3.2.5",
+    "tsx": "^4.21.0"
+  },
+  "dependencies": {
+    "@solana/spl-token": "^0.4.14",
+    "@solana/web3.js": "^1.98.4",
+    "dotenv": "^17.3.1",
+    "pg": "^8.18.0"
+  },
+  "pnpm": {
+    "overrides": {
+      "ajv": ">=6.14.0",
+      "axios": ">=1.13.5",
+      "bn.js": ">=5.2.3",
+      "lodash": ">=4.17.21",
+      "minimatch": ">=10.2.3",
+      "rollup": "4.59.0",
+      "serialize-javascript": ">=7.0.5",
+      "picomatch": ">=4.0.4",
+      "brace-expansion": ">=5.0.5",
+      "yaml": ">=2.8.3",
+      "undici": ">=7.24.0",
+      "h3": ">=1.15.9",
+      "socket.io-parser": ">=4.2.6",
+      "flatted": ">=3.4.0"
+    }
+  }
+}
