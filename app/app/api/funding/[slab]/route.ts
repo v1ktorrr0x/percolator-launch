@@ -1,0 +1,63 @@
+import { type NextRequest, NextResponse } from "next/server";
+import { proxyToApi } from "@/lib/api-proxy";
+import { validateSlabParam } from "@/lib/route-validators";
+import { BLOCKED_SLAB_ADDRESSES } from "@/lib/blocklist";
+
+export const dynamic = "force-dynamic";
+
+/**
+ * Blocked slab set: hardcoded list + env var runtime overrides.
+ * Mirrors the guard in /api/markets/route.ts.
+ */
+const BLOCKED_MARKET_ADDRESSES: ReadonlySet<string> = new Set([
+  ...BLOCKED_SLAB_ADDRESSES,
+  ...(process.env.BLOCKED_MARKET_ADDRESSES ?? "")
+    .split(",")
+    .map((s) => s.trim())
+    .filter(Boolean),
+]);
+
+/**
+ * GET /api/funding/[slab]
+ *
+ * Proxies to percolator-api GET /funding/:slab
+ * Removed standalone Supabase impl (GH#1066 — arch cleanup).
+ *
+ * GH#1357: Return 404 for blocklisted slabs instead of proxying to
+ * backend which returns 500 for invalid/corrupt slab addresses.
+ * 
+ * MEDIUM-003: Added slab parameter validation to prevent injection attacks.
+ */
+export async function GET(
+  req: NextRequest,
+  { params }: { params: Promise<{ slab: string }> }
+) {
+  const { slab } = await params;
+
+  // Validate slab parameter format
+  const validation = validateSlabParam(slab);
+  if (!validation.valid) {
+    return validation.response;
+  }
+  const validSlab = validation.slab;
+
+  if (BLOCKED_MARKET_ADDRESSES.has(validSlab)) {
+    return NextResponse.json(
+      { error: "Market not found" },
+      { status: 404 }
+    );
+  }
+
+  const response = await proxyToApi(req, `/funding/${validSlab}`);
+
+  // GH#1602: If backend returns 500 (e.g. zombie slab with corrupt data),
+  // return 404 instead of propagating the 500 to the client.
+  if (response.status >= 500) {
+    return NextResponse.json(
+      { error: "Market not found or data unavailable" },
+      { status: 404 }
+    );
+  }
+
+  return response;
+}

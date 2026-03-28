@@ -1,0 +1,234 @@
+"use client";
+
+import {
+  FC,
+  ReactNode,
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+  useRef,
+  useCallback,
+} from "react";
+import { PublicKey } from "@solana/web3.js";
+import { useConnectionCompat } from "@/hooks/useWalletCompat";
+import {
+  parseHeader,
+  parseConfig,
+  parseEngine,
+  parseAllAccounts,
+  parseParams,
+  type SlabHeader,
+  type MarketConfig,
+  type EngineState,
+  type RiskParams,
+  type Account,
+} from "@percolator/sdk";
+import { isMockSlab, getMockSlabState } from "@/lib/mock-trade-data";
+import { isMockMode } from "@/lib/mock-mode";
+
+export interface SlabState {
+  /** The slab account address this provider is tracking */
+  slabAddress: string;
+  raw: Uint8Array | null;
+  header: SlabHeader | null;
+  config: MarketConfig | null;
+  engine: EngineState | null;
+  params: RiskParams | null;
+  accounts: { idx: number; account: Account }[];
+  loading: boolean;
+  error: string | null;
+  /** The on-chain program that owns this slab account */
+  programId: PublicKey | null;
+}
+
+/** Full context value exposed to consumers — includes stable callbacks on top of SlabState. */
+export interface SlabContextValue extends SlabState {
+  /**
+   * Force an immediate re-fetch of the slab account from the RPC.
+   * Call this after any tx that mutates the slab (deposit, withdraw, open/close position)
+   * so the UI reflects the confirmed on-chain state without waiting for the next poll cycle.
+   */
+  refresh: () => void;
+}
+
+const defaultSlabState: SlabState = {
+  slabAddress: "",
+  raw: null,
+  header: null,
+  config: null,
+  engine: null,
+  params: null,
+  accounts: [],
+  loading: true,
+  error: null,
+  programId: null,
+};
+
+const defaultContextValue: SlabContextValue = { ...defaultSlabState, refresh: () => {} };
+
+const SlabContext = createContext<SlabContextValue>(defaultContextValue);
+
+export const useSlabState = () => useContext(SlabContext);
+
+const POLL_INTERVAL_MS = 3000;
+
+export const SlabProvider: FC<{ children: ReactNode; slabAddress: string }> = ({ children, slabAddress }) => {
+  const { connection } = useConnectionCompat();
+  const [state, setState] = useState<SlabState>({ ...defaultSlabState, slabAddress });
+  const wsActive = useRef(false);
+  const fetchRef = useRef<() => void>(() => {});
+
+  useEffect(() => {
+    if (!slabAddress) {
+      setState((s) => ({ ...s, slabAddress, loading: false, error: "No slab address" }));
+      return;
+    }
+
+    // Mock data mode — use synthetic data for design testing (opt-in only)
+    if (isMockMode() && isMockSlab(slabAddress)) {
+      const mock = getMockSlabState(slabAddress);
+      if (mock) {
+        setState({
+          slabAddress,
+          raw: null,
+          header: mock.header,
+          config: mock.config,
+          engine: mock.engine,
+          params: mock.params,
+          accounts: mock.accounts,
+          loading: false,
+          error: null,
+          programId: null,
+        });
+      }
+      return;
+    }
+
+    let slabPk: PublicKey;
+    try {
+      slabPk = new PublicKey(slabAddress);
+    } catch {
+      setState((s) => ({ ...s, slabAddress, loading: false, error: "Invalid market address. Check the URL and try again." }));
+      return;
+    }
+    let cancelled = false;
+
+    // Current expected slab version — bump when program is upgraded with schema changes
+    const EXPECTED_SLAB_VERSION = 1;
+
+    function parseSlab(data: Uint8Array, owner?: PublicKey) {
+      if (cancelled) return;
+      try {
+        const header = parseHeader(data);
+
+        // Graceful version mismatch detection (bug #52f49b69)
+        if (header.version !== EXPECTED_SLAB_VERSION) {
+          setState((s) => ({
+            ...s,
+            loading: false,
+            error: `This market uses slab version ${header.version} but the current program expects version ${EXPECTED_SLAB_VERSION}. ` +
+              `The program was upgraded and this market needs migration. Please contact the market admin or create a new market.`,
+          }));
+          return;
+        }
+
+        const config = parseConfig(data);
+        const engine = parseEngine(data);
+        const params = parseParams(data);
+        const accounts = parseAllAccounts(data);
+        setState((s) => ({ slabAddress, raw: data, header, config, engine, params, accounts, loading: false, error: null, programId: owner ?? s.programId }));
+      } catch (e) {
+        const msg = e instanceof Error ? e.message : String(e);
+
+        // Detect version/layout mismatch errors that typically occur after a program upgrade.
+        // Common symptoms: unexpected data length, bad discriminator/magic, out-of-range reads.
+        const isLayoutMismatch =
+          msg.includes("out of range") ||
+          msg.includes("offset") ||
+          msg.includes("Invalid") ||
+          msg.includes("discriminator") ||
+          msg.includes("magic") ||
+          msg.includes("unexpected length") ||
+          msg.includes("buffer") ||
+          (data.length > 0 && data.length < 200); // Suspiciously small for a slab
+
+        if (isLayoutMismatch) {
+          setState((s) => ({
+            ...s,
+            loading: false,
+            error:
+              "This market's on-chain data format has changed (likely due to a program upgrade). " +
+              "Please refresh the page. If the issue persists, the market may need migration — " +
+              "contact the market admin or check the Percolator Discord for updates.",
+          }));
+        } else {
+          setState((s) => ({ ...s, loading: false, error: msg }));
+        }
+      }
+    }
+
+    let subId: number | undefined;
+    try {
+      subId = connection.onAccountChange(slabPk, (info) => {
+        if (cancelled) return;
+        wsActive.current = true;
+        parseSlab(new Uint8Array(info.data), info.owner);
+      });
+    } catch { /* ws not available */ }
+
+    let timer: ReturnType<typeof setInterval> | undefined;
+    async function poll() {
+      if (cancelled) return;
+      try {
+        const info = await connection.getAccountInfo(slabPk);
+        if (info) {
+          parseSlab(new Uint8Array(info.data), info.owner);
+        } else {
+          // Slab account doesn't exist on-chain
+          setState((s) => ({ ...s, loading: false, error: "Market not found on-chain. It may have been closed or the address is invalid." }));
+        }
+      } catch (e) {
+        console.error("[SlabProvider] RPC poll error:", e);
+        // Set error on first load so page doesn't show loading forever
+        setState((s) => s.engine ? s : { ...s, loading: false, error: `RPC error: ${e instanceof Error ? e.message : "connection failed"}` });
+      }
+    }
+
+    // Adaptive polling: 30s when WS active, 3s when not
+    function schedulePoll() {
+      if (cancelled) return;
+      const interval = wsActive.current ? 30_000 : POLL_INTERVAL_MS;
+      timer = setTimeout(() => {
+        poll().then(schedulePoll);
+      }, interval);
+    }
+
+    fetchRef.current = poll;
+    poll().then(schedulePoll);
+
+    return () => {
+      cancelled = true;
+      wsActive.current = false;
+      if (subId !== undefined) connection.removeAccountChangeListener(subId);
+      if (timer) clearTimeout(timer);
+    };
+  }, [connection.rpcEndpoint, slabAddress]);
+
+  // Re-poll immediately when tab becomes visible (browser sleep/wake)
+  useEffect(() => {
+    const handler = () => {
+      if (document.visibilityState === "visible") fetchRef.current();
+    };
+    document.addEventListener("visibilitychange", handler);
+    return () => document.removeEventListener("visibilitychange", handler);
+  }, []);
+
+  const refresh = useCallback(() => { fetchRef.current(); }, []);
+
+  return (
+    <SlabContext.Provider value={{ ...state, refresh }}>
+      {children}
+    </SlabContext.Provider>
+  );
+};

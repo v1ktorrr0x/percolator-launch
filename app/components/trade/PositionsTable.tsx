@@ -1,0 +1,284 @@
+"use client";
+
+import { FC, useMemo, useState } from "react";
+import { useUserAccount } from "@/hooks/useUserAccount";
+import { useClosePosition } from "@/hooks/useClosePosition";
+import { useSlabState } from "@/components/providers/SlabProvider";
+import { useTokenMeta } from "@/hooks/useTokenMeta";
+import { useLivePrice } from "@/hooks/useLivePrice";
+import { useMarketConfig } from "@/hooks/useMarketConfig";
+import { AccountKind } from "@percolator/sdk";
+import {
+  formatTokenAmount,
+  formatUsd,
+  formatLiqPrice,
+  formatPnl,
+  formatPercent,
+} from "@/lib/format";
+import { computeMarkPnl, computeLiqPrice, computePnlPercent } from "@/lib/trading";
+import { isMockMode } from "@/lib/mock-mode";
+import { isMockSlab, getMockUserAccount } from "@/lib/mock-trade-data";
+import { ClosePositionModal } from "./ClosePositionModal";
+import { WarmupProgress } from "./WarmupProgress";
+import { sanitizeSymbol } from "@/lib/symbol-utils";
+
+function abs(n: bigint): bigint {
+  return n < 0n ? -n : n;
+}
+
+export const PositionsTable: FC<{ slabAddress: string }> = ({ slabAddress }) => {
+  const realUserAccount = useUserAccount();
+  const mockMode = isMockMode() && isMockSlab(slabAddress);
+  const userAccount = realUserAccount ?? (mockMode ? getMockUserAccount(slabAddress) : null);
+  const config = useMarketConfig();
+  const { accounts, config: mktConfig, params } = useSlabState();
+  const { priceE6: livePriceE6, priceUsd } = useLivePrice();
+  const tokenMeta = useTokenMeta(mktConfig?.collateralMint ?? null);
+  const mintAddress = mktConfig?.collateralMint?.toBase58() ?? "";
+  const symbol = sanitizeSymbol(tokenMeta?.symbol, mintAddress);
+  const decimals = tokenMeta?.decimals ?? 6;
+
+  const { closePosition, loading: closeLoading, error: closeError, phase: closePhase } = useClosePosition(slabAddress);
+
+  const [showCloseModal, setShowCloseModal] = useState(false);
+
+  const lpEntry = useMemo(() => {
+    return accounts.find(({ account }) => account.kind === AccountKind.LP) ?? null;
+  }, [accounts]);
+  const lpUnderfunded = lpEntry !== null && lpEntry.account.capital === 0n;
+
+  if (!userAccount) {
+    return (
+      <div className="border border-[var(--border)]/50 bg-[var(--bg)]/80">
+        <div className="py-10 text-center">
+          <div className="mx-auto mb-2 flex h-8 w-8 items-center justify-center rounded-full border border-[var(--border)]/30">
+            <svg className="h-4 w-4 text-[var(--text-dim)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 3v11.25A2.25 2.25 0 006 16.5h2.25M3.75 3h-1.5m1.5 0h16.5m0 0h1.5m-1.5 0v11.25A2.25 2.25 0 0118 16.5h-2.25m-7.5 0h7.5m-7.5 0l-1 3m8.5-3l1 3m0 0l.5 1.5m-.5-1.5h-9.5m0 0l-.5 1.5" />
+            </svg>
+          </div>
+          <p className="text-[11px] font-medium text-[var(--text-muted)]">No open positions</p>
+          <p className="mt-1 text-[10px] text-[var(--text-dim)] max-w-[220px] mx-auto leading-relaxed">
+            Connect your wallet and deposit collateral to start trading.
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  const { account } = userAccount;
+  const hasPosition = account.positionSize !== 0n;
+
+  if (!hasPosition) {
+    return (
+      <div className="border border-[var(--border)]/50 bg-[var(--bg)]/80">
+        <div className="py-10 text-center">
+          <div className="mx-auto mb-2 flex h-8 w-8 items-center justify-center rounded-full border border-[var(--border)]/30">
+            <svg className="h-4 w-4 text-[var(--text-dim)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 3v11.25A2.25 2.25 0 006 16.5h2.25M3.75 3h-1.5m1.5 0h16.5m0 0h1.5m-1.5 0v11.25A2.25 2.25 0 0118 16.5h-2.25m-7.5 0h7.5m-7.5 0l-1 3m8.5-3l1 3m0 0l.5 1.5m-.5-1.5h-9.5m0 0l-.5 1.5" />
+            </svg>
+          </div>
+          <p className="text-[11px] font-medium text-[var(--text-muted)]">No open positions</p>
+          <p className="mt-1 text-[10px] text-[var(--text-dim)] max-w-[220px] mx-auto leading-relaxed">
+            Use the trade form to open a position.
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  const isLong = account.positionSize > 0n;
+  const absPosition = abs(account.positionSize);
+  const onChainPriceE6 = config?.lastEffectivePriceE6 ?? null;
+  const currentPriceE6 = livePriceE6 ?? onChainPriceE6 ?? 0n;
+  const entryPriceE6 = account.entryPrice;
+  const maintenanceBps = params?.maintenanceMarginBps ?? 500n;
+
+  // PERC-297: Mark price is considered "available" when it's a positive value.
+  // When mark is unavailable (oracle not initialized, price feed stale, or tx
+  // just processed before price arrives), PnL/ROE cannot be computed reliably.
+  const hasValidMark = currentPriceE6 > 0n;
+
+  const pnlTokens = hasValidMark
+    ? computeMarkPnl(account.positionSize, entryPriceE6, currentPriceE6)
+    : 0n;
+  const pnlUsdRaw = priceUsd !== null && hasValidMark
+    ? (Number(pnlTokens) / (10 ** decimals)) * priceUsd
+    : null;
+  const pnlUsd = pnlUsdRaw !== null && Number.isFinite(pnlUsdRaw) ? pnlUsdRaw : null;
+  const roe = hasValidMark ? computePnlPercent(pnlTokens, account.capital) : 0;
+
+  const liqPriceE6 = computeLiqPrice(
+    entryPriceE6,
+    account.capital,
+    account.positionSize,
+    maintenanceBps,
+  );
+
+  // Liq price danger color: amber when mark is within 10% of liq, red within 5%
+  const liqPriceColor = (() => {
+    if (liqPriceE6 <= 0n || !hasValidMark || currentPriceE6 <= 0n) return "text-[var(--warning)]";
+    const markNum = Number(currentPriceE6);
+    const liqNum = Number(liqPriceE6);
+    const distPct = Math.abs(markNum - liqNum) / markNum;
+    if (distPct < 0.05) return "text-[var(--short)]";
+    if (distPct < 0.10) return "text-[var(--warning)]";
+    return "text-[var(--text-secondary)]";
+  })();
+
+  const pnlColor =
+    pnlTokens === 0n
+      ? "text-[var(--text-muted)]"
+      : pnlTokens > 0n
+        ? "text-[var(--long)]"
+        : "text-[var(--short)]";
+
+  const roeColor =
+    roe === 0
+      ? "text-[var(--text-muted)]"
+      : roe > 0
+        ? "text-[var(--long)]"
+        : "text-[var(--short)]";
+
+  const handleConfirmClose = async (percent: number) => {
+    try {
+      await closePosition(percent);
+      setShowCloseModal(false);
+    } catch {
+      // error shown via hook state
+    }
+  };
+
+  return (
+    <div className="border border-[var(--border)]/50 bg-[var(--bg)]/80">
+      {/* LP Underfunded warning */}
+      {lpUnderfunded && (
+        <div className="border-b border-[var(--warning)]/20 bg-[var(--warning)]/5 px-4 py-1.5 text-center">
+          <span className="text-[9px] font-medium uppercase tracking-[0.12em] text-[var(--warning)]">
+            LP Underfunded
+          </span>
+        </div>
+      )}
+
+      {/* Table */}
+      <div className="overflow-x-auto">
+        <table className="min-w-full text-[10px]">
+          <thead>
+            <tr className="border-b border-[var(--border)]/30 text-[8px] uppercase tracking-[0.15em] text-[var(--text-muted)]">
+              <th className="whitespace-nowrap px-4 py-2 text-left font-medium">Market</th>
+              <th className="whitespace-nowrap px-3 py-2 text-left font-medium">Side</th>
+              <th className="whitespace-nowrap px-3 py-2 text-right font-medium">Size</th>
+              <th className="whitespace-nowrap px-3 py-2 text-right font-medium">Entry</th>
+              <th className="whitespace-nowrap px-3 py-2 text-right font-medium">Mark</th>
+              <th className="whitespace-nowrap px-3 py-2 text-right font-medium">Liq. Price</th>
+              <th className="whitespace-nowrap px-3 py-2 text-right font-medium">PnL</th>
+              <th className="whitespace-nowrap px-3 py-2 text-right font-medium">ROE%</th>
+              <th className="whitespace-nowrap px-3 py-2 text-right font-medium">Close</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr className="border-b border-[var(--border)]/20 transition-colors hover:bg-[var(--accent)]/[0.03]">
+              {/* Market */}
+              <td className="whitespace-nowrap px-4 py-2.5 text-left">
+                <span className="text-[11px] font-medium text-[var(--text)]">{symbol}/USD</span>
+              </td>
+
+              {/* Side */}
+              <td className="whitespace-nowrap px-3 py-2.5 text-left">
+                <span className={`inline-block rounded-sm px-1.5 py-0.5 text-[9px] font-bold uppercase ${
+                  isLong
+                    ? "bg-[var(--long)]/10 text-[var(--long)]"
+                    : "bg-[var(--short)]/10 text-[var(--short)]"
+                }`}>
+                  {isLong ? "LONG" : "SHORT"}
+                </span>
+              </td>
+
+              {/* Size */}
+              <td className="whitespace-nowrap px-3 py-2.5 text-right" style={{ fontFamily: "var(--font-mono)", fontVariantNumeric: "tabular-nums" }}>
+                <span className="text-[var(--text)]">{formatTokenAmount(absPosition, decimals)}</span>
+                <span className="ml-1 text-[var(--text-dim)]">{symbol}</span>
+              </td>
+
+              {/* Entry */}
+              <td className="whitespace-nowrap px-3 py-2.5 text-right text-[var(--text)]" style={{ fontFamily: "var(--font-mono)", fontVariantNumeric: "tabular-nums" }}>
+                {formatUsd(entryPriceE6)}
+              </td>
+
+              {/* Mark */}
+              <td className="whitespace-nowrap px-3 py-2.5 text-right text-[var(--text)]" style={{ fontFamily: "var(--font-mono)", fontVariantNumeric: "tabular-nums" }}>
+                {hasValidMark ? formatUsd(currentPriceE6) : <span className="text-[var(--text-dim)]">--</span>}
+              </td>
+
+              {/* Liq. Price */}
+              <td className={`whitespace-nowrap px-3 py-2.5 text-right font-medium ${liqPriceColor}`} style={{ fontFamily: "var(--font-mono)", fontVariantNumeric: "tabular-nums" }}>
+                {formatLiqPrice(liqPriceE6)}
+              </td>
+
+              {/* PnL */}
+              <td className={`whitespace-nowrap px-3 py-2.5 text-right ${hasValidMark ? pnlColor : "text-[var(--text-dim)]"}`} style={{ fontFamily: "var(--font-mono)", fontVariantNumeric: "tabular-nums" }}>
+                {hasValidMark ? (
+                  <>
+                    <div>{formatPnl(pnlTokens, decimals)} {symbol}</div>
+                    {pnlUsd !== null && (
+                      <div className="text-[9px]">
+                        {pnlUsd >= 0 ? "+" : ""}${Math.abs(pnlUsd).toFixed(2)}
+                      </div>
+                    )}
+                  </>
+                ) : (
+                  <span>--</span>
+                )}
+              </td>
+
+              {/* ROE% */}
+              <td className={`whitespace-nowrap px-3 py-2.5 text-right font-medium ${hasValidMark ? roeColor : "text-[var(--text-dim)]"}`} style={{ fontFamily: "var(--font-mono)", fontVariantNumeric: "tabular-nums" }}>
+                {hasValidMark ? formatPercent(roe) : "--"}
+              </td>
+
+              {/* Close */}
+              <td className="whitespace-nowrap px-3 py-2.5 text-right">
+                <button
+                  onClick={() => setShowCloseModal(true)}
+                  disabled={closeLoading || lpUnderfunded || !hasValidMark}
+                  title={!hasValidMark ? "Waiting for price data…" : undefined}
+                  className="rounded-none border border-[var(--short)]/30 px-3 py-1 text-[9px] font-medium uppercase tracking-[0.1em] text-[var(--short)] transition-all duration-150 hover:bg-[var(--short)]/8 hover:border-[var(--short)]/50 disabled:cursor-not-allowed disabled:opacity-50"
+                >
+                  Close
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      {/* Warmup progress below the position row */}
+      <div className="px-4 py-2">
+        <WarmupProgress slabAddress={slabAddress} accountIdx={userAccount.idx} />
+      </div>
+
+      {/* Close error */}
+      {closeError && (
+        <div className="mx-4 mb-3 rounded-none border border-[var(--short)]/20 bg-[var(--short)]/5 px-3 py-2">
+          <p className="text-[10px] text-[var(--short)]">{closeError}</p>
+        </div>
+      )}
+
+      {/* Close Position Modal */}
+      {showCloseModal && (
+        <ClosePositionModal
+          positionSize={account.positionSize}
+          entryPrice={entryPriceE6}
+          currentPrice={currentPriceE6}
+          capital={account.capital}
+          symbol={symbol}
+          decimals={decimals}
+          priceUsd={priceUsd}
+          isLong={isLong}
+          loading={closeLoading}
+          onConfirm={handleConfirmClose}
+          onCancel={() => setShowCloseModal(false)}
+        />
+      )}
+    </div>
+  );
+};
