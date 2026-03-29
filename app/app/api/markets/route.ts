@@ -162,17 +162,43 @@ export async function GET(request: NextRequest) {
     // they have slab=null, mainnet_ca=null, vault_balance=null and cannot be indexed.
     // Filtering at the query level prevents them polluting the response even if
     // the JS-layer zombie/blocklist guards don't catch them (Set.has(null) → false).
-    // PERC-8195: filter by network so devnet and mainnet rows don't mix
-    const { data, error } = await supabase
+    // PERC-8195: filter by network so devnet and mainnet rows don't mix.
+    // PERC-8215: Graceful fallback — if the network column is missing (migration not yet
+    // applied to this Supabase instance), retry without the filter to restore service.
+    // The column absence causes a hard 500; we detect it by error message and degrade
+    // gracefully rather than keeping the endpoint broken for all users.
+    const SELECT_FIELDS =
+      "slab_address,mint_address,symbol,name,decimals,deployer,logo_url,max_leverage,trading_fee_bps," +
+      "last_price,mark_price,index_price,volume_24h,trade_count_24h,open_interest_long,open_interest_short,total_open_interest," +
+      "insurance_fund,insurance_balance,total_accounts,funding_rate,net_lp_pos,lp_sum_abs,c_tot," +
+      "vault_balance,created_at,stats_updated_at,oracle_mode,dex_pool_address,mainnet_ca,oracle_authority";
+
+    let { data, error } = await supabase
       .from("markets_with_stats")
-      .select(
-        "slab_address,mint_address,symbol,name,decimals,deployer,logo_url,max_leverage,trading_fee_bps," +
-        "last_price,mark_price,index_price,volume_24h,trade_count_24h,open_interest_long,open_interest_short,total_open_interest," +
-        "insurance_fund,insurance_balance,total_accounts,funding_rate,net_lp_pos,lp_sum_abs,c_tot," +
-        "vault_balance,created_at,stats_updated_at,oracle_mode,dex_pool_address,mainnet_ca,oracle_authority"
-      )
+      .select(SELECT_FIELDS)
       .eq("network", getServerNetwork())
       .not("slab_address", "is", null);
+
+    // PERC-8215: Fallback — migration 20260329180000 not yet applied; `network` column
+    // does not exist in markets_with_stats view. Retry without the network filter so the
+    // endpoint stays up. Logs a Sentry warning so the missing migration is visible on-call.
+    if (error && error.message?.includes("network")) {
+      Sentry.captureMessage(
+        "PERC-8215: markets_with_stats.network column missing — migration not applied. " +
+        "Falling back to unfiltered query. Apply 20260329180000_add_network_column.sql to fix.",
+        {
+          level: "warning",
+          tags: { endpoint: "/api/markets", method: "GET", degraded: "true" },
+          fingerprint: ["perc-8215-network-column-missing"],
+        }
+      );
+      const fallback = await supabase
+        .from("markets_with_stats")
+        .select(SELECT_FIELDS)
+        .not("slab_address", "is", null);
+      data = fallback.data;
+      error = fallback.error;
+    }
 
     if (error) {
       Sentry.captureException(error, {
