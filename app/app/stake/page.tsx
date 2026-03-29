@@ -149,7 +149,7 @@ function StakeHero({ pools, totalUserDeposited }: { pools: StakePool[]; totalUse
             className="mb-4 text-3xl font-medium tracking-[-0.02em] sm:text-4xl lg:text-[56px]"
             style={{ fontFamily: "var(--font-heading)" }}
           >
-            <span className="text-white">Stake. Earn.</span>
+            <span className="text-[var(--text)]">Stake. Earn.</span>
             <br />
             <span className="text-[var(--cyan)]">Back the Fund.</span>
           </h1>
@@ -232,7 +232,7 @@ function YourPositionPanel({
         <p className="mt-1 text-[10px] text-[var(--text-dim)]">Deposit into a pool to get started</p>
         <a
           href="#deposit"
-          className="mt-3 inline-block text-[11px] font-medium text-[var(--accent)] transition-colors hover:text-white"
+          className="mt-3 inline-block text-[11px] font-medium text-[var(--accent)] transition-colors hover:text-[var(--text)]"
         >
           Deposit Now →
         </a>
@@ -253,17 +253,17 @@ function YourPositionPanel({
         <div className="grid grid-cols-2 gap-3 text-[12px]">
           <div>
             <span className="text-[var(--text-secondary)]">Pool</span>
-            <p className="font-medium text-white">{position.poolName}</p>
+            <p className="font-medium text-[var(--text)]">{position.poolName}</p>
           </div>
           <div>
             <span className="text-[var(--text-secondary)]">LP Balance</span>
-            <p className="font-medium text-white tabular-nums" style={{ fontFamily: "var(--font-mono)" }}>
+            <p className="font-medium text-[var(--text)] tabular-nums" style={{ fontFamily: "var(--font-mono)" }}>
               {position.lpBalance.toLocaleString(undefined, { maximumFractionDigits: 4 })} LP
             </p>
           </div>
           <div>
             <span className="text-[var(--text-secondary)]">Est. Value</span>
-            <p className="font-medium text-white tabular-nums" style={{ fontFamily: "var(--font-mono)" }}>
+            <p className="font-medium text-[var(--text)] tabular-nums" style={{ fontFamily: "var(--font-mono)" }}>
               {formatUsd(position.estimatedValue)}
             </p>
           </div>
@@ -410,7 +410,7 @@ function DepositWidget({
           <select
             value={selectedPool}
             onChange={(e) => { setSelectedPool(e.target.value); setTxStatus(null); }}
-            className="w-full border border-[var(--border)] bg-[var(--bg-surface)] px-3 py-2.5 text-[13px] text-white outline-none transition-colors focus:border-[var(--accent)]/50"
+            className="w-full border border-[var(--border)] bg-[var(--bg-surface)] px-3 py-2.5 text-[13px] text-[var(--text)] outline-none transition-colors focus:border-[var(--accent)]/50"
             style={{ fontFamily: "var(--font-mono)" }}
           >
             {pools.map((p) => (
@@ -443,7 +443,7 @@ function DepositWidget({
               placeholder="0.00"
               min="0"
               step="any"
-              className="flex-1 border border-[var(--border)] bg-[var(--bg-surface)] px-3 py-2.5 text-[13px] text-white placeholder:text-[var(--text-muted)] outline-none transition-colors focus:border-[var(--accent)]/50 tabular-nums"
+              className="flex-1 border border-[var(--border)] bg-[var(--bg-surface)] px-3 py-2.5 text-[13px] text-[var(--text)] placeholder:text-[var(--text-muted)] outline-none transition-colors focus:border-[var(--accent)]/50 tabular-nums"
               style={{ fontFamily: "var(--font-mono)" }}
             />
             <button
@@ -460,7 +460,7 @@ function DepositWidget({
         {amountNum > 0 && (
           <div className="text-[12px] text-[var(--text-secondary)]">
             You will receive ≈{" "}
-            <span className="font-medium text-white tabular-nums" style={{ fontFamily: "var(--font-mono)" }}>
+            <span className="font-medium text-[var(--text)] tabular-nums" style={{ fontFamily: "var(--font-mono)" }}>
               {lpEstimate.toLocaleString(undefined, { maximumFractionDigits: 4 })} LP
             </span>
           </div>
@@ -532,7 +532,7 @@ function PoolCard({ pool }: { pool: StakePool }) {
             💧
           </div>
           <div>
-            <h3 className="text-[13px] font-semibold text-white">{pool.symbol}</h3>
+            <h3 className="text-[13px] font-semibold text-[var(--text)]">{pool.symbol}</h3>
             <p className="text-[10px] text-[var(--text-muted)]">POOL</p>
           </div>
         </div>
@@ -541,7 +541,7 @@ function PoolCard({ pool }: { pool: StakePool }) {
       <div className="space-y-2 text-[12px]">
         <div className="flex justify-between">
           <span className="text-[var(--text-secondary)]">TVL</span>
-          <span className="font-medium text-white tabular-nums" style={{ fontFamily: "var(--font-mono)" }}>{formatUsd(pool.tvl)}</span>
+          <span className="font-medium text-[var(--text)] tabular-nums" style={{ fontFamily: "var(--font-mono)" }}>{formatUsd(pool.tvl)}</span>
         </div>
         <div className="flex justify-between">
           <span className="text-[var(--text-secondary)]">APR</span>

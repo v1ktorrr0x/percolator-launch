@@ -117,7 +117,7 @@ const card =
 const labelStyle =
   "text-[10px] font-bold uppercase tracking-[0.15em] text-[var(--text-muted)]";
 const inputStyle =
-  "w-full rounded-none border border-[var(--border)] bg-[#0D0D14] px-3 py-2 text-[12px] text-white placeholder:text-[var(--text-dim)] focus:border-[var(--accent)] focus:outline-none transition-colors";
+  "w-full rounded-none border border-[var(--border)] bg-[var(--bg-elevated)] px-3 py-2 text-[12px] text-[var(--text)] placeholder:text-[var(--text-dim)] focus:border-[var(--accent)] focus:outline-none transition-colors";
 
 // ─── Small helpers ─────────────────────────────────────────────────────────────
 
@@ -261,7 +261,7 @@ function BarRow({
     >
       <div className="flex items-center justify-between mb-1">
         <span
-          className="text-[11px] font-medium capitalize group-hover:text-white transition-colors"
+          className="text-[11px] font-medium capitalize group-hover:text-[var(--text)] transition-colors"
           style={{ color }}
         >
           {label.replace("_", " ")}
@@ -470,7 +470,7 @@ export default function AdminDashboard() {
       <div className="flex items-center justify-between mb-8">
         <div>
           <div className={`${labelStyle} mb-1`}>Admin Dashboard</div>
-          <h1 className="text-xl font-bold text-white">Percolator Admin</h1>
+          <h1 className="text-xl font-bold text-[var(--text)]">Percolator Admin</h1>
         </div>
         <div className="flex items-center gap-3">
           <span className="hidden sm:inline text-[11px] text-[var(--text-muted)]">
@@ -478,7 +478,7 @@ export default function AdminDashboard() {
           </span>
           <button
             onClick={signOut}
-            className="rounded-none border border-[var(--border)] px-3 py-1.5 text-[10px] font-bold uppercase tracking-[0.15em] text-[var(--text-secondary)] hover:text-white hover:border-[var(--border-hover)] transition-colors"
+            className="rounded-none border border-[var(--border)] px-3 py-1.5 text-[10px] font-bold uppercase tracking-[0.15em] text-[var(--text-secondary)] hover:text-[var(--text)] hover:border-[var(--border-hover)] transition-colors"
           >
             Sign Out
           </button>
@@ -528,7 +528,7 @@ export default function AdminDashboard() {
 
           <div className={`${card} p-4`}>
             <div className={labelStyle}>Total Reports</div>
-            <div className="text-3xl font-bold mt-1 text-white">
+            <div className="text-3xl font-bold mt-1 text-[var(--text)]">
               {bugs.length}
             </div>
             <div className="text-[11px] text-[var(--text-muted)] mt-1">
@@ -630,7 +630,7 @@ export default function AdminDashboard() {
                           {r.paid}✓
                         </span>
                       )}
-                      <span className="text-[12px] font-bold text-white w-5 text-right">
+                      <span className="text-[12px] font-bold text-[var(--text)] w-5 text-right">
                         {r.total}
                       </span>
                     </div>
@@ -681,7 +681,7 @@ export default function AdminDashboard() {
                     />
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 flex-wrap">
-                        <span className="text-[12px] text-white truncate max-w-[220px] group-hover:text-[var(--accent)] transition-colors">
+                        <span className="text-[12px] text-[var(--text)] truncate max-w-[220px] group-hover:text-[var(--accent)] transition-colors">
                           {bug.title}
                         </span>
                         <span
@@ -850,7 +850,7 @@ export default function AdminDashboard() {
               setStatusFilter("all");
               setSeverityFilter("all");
             }}
-            className="rounded-none border border-[var(--border)] px-3 py-2 text-[10px] font-bold uppercase tracking-[0.15em] text-[var(--text-dim)] hover:text-white hover:border-[var(--border-hover)] transition-colors"
+            className="rounded-none border border-[var(--border)] px-3 py-2 text-[10px] font-bold uppercase tracking-[0.15em] text-[var(--text-dim)] hover:text-[var(--text)] hover:border-[var(--border-hover)] transition-colors"
           >
             Clear
           </button>
@@ -859,7 +859,7 @@ export default function AdminDashboard() {
               fetchBugs();
               fetchPlatformStats();
             }}
-            className="rounded-none border border-[var(--border)] px-3 py-2 text-[10px] font-bold uppercase tracking-[0.15em] text-[var(--text-secondary)] hover:text-white hover:border-[var(--accent)] transition-colors"
+            className="rounded-none border border-[var(--border)] px-3 py-2 text-[10px] font-bold uppercase tracking-[0.15em] text-[var(--text-secondary)] hover:text-[var(--text)] hover:border-[var(--accent)] transition-colors"
           >
             Refresh
           </button>
@@ -908,7 +908,7 @@ export default function AdminDashboard() {
                             "var(--text-muted)"
                           }
                         />
-                        <span className="text-[13px] font-medium text-white truncate">
+                        <span className="text-[13px] font-medium text-[var(--text)] truncate">
                           {bug.title}
                         </span>
                       </div>
@@ -963,7 +963,7 @@ export default function AdminDashboard() {
                     {selectedBug.severity}
                   </span>
                 </div>
-                <h2 className="text-[15px] font-bold text-white leading-tight mb-2">
+                <h2 className="text-[15px] font-bold text-[var(--text)] leading-tight mb-2">
                   {selectedBug.title}
                 </h2>
                 <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px]">
@@ -1081,8 +1081,8 @@ export default function AdminDashboard() {
                       disabled={saving || selectedBug.status === s}
                       className={`rounded-none border px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.1em] transition-colors ${
                         selectedBug.status === s
-                          ? "bg-[var(--accent-subtle)] border-[var(--accent)] text-white"
-                          : "border-[var(--border)] text-[var(--text-muted)] hover:text-white hover:border-[var(--border-hover)]"
+                          ? "bg-[var(--accent-subtle)] border-[var(--accent)] text-[var(--text)]"
+                          : "border-[var(--border)] text-[var(--text-muted)] hover:text-[var(--text)] hover:border-[var(--border-hover)]"
                       }`}
                     >
                       {s.replace("_", " ")}

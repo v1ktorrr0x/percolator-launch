@@ -5,13 +5,13 @@ import Link from "next/link";
 import { ScrollReveal } from "@/components/ui/ScrollReveal";
 
 const card = "rounded-sm bg-[var(--panel-bg)] border border-[var(--border)] p-6";
-const h2Style = "text-lg font-bold text-white mb-4";
+const h2Style = "text-lg font-bold text-[var(--text)] mb-4";
 const textMuted = "text-[13px] leading-relaxed text-[var(--text-secondary)]";
 const labelStyle = "block text-[11px] font-medium uppercase tracking-[0.15em] text-[var(--text-muted)] mb-1.5";
 const inputStyle =
-  "w-full rounded-sm border border-[var(--border)] bg-[#0D0D14] px-3 py-2.5 text-[13px] text-white placeholder:text-[var(--text-dim)] focus:border-[var(--accent)] focus:outline-none transition-colors";
+  "w-full rounded-sm border border-[var(--border)] bg-[var(--bg-elevated)] px-3 py-2.5 text-[13px] text-[var(--text)] placeholder:text-[var(--text-dim)] focus:border-[var(--accent)] focus:outline-none transition-colors";
 const textareaStyle =
-  "w-full rounded-sm border border-[var(--border)] bg-[#0D0D14] px-3 py-2.5 text-[13px] text-white placeholder:text-[var(--text-dim)] focus:border-[var(--accent)] focus:outline-none transition-colors resize-none";
+  "w-full rounded-sm border border-[var(--border)] bg-[var(--bg-elevated)] px-3 py-2.5 text-[13px] text-[var(--text)] placeholder:text-[var(--text-dim)] focus:border-[var(--accent)] focus:outline-none transition-colors resize-none";
 
 const SEVERITY_OPTIONS = [
   { value: "low", label: "Low", color: "var(--text-muted)", desc: "Minor visual glitch or cosmetic issue" },
@@ -98,7 +98,7 @@ export default function ReportBugPage() {
                 <path d="M20 6L9 17l-5-5" />
               </svg>
             </div>
-            <h2 className="text-lg font-bold text-white mb-2">Bug Report Submitted</h2>
+            <h2 className="text-lg font-bold text-[var(--text)] mb-2">Bug Report Submitted</h2>
             <p className={textMuted}>
               Thanks @{form.twitter_handle.replace(/^@/, "")} — we&apos;ll review this and reach out on X if we need more info.
             </p>
@@ -121,7 +121,7 @@ export default function ReportBugPage() {
                     browser: "",
                   });
                 }}
-                className="border border-[var(--border)] px-4 py-2 text-xs font-medium text-white transition-colors hover:bg-[var(--accent)]/10"
+                className="border border-[var(--border)] px-4 py-2 text-xs font-medium text-[var(--text)] transition-colors hover:bg-[var(--accent)]/10"
               >
                 Submit Another
               </button>
@@ -149,8 +149,8 @@ export default function ReportBugPage() {
               <div className="mb-2 text-[10px] font-medium uppercase tracking-[0.25em] text-[var(--accent)]/60">
                 // report
               </div>
-              <h1 className="text-xl font-medium tracking-[-0.01em] text-white sm:text-2xl" style={{ fontFamily: "var(--font-heading)" }}>
-                <span className="font-normal text-white/50">Bug </span>Report
+              <h1 className="text-xl font-medium tracking-[-0.01em] text-[var(--text)] sm:text-2xl" style={{ fontFamily: "var(--font-heading)" }}>
+                <span className="font-normal text-[var(--text-muted)]">Bug </span>Report
               </h1>
               <p className="mt-2 text-[13px] text-[var(--text-secondary)]">
                 Found something broken? Help us fix it. Be as detailed as possible.
@@ -168,7 +168,7 @@ export default function ReportBugPage() {
               </svg>
             </div>
             <div>
-              <p className="text-[13px] font-medium text-white">Bug bounties paid from creator rewards</p>
+              <p className="text-[13px] font-medium text-[var(--text)]">Bug bounties paid from creator rewards</p>
               <p className="mt-1 text-[11px] leading-relaxed text-[var(--text-secondary)]">
                 Valid bug reports are eligible for bounties. We allocate a portion of creator rewards to pay community members who help us find and document bugs. The more detailed your report, the higher the bounty.
               </p>
@@ -269,7 +269,7 @@ export default function ReportBugPage() {
                         className="h-2 w-2 rounded-full"
                         style={{ backgroundColor: opt.color }}
                       />
-                      <span className="text-[12px] font-medium text-white">{opt.label}</span>
+                      <span className="text-[12px] font-medium text-[var(--text)]">{opt.label}</span>
                     </div>
                     <p className="mt-0.5 text-[10px] text-[var(--text-dim)]">{opt.desc}</p>
                   </button>
@@ -287,8 +287,8 @@ export default function ReportBugPage() {
                     onClick={() => update("page", form.page === p ? "" : p)}
                     className={`rounded-sm border px-3 py-1.5 text-[11px] font-medium transition-all ${
                       form.page === p
-                        ? "border-[var(--accent)] bg-[var(--accent)]/10 text-white"
-                        : "border-[var(--border)] text-[var(--text-muted)] hover:border-[var(--border-hover)] hover:text-white"
+                        ? "border-[var(--accent)] bg-[var(--accent)]/10 text-[var(--text)]"
+                        : "border-[var(--border)] text-[var(--text-muted)] hover:border-[var(--border-hover)] hover:text-[var(--text)]"
                     }`}
                   >
                     {p}
@@ -380,7 +380,7 @@ export default function ReportBugPage() {
         <div className="flex items-center justify-between">
           <Link
             href="/"
-            className="inline-flex items-center gap-2 text-sm text-[var(--text-muted)] transition-colors hover:text-white"
+            className="inline-flex items-center gap-2 text-sm text-[var(--text-muted)] transition-colors hover:text-[var(--text)]"
           >
             <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M19 12H5M12 19l-7-7 7-7" />

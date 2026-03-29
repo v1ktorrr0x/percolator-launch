@@ -4,7 +4,7 @@ import Link from "next/link";
 import { ScrollReveal } from "@/components/ui/ScrollReveal";
 
 const sectionHeader = "mb-2 text-[10px] font-medium uppercase tracking-[0.25em] text-[var(--accent)]/60";
-const sectionTitle = "text-lg font-semibold tracking-[-0.01em] text-white sm:text-xl";
+const sectionTitle = "text-lg font-semibold tracking-[-0.01em] text-[var(--text)] sm:text-xl";
 const cardClass = "border border-[var(--border)] bg-[var(--panel-bg)]";
 const cellClass = "px-4 py-3 text-[12px]";
 const thClass = "px-4 py-3 text-[10px] font-medium uppercase tracking-[0.15em] text-[var(--text-muted)] text-left";
@@ -43,10 +43,10 @@ export default function GuidePage() {
             // documentation
           </div>
           <h1
-            className="text-xl font-medium tracking-[-0.01em] text-white sm:text-2xl"
+            className="text-xl font-medium tracking-[-0.01em] text-[var(--text)] sm:text-2xl"
             style={{ fontFamily: "var(--font-heading)" }}
           >
-            <span className="font-normal text-white/50">Percolator </span>Guide
+            <span className="font-normal text-[var(--text-muted)]">Percolator </span>Guide
           </h1>
           <p className="mt-2 text-[13px] text-[var(--text-secondary)]">
             Everything you need to know about launching and trading perpetual futures markets on Solana.
@@ -57,7 +57,7 @@ export default function GuidePage() {
       {/* P-MED-6: Table of Contents */}
       <ScrollReveal>
         <nav className={`${cardClass} p-5`}>
-          <h2 className="text-sm font-semibold text-white mb-3 uppercase tracking-wider">Contents</h2>
+          <h2 className="text-sm font-semibold text-[var(--text)] mb-3 uppercase tracking-wider">Contents</h2>
           <ul className="space-y-2">
             {sections.map((section) => (
               <li key={section.id}>
@@ -81,7 +81,7 @@ export default function GuidePage() {
         <div className={cardClass}>
           <div className="p-5 space-y-3">
             <p className="text-[13px] leading-relaxed text-[var(--text-secondary)]">
-              Percolator is <span className="text-white font-medium">pump.fun for perps</span> — anyone can launch a perpetual futures market for any Solana token in one click. No approvals, no gatekeepers.
+              Percolator is <span className="text-[var(--text)] font-medium">pump.fun for perps</span> — anyone can launch a perpetual futures market for any Solana token in one click. No approvals, no gatekeepers.
             </p>
             <p className="text-[13px] leading-relaxed text-[var(--text-secondary)]">
               Paste a token address, set your terms, and your market goes live on-chain instantly. Traders can open leveraged long/short positions using the token itself as collateral.
@@ -110,7 +110,7 @@ export default function GuidePage() {
                 ["Markets", "Anyone can create (free, 3 tiers)", "Anyone can create (0.45–7 SOL rent deposit)"],
               ].map(([aspect, devnet, mainnet]) => (
                 <tr key={aspect} className="transition-colors hover:bg-[var(--bg-elevated)]">
-                  <td className={`${cellClass} font-medium text-white`}>{aspect}</td>
+                  <td className={`${cellClass} font-medium text-[var(--text)]`}>{aspect}</td>
                   <td className={`${cellClass} text-[var(--warning)]`}>{devnet}</td>
                   <td className={`${cellClass} text-[var(--cyan)]`}>{mainnet}</td>
                 </tr>
@@ -142,7 +142,7 @@ export default function GuidePage() {
             },
           ].map((item) => (
             <div key={item.title} className="bg-[var(--panel-bg)] p-5 transition-colors hover:bg-[var(--bg-elevated)]">
-              <h3 className="text-[13px] font-semibold text-white mb-2">{item.title}</h3>
+              <h3 className="text-[13px] font-semibold text-[var(--text)] mb-2">{item.title}</h3>
               <p className="text-[12px] leading-relaxed text-[var(--text-secondary)]">{item.desc}</p>
             </div>
           ))}
@@ -179,7 +179,7 @@ export default function GuidePage() {
               />
               <div>
                 <div className="flex items-center gap-2">
-                  <h3 className="text-[13px] font-semibold text-white">{item.mode}</h3>
+                  <h3 className="text-[13px] font-semibold text-[var(--text)]">{item.mode}</h3>
                   <span
                     className="px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider border"
                     style={{ color: item.color, borderColor: `color-mix(in srgb, ${item.color} 30%, transparent)` }}
@@ -219,7 +219,7 @@ export default function GuidePage() {
                 ["Large", "4,096", "~$1,000 (~7 SOL)", "available"],
               ].map(([tier, slots, cost, status]) => (
                 <tr key={tier} className="transition-colors hover:bg-[var(--bg-elevated)]">
-                  <td className={`${cellClass} font-medium text-white`}>{tier}</td>
+                  <td className={`${cellClass} font-medium text-[var(--text)]`}>{tier}</td>
                   <td className={`${cellClass} text-[var(--text-secondary)]`}>{slots}</td>
                   <td className={`${cellClass} text-[var(--text-secondary)]`}>{cost}</td>
                   <td className={cellClass}>
@@ -255,7 +255,7 @@ export default function GuidePage() {
                 {item.step}
               </span>
               <div>
-                <h3 className="text-[13px] font-semibold text-white">{item.title}</h3>
+                <h3 className="text-[13px] font-semibold text-[var(--text)]">{item.title}</h3>
                 <p className="mt-1 text-[12px] leading-relaxed text-[var(--text-secondary)]">{item.desc}</p>
               </div>
             </div>
@@ -293,7 +293,7 @@ export default function GuidePage() {
             },
           ].map((item, idx) => (
             <details key={idx} className="bg-[var(--panel-bg)] group">
-              <summary className="cursor-pointer px-5 py-4 text-[13px] font-medium text-white transition-colors hover:bg-[var(--bg-elevated)] list-none flex items-center justify-between focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/50">
+              <summary className="cursor-pointer px-5 py-4 text-[13px] font-medium text-[var(--text)] transition-colors hover:bg-[var(--bg-elevated)] list-none flex items-center justify-between focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/50">
                 {item.q}
                 <svg className="h-3 w-3 text-[var(--text-muted)] transition-transform group-open:rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
