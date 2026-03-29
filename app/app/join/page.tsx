@@ -5,13 +5,13 @@ import Link from "next/link";
 import { ScrollReveal } from "@/components/ui/ScrollReveal";
 
 const card = "rounded-sm bg-[var(--panel-bg)] border border-[var(--border)] p-6";
-const h2Style = "text-lg font-bold text-white mb-4";
+const h2Style = "text-lg font-bold text-[var(--text)] mb-4";
 const textMuted = "text-[13px] leading-relaxed text-[var(--text-secondary)]";
 const labelStyle = "block text-[11px] font-medium uppercase tracking-[0.15em] text-[var(--text-muted)] mb-1.5";
 const inputStyle =
-  "w-full rounded-sm border border-[var(--border)] bg-[#0D0D14] px-3 py-2.5 text-[13px] text-white placeholder:text-[var(--text-dim)] focus:border-[var(--accent)] focus:outline-none transition-colors";
+  "w-full rounded-sm border border-[var(--border)] bg-[var(--bg-elevated)] px-3 py-2.5 text-[13px] text-[var(--text)] placeholder:text-[var(--text-dim)] focus:border-[var(--accent)] focus:outline-none transition-colors";
 const textareaStyle =
-  "w-full rounded-sm border border-[var(--border)] bg-[#0D0D14] px-3 py-2.5 text-[13px] text-white placeholder:text-[var(--text-dim)] focus:border-[var(--accent)] focus:outline-none transition-colors resize-none";
+  "w-full rounded-sm border border-[var(--border)] bg-[var(--bg-elevated)] px-3 py-2.5 text-[13px] text-[var(--text)] placeholder:text-[var(--text-dim)] focus:border-[var(--accent)] focus:outline-none transition-colors resize-none";
 
 const ROLE_OPTIONS = [
   { value: "developer", label: "Developer", desc: "Smart contracts, frontend, backend" },
@@ -139,7 +139,7 @@ export default function JoinPage() {
                 <path d="M20 6L9 17l-5-5" />
               </svg>
             </div>
-            <h2 className="text-lg font-bold text-white mb-2">Application Submitted</h2>
+            <h2 className="text-lg font-bold text-[var(--text)] mb-2">Application Submitted</h2>
             <p className={textMuted}>
               Thanks {form.name} — we&apos;ll review your application and reach out via @{form.twitter_handle.replace(/^@/, "")} or email.
             </p>
@@ -162,7 +162,7 @@ export default function JoinPage() {
                   });
                   setCvFile(null);
                 }}
-                className="border border-[var(--border)] px-4 py-2 text-xs font-medium text-white transition-colors hover:bg-[var(--accent)]/10"
+                className="border border-[var(--border)] px-4 py-2 text-xs font-medium text-[var(--text)] transition-colors hover:bg-[var(--accent)]/10"
               >
                 Submit Another
               </button>
@@ -189,9 +189,9 @@ export default function JoinPage() {
             <div className="mb-2 text-[10px] font-medium uppercase tracking-[0.25em] text-[var(--accent)]/60">
               // careers
             </div>
-            <h1 className="text-xl font-medium tracking-[-0.01em] text-white sm:text-2xl" style={{ fontFamily: "var(--font-heading)" }}>
+            <h1 className="text-xl font-medium tracking-[-0.01em] text-[var(--text)] sm:text-2xl" style={{ fontFamily: "var(--font-heading)" }}>
               <span className="font-bold">Join</span>{" "}
-              <span className="font-normal text-white/50">Us</span>
+              <span className="font-normal text-[var(--text-muted)]">Us</span>
             </h1>
             <p className="mt-2 text-[13px] text-[var(--text-secondary)]">
               Help build the future of perpetual futures on Solana.
@@ -286,7 +286,7 @@ export default function JoinPage() {
                             : "border-[var(--border)] hover:border-[var(--border-hover)]"
                         }`}
                       >
-                        <span className="text-[12px] font-medium text-white">{opt.label}</span>
+                        <span className="text-[12px] font-medium text-[var(--text)]">{opt.label}</span>
                         <p className="mt-0.5 text-[10px] text-[var(--text-dim)]">{opt.desc}</p>
                       </button>
                     ))}
@@ -301,8 +301,8 @@ export default function JoinPage() {
                         onClick={() => update("experience_level", opt.value)}
                         className={`rounded-sm border px-4 py-1.5 text-[11px] font-medium transition-all ${
                           form.experience_level === opt.value
-                            ? "border-[var(--accent)] bg-[var(--accent)]/10 text-white"
-                            : "border-[var(--border)] text-[var(--text-muted)] hover:border-[var(--border-hover)] hover:text-white"
+                            ? "border-[var(--accent)] bg-[var(--accent)]/10 text-[var(--text)]"
+                            : "border-[var(--border)] text-[var(--text-muted)] hover:border-[var(--border-hover)] hover:text-[var(--text)]"
                         }`}
                       >
                         {opt.label}
@@ -367,7 +367,7 @@ export default function JoinPage() {
                     />
                     {cvFile ? (
                       <div>
-                        <p className="text-[13px] text-white font-medium">{cvFile.name}</p>
+                        <p className="text-[13px] text-[var(--text)] font-medium">{cvFile.name}</p>
                         <button
                           onClick={(e) => { e.stopPropagation(); setCvFile(null); }}
                           className="mt-1 text-[11px] text-[var(--text-muted)] hover:text-[var(--short)] transition-colors"
@@ -402,8 +402,8 @@ export default function JoinPage() {
                         onClick={() => update("availability", opt.value)}
                         className={`rounded-sm border px-4 py-1.5 text-[11px] font-medium transition-all ${
                           form.availability === opt.value
-                            ? "border-[var(--accent)] bg-[var(--accent)]/10 text-white"
-                            : "border-[var(--border)] text-[var(--text-muted)] hover:border-[var(--border-hover)] hover:text-white"
+                            ? "border-[var(--accent)] bg-[var(--accent)]/10 text-[var(--text)]"
+                            : "border-[var(--border)] text-[var(--text-muted)] hover:border-[var(--border-hover)] hover:text-[var(--text)]"
                         }`}
                       >
                         {opt.label}
@@ -436,7 +436,7 @@ export default function JoinPage() {
             <div className="flex items-center justify-between">
               <Link
                 href="/"
-                className="inline-flex items-center gap-2 text-sm text-[var(--text-muted)] transition-colors hover:text-white"
+                className="inline-flex items-center gap-2 text-sm text-[var(--text-muted)] transition-colors hover:text-[var(--text)]"
               >
                 <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M19 12H5M12 19l-7-7 7-7" />
@@ -468,7 +468,7 @@ export default function JoinPage() {
                   <li key={item.title} className="flex items-start gap-3">
                     <span className="mt-1.5 h-1.5 w-1.5 shrink-0 bg-[var(--accent)]" />
                     <div>
-                      <p className="text-[12px] font-medium text-white">{item.title}</p>
+                      <p className="text-[12px] font-medium text-[var(--text)]">{item.title}</p>
                       <p className="text-[11px] text-[var(--text-secondary)]">{item.desc}</p>
                     </div>
                   </li>

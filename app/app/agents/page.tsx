@@ -5,7 +5,7 @@ import { ScrollReveal } from "@/components/ui/ScrollReveal";
 import { CodeBlock } from "@/components/ui/CodeBlock";
 
 const card = "rounded-sm bg-[var(--panel-bg)] border border-[var(--border)] p-6";
-const h2Style = "text-lg font-bold text-white mb-4";
+const h2Style = "text-lg font-bold text-[var(--text)] mb-4";
 const h3Style = "text-sm font-semibold text-[var(--accent)] mb-2 uppercase tracking-wider";
 const textMuted = "text-[13px] leading-relaxed text-[var(--text-secondary)]";
 const badge = "inline-block rounded-sm px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider";
@@ -22,8 +22,8 @@ export default function AgentsPage() {
               <div className="mb-2 text-[10px] font-medium uppercase tracking-[0.25em] text-[var(--accent)]/60">
                 // contribute
               </div>
-              <h1 className="text-xl font-medium tracking-[-0.01em] text-white sm:text-2xl" style={{ fontFamily: "var(--font-heading)" }}>
-                <span className="font-normal text-white/50">Agent </span>Contribution Guide
+              <h1 className="text-xl font-medium tracking-[-0.01em] text-[var(--text)] sm:text-2xl" style={{ fontFamily: "var(--font-heading)" }}>
+                <span className="font-normal text-[var(--text-muted)]">Agent </span>Contribution Guide
               </h1>
               <p className="mt-2 text-[13px] text-[var(--text-secondary)]">
                 Use your AI agent to improve Percolator Launch. Fork, build, submit PRs.
@@ -34,7 +34,7 @@ export default function AgentsPage() {
                 href="https://github.com/dcccrypto/percolator-launch"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="border border-[var(--border)] px-4 py-2 text-xs font-medium text-white transition-colors hover:bg-[var(--accent)]/10"
+                className="border border-[var(--border)] px-4 py-2 text-xs font-medium text-[var(--text)] transition-colors hover:bg-[var(--accent)]/10"
               >
                 View on GitHub
               </a>
@@ -57,28 +57,28 @@ export default function AgentsPage() {
             <div className="flex gap-4">
               <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-sm bg-[var(--accent)]/10 text-sm font-bold text-[var(--accent)]">1</div>
               <div>
-                <p className="text-sm font-medium text-white">Fork the repository</p>
+                <p className="text-sm font-medium text-[var(--text)]">Fork the repository</p>
                 <p className={textMuted}>Clone dcccrypto/percolator-launch to your own GitHub</p>
               </div>
             </div>
             <div className="flex gap-4">
               <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-sm bg-[var(--accent)]/10 text-sm font-bold text-[var(--accent)]">2</div>
               <div>
-                <p className="text-sm font-medium text-white">Point your agent at the code</p>
+                <p className="text-sm font-medium text-[var(--text)]">Point your agent at the code</p>
                 <p className={textMuted}>Give it the architecture context and a specific task</p>
               </div>
             </div>
             <div className="flex gap-4">
               <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-sm bg-[var(--accent)]/10 text-sm font-bold text-[var(--accent)]">3</div>
               <div>
-                <p className="text-sm font-medium text-white">Agent builds on a feature branch</p>
+                <p className="text-sm font-medium text-[var(--text)]">Agent builds on a feature branch</p>
                 <p className={textMuted}>TypeScript must compile clean. Follow the design system.</p>
               </div>
             </div>
             <div className="flex gap-4">
               <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-sm bg-[var(--accent)]/10 text-sm font-bold text-[var(--accent)]">4</div>
               <div>
-                <p className="text-sm font-medium text-white">Submit a PR</p>
+                <p className="text-sm font-medium text-[var(--text)]">Submit a PR</p>
                 <p className={textMuted}>Main branch is protected. All changes go through review.</p>
               </div>
             </div>
@@ -119,7 +119,7 @@ Key concepts:
             <div className="rounded-sm border border-[var(--border)] p-4">
               <div className="mb-2 flex items-center gap-2">
                 <span className={`${badge} bg-[var(--long)]/20 text-[var(--long)]`}>Easy</span>
-                <h3 className="text-sm font-medium text-white">Bug Fixes</h3>
+                <h3 className="text-sm font-medium text-[var(--text)]">Bug Fixes</h3>
               </div>
               <p className={textMuted}>
                 Fix console errors, null rendering, missing loading states, TypeScript issues, mobile layout
@@ -128,7 +128,7 @@ Key concepts:
             <div className="rounded-sm border border-[var(--border)] p-4">
               <div className="mb-2 flex items-center gap-2">
                 <span className={`${badge} bg-[var(--long)]/20 text-[var(--long)]`}>Easy</span>
-                <h3 className="text-sm font-medium text-white">UI Polish</h3>
+                <h3 className="text-sm font-medium text-[var(--text)]">UI Polish</h3>
               </div>
               <p className={textMuted}>
                 Better skeletons, animations, accessibility, responsive design, performance
@@ -137,7 +137,7 @@ Key concepts:
             <div className="rounded-sm border border-[var(--border)] p-4">
               <div className="mb-2 flex items-center gap-2">
                 <span className={`${badge} bg-[var(--warning)]/20 text-[var(--warning)]`}>Medium</span>
-                <h3 className="text-sm font-medium text-white">Backend Features</h3>
+                <h3 className="text-sm font-medium text-[var(--text)]">Backend Features</h3>
               </div>
               <p className={textMuted}>
                 Trade history indexing, market stats, WebSocket reliability, monitoring dashboards
@@ -146,7 +146,7 @@ Key concepts:
             <div className="rounded-sm border border-[var(--border)] p-4">
               <div className="mb-2 flex items-center gap-2">
                 <span className={`${badge} bg-[var(--short)]/20 text-[var(--short)]`}>Hard</span>
-                <h3 className="text-sm font-medium text-white">Solana Program</h3>
+                <h3 className="text-sm font-medium text-[var(--text)]">Solana Program</h3>
               </div>
               <p className={textMuted}>
                 Gas optimization, new instructions, security hardening. Requires Rust + BPF toolchain.
@@ -243,7 +243,7 @@ npx tsx tests/t1-market-boot.ts`}</CodeBlock>
         <div className="text-center">
           <Link
             href="/"
-            className="inline-flex items-center gap-2 text-sm text-[var(--text-muted)] transition-colors hover:text-white"
+            className="inline-flex items-center gap-2 text-sm text-[var(--text-muted)] transition-colors hover:text-[var(--text)]"
           >
             <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M19 12H5M12 19l-7-7 7-7" />
