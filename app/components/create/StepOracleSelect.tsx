@@ -152,7 +152,7 @@ export const StepOracleSelect: FC<StepOracleSelectProps> = ({
             >
               <p
                 className={`text-[12px] font-semibold uppercase tracking-[0.05em] ${
-                  selected ? "text-white" : "text-[var(--text)]"
+                  selected ? "text-[var(--text)]" : "text-[var(--text)]"
                 }`}
               >
                 {opt.label}
