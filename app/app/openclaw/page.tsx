@@ -7,6 +7,9 @@ export const metadata: Metadata = {
   robots: { index: false, follow: false },
 };
 
+// Security: workshopStyle and workshopBody are static module strings committed at build time
+// (no CMS, DB, or request-derived HTML/CSS); dangerouslySetInnerHTML is only as unsafe as this source file.
+
 /* ---------- raw HTML sourced from ~/percolator-ops/content/openclaw-workshop.html ---------- */
 
 const workshopStyle = `
