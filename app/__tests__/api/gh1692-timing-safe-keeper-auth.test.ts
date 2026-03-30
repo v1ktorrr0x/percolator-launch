@@ -95,6 +95,27 @@ describe("GH#1692: oracle-keeper/register timing-safe auth", () => {
     expect(res.status).toBe(503);
   });
 
+  it("rejects when KEEPER_REGISTER_SECRET is whitespace-only (treated as unset)", async () => {
+    process.env.KEEPER_REGISTER_SECRET = "  \t\n  ";
+    vi.resetModules();
+    process.env.KEEPER_INTERNAL_URL = "http://localhost:8081";
+    const { POST } = await import("@/app/api/oracle-keeper/register/route");
+    const res = await POST(
+      new NextRequest("http://localhost/api/oracle-keeper/register", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "x-keeper-secret": "any-value",
+        },
+        body: JSON.stringify({
+          slabAddress: "11111111111111111111111111111111",
+          mainnetCA: "22222222222222222222222222222222",
+        }),
+      }),
+    );
+    expect(res.status).toBe(503);
+  });
+
   it("passes auth with correct secret (proceeds to validation)", async () => {
     const { POST } = await import("@/app/api/oracle-keeper/register/route");
     // Correct secret but invalid pubkeys → 400, not 401

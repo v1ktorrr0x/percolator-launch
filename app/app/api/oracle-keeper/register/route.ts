@@ -11,6 +11,8 @@
  *
  * The keeper service URL is read from KEEPER_INTERNAL_URL env (default: http://localhost:8081).
  * Non-fatal if keeper is unreachable — market will be auto-discovered on next cycle.
+ *
+ * KEEPER_REGISTER_SECRET is trimmed; empty or whitespace-only disables the route (503).
  */
 
 import { NextRequest, NextResponse } from "next/server";
@@ -21,7 +23,8 @@ import { PublicKey } from "@solana/web3.js";
 export const dynamic = "force-dynamic";
 
 const KEEPER_URL = process.env.KEEPER_INTERNAL_URL ?? "http://localhost:8081";
-const REGISTER_SECRET = process.env.KEEPER_REGISTER_SECRET ?? "";
+/** Trimmed — whitespace-only env counts as unset (same idea as set-price-cap / ADMIN_API_SECRET). */
+const REGISTER_SECRET = (process.env.KEEPER_REGISTER_SECRET ?? "").trim();
 
 export async function POST(req: NextRequest) {
   // Auth: require shared secret to prevent unauthorized oracle source manipulation (#780)
