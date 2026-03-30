@@ -1,0 +1,206 @@
+"use client";
+
+import { useEffect, useState } from "react";
+import { useConnectionCompat } from "@/hooks/useWalletCompat";
+import { PublicKey } from "@solana/web3.js";
+import { useDexPoolSearch, type DexPoolResult } from "./useDexPoolSearch";
+import { fetchTokenMeta } from "@/lib/tokenMeta";
+
+export interface QuickLaunchConfig {
+  mint: string;
+  name: string;
+  symbol: string;
+  decimals: number;
+  initialPrice: string;
+  maxLeverage: number;
+  initialMarginBps: number;
+  maintenanceMarginBps: number;
+  tradingFeeBps: number;
+  lpCollateral: string;
+  liquidityTier: "low" | "medium" | "high";
+}
+
+export interface QuickLaunchResult {
+  config: QuickLaunchConfig | null;
+  loading: boolean;
+  error: string | null;
+  poolInfo: DexPoolResult | null;
+  /** Detected oracle type for this token */
+  oracleType: "pyth" | "hyperp_ema" | "admin";
+  /** Pyth feed ID (hex64) if oracleType === "pyth", else null */
+  pythFeedId: string | null;
+  /** Best price string for adminPrice field */
+  adminPrice: string;
+  /** PERC-470: DEX pool address for hyperp oracle mode */
+  dexPoolAddress: string | null;
+}
+
+/**
+ * Auto-detects token metadata and best DEX pool, then suggests
+ * sensible market parameters based on liquidity.
+ * Also resolves oracle type: Pyth (mainnet) vs admin (devnet-only tokens).
+ */
+export function useQuickLaunch(mint: string | null): QuickLaunchResult {
+  const { connection } = useConnectionCompat();
+  const { pools, loading: poolsLoading } = useDexPoolSearch(mint);
+  const [config, setConfig] = useState<QuickLaunchConfig | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [tokenMeta, setTokenMeta] = useState<{ name: string; symbol: string; decimals: number } | null>(null);
+
+  // Oracle detection state
+  const [oracleType, setOracleType] = useState<"pyth" | "hyperp_ema" | "admin">("admin");
+  const [pythFeedId, setPythFeedId] = useState<string | null>(null);
+  const [adminPrice, setAdminPrice] = useState<string>("1.000000");
+  const [dexPoolAddress, setDexPoolAddress] = useState<string | null>(null);
+
+  // Oracle resolution: call /api/oracle/resolve/[mint] after token meta loads.
+  // If Pyth feed found → pyth oracle; else → admin oracle with best available price.
+  useEffect(() => {
+    setOracleType("admin");
+    setPythFeedId(null);
+    setAdminPrice("1.000000");
+    setDexPoolAddress(null);
+    if (!mint || mint.length < 32 || !tokenMeta) return;
+
+    let cancelled = false;
+    (async () => {
+      try {
+        const resp = await fetch(`/api/oracle/resolve/${mint}`, {
+          signal: AbortSignal.timeout(8000),
+        });
+        if (cancelled) return;
+        if (resp.ok) {
+          const data = await resp.json();
+          if (data.feedId) {
+            setOracleType("pyth");
+            setPythFeedId(data.feedId);
+            setDexPoolAddress(null);
+            if (data.price > 0) setAdminPrice(data.price.toFixed(6));
+          } else if (data.oracleMode === "hyperp" && data.dexPoolAddress) {
+            // PERC-470: Hyperp mode — DEX pool is the oracle
+            setOracleType("hyperp_ema");
+            setPythFeedId(null);
+            setDexPoolAddress(data.dexPoolAddress);
+            if (data.price > 0) setAdminPrice(data.price.toFixed(6));
+          } else {
+            setOracleType("admin");
+            setPythFeedId(null);
+            setDexPoolAddress(null);
+            if (data.price > 0) setAdminPrice(data.price.toFixed(6));
+          }
+        } else {
+          // 404 or error — fall back to admin oracle
+          setOracleType("admin");
+          setPythFeedId(null);
+        }
+      } catch {
+        if (!cancelled) {
+          setOracleType("admin");
+          setPythFeedId(null);
+        }
+      }
+    })();
+
+    return () => { cancelled = true; };
+  }, [mint, tokenMeta]);
+
+  // Fetch on-chain token metadata using shared fetchTokenMeta
+  // (checks cache → well-known → Metaplex on-chain → Jupiter, in that order)
+  useEffect(() => {
+    setTokenMeta(null);
+    setError(null);
+    if (!mint || mint.length < 32) return;
+
+    let cancelled = false;
+    setLoading(true);
+
+    (async () => {
+      try {
+        const mintPk = new PublicKey(mint);
+        const meta = await fetchTokenMeta(connection, mintPk);
+        if (!cancelled) {
+          setTokenMeta({ name: meta.name, symbol: meta.symbol, decimals: meta.decimals });
+        }
+      } catch (e) {
+        if (!cancelled) setError(e instanceof Error ? e.message : "Invalid mint");
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    })();
+
+    return () => { cancelled = true; };
+  }, [mint, connection]);
+
+  // Build config when we have both token meta and pools
+  useEffect(() => {
+    if (!tokenMeta || !mint) {
+      setConfig(null);
+      return;
+    }
+
+    // Block tokens with > 12 decimals (u64 overflow risk in on-chain arithmetic)
+    if (tokenMeta.decimals > 12) {
+      setError(`Token has ${tokenMeta.decimals} decimals — max safe limit is 12. Tokens with excessive decimals cause integer overflow on Solana.`);
+      setConfig(null);
+      return;
+    }
+
+    const bestPool = pools.length > 0 ? pools[0] : null;
+    const liquidity = bestPool?.liquidityUsd ?? 0;
+    const price = bestPool?.priceUsd ?? 0;
+
+    let tier: "low" | "medium" | "high";
+    let initialMarginBps: number;
+    let maintenanceMarginBps: number;
+    let maxLeverage: number;
+    let tradingFeeBps: number;
+
+    if (liquidity < 10_000) {
+      tier = "low";
+      initialMarginBps = 2000;
+      maintenanceMarginBps = 1000;
+      maxLeverage = 5;
+      tradingFeeBps = 20;
+    } else if (liquidity < 100_000) {
+      tier = "medium";
+      initialMarginBps = 1500;
+      maintenanceMarginBps = 750;
+      maxLeverage = 6;
+      tradingFeeBps = 10;
+    } else {
+      tier = "high";
+      initialMarginBps = 1000;
+      maintenanceMarginBps = 500;
+      maxLeverage = 10;
+      tradingFeeBps = 5;
+    }
+
+    setConfig({
+      mint,
+      name: tokenMeta.name,
+      symbol: tokenMeta.symbol,
+      decimals: tokenMeta.decimals,
+      initialPrice: price > 0 ? price.toFixed(6) : "1.000000",
+      maxLeverage,
+      initialMarginBps,
+      maintenanceMarginBps,
+      tradingFeeBps,
+      lpCollateral: "1000",
+      liquidityTier: tier,
+    });
+  }, [tokenMeta, pools, mint]);
+
+  const bestPool = pools.length > 0 ? pools[0] : null;
+
+  return {
+    config,
+    loading: loading || poolsLoading,
+    error,
+    poolInfo: bestPool,
+    oracleType,
+    pythFeedId,
+    adminPrice,
+    dexPoolAddress,
+  };
+}

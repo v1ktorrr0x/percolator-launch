@@ -1,0 +1,67 @@
+name: Post-Deploy Smoke Test
+
+# Runs automatically after Vercel production deployments via workflow_call,
+# or can be triggered manually targeting any URL.
+on:
+  workflow_dispatch:
+    inputs:
+      base_url:
+        description: 'Base URL to smoke test'
+        required: false
+        default: 'https://percolator.trade'
+        type: string
+      min_oracle_prices:
+        description: 'Minimum markets with oracle prices required to pass'
+        required: false
+        default: '10'
+        type: string
+
+  # Allow other workflows to call this as a post-deploy step
+  workflow_call:
+    inputs:
+      base_url:
+        required: false
+        type: string
+        default: 'https://percolator.trade'
+      min_oracle_prices:
+        required: false
+        type: string
+        default: '10'
+
+concurrency:
+  group: smoke-${{ github.ref }}
+  cancel-in-progress: false   # Never cancel in-flight smoke tests
+
+jobs:
+  smoke-test:
+    name: 🚬 Smoke Test
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    env:
+      BASE_URL: ${{ inputs.base_url || 'https://percolator.trade' }}
+      MIN_ORACLE_PRICES: ${{ inputs.min_oracle_prices || '10' }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+
+      - name: Wait for deployment to settle
+        # Give Vercel/Railway a moment to finish routing before hitting endpoints
+        run: sleep 10
+
+      - name: Install jq
+        run: sudo apt-get install -y jq
+
+      - name: Run smoke test
+        run: |
+          chmod +x scripts/smoke-test.sh
+          BASE_URL="${BASE_URL}" MIN_ORACLE_PRICES="${MIN_ORACLE_PRICES}" \
+            bash scripts/smoke-test.sh
+
+      - name: Post failure summary
+        if: failure()
+        run: |
+          echo "::error::Smoke test failed against ${BASE_URL}"
+          echo "::error::This likely indicates a failed migration, offline service, or missing oracle prices."
+          echo "::error::Check /api/markets and /api/health directly, and verify the Supabase migration was applied."

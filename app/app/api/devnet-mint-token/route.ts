@@ -1,0 +1,408 @@
+/**
+ * PERC-362: Devnet Token Mint API
+ *
+ * POST /api/devnet-mint-token
+ * Body: { mainnetCA: string, marketAddress: string, creatorWallet: string }
+ *
+ * Creates a devnet SPL mint mirroring a mainnet token, then airdrops
+ * $500 USD worth of tokens to the creator's wallet at current price.
+ *
+ * Requires: DEVNET_MINT_AUTHORITY_KEYPAIR env var (JSON secret key bytes)
+ */
+
+import { NextRequest, NextResponse } from "next/server";
+import {
+  Connection,
+  Keypair,
+  PublicKey,
+  Transaction,
+  VersionedTransaction,
+  SystemProgram,
+  LAMPORTS_PER_SOL,
+} from "@solana/web3.js";
+import {
+  MINT_SIZE,
+  TOKEN_PROGRAM_ID,
+  getMinimumBalanceForRentExemptMint,
+  createInitializeMintInstruction,
+  getAssociatedTokenAddress,
+  createAssociatedTokenAccountInstruction,
+  createMintToInstruction,
+} from "@solana/spl-token";
+import { getConfig } from "@/lib/config";
+import { getServiceClient } from "@/lib/supabase";
+import { getDevnetMintSigner } from "@/lib/devnet-signer";
+import * as Sentry from "@sentry/nextjs";
+
+export const dynamic = "force-dynamic";
+
+// Default to 'mainnet' so misconfigured deployments fail closed, not open
+const NETWORK = process.env.NEXT_PUBLIC_SOLANA_NETWORK?.trim() ?? "mainnet";
+const AIRDROP_USD_VALUE = 500; // $500 worth of tokens
+// ORACLE_BRIDGE_URL removed — unreachable from Vercel serverless.
+// Price fetching uses DexScreener API directly via fetchTokenInfo().
+
+interface DexScreenerToken {
+  name: string;
+  symbol: string;
+  decimals: number;
+  priceUsd: number;
+  logoUrl?: string;
+}
+
+/** Fetch token metadata and price from DexScreener */
+async function fetchTokenInfo(ca: string): Promise<DexScreenerToken | null> {
+  try {
+    const resp = await fetch(
+      `https://api.dexscreener.com/latest/dex/tokens/${ca}`,
+      { signal: AbortSignal.timeout(8000) },
+    );
+    if (!resp.ok) return null;
+    const json = await resp.json();
+    const pairs = json.pairs as Array<{
+      baseToken?: { name?: string; symbol?: string };
+      priceUsd?: string;
+      liquidity?: { usd?: number };
+      info?: { imageUrl?: string };
+    }>[] | undefined;
+
+    if (!pairs || pairs.length === 0) return null;
+
+    // Sort by liquidity, pick best
+    const sorted = [...pairs].sort(
+      (a: any, b: any) => (b.liquidity?.usd ?? 0) - (a.liquidity?.usd ?? 0),
+    );
+    const best = sorted[0] as any;
+    const price = parseFloat(best.priceUsd ?? "0");
+    if (price <= 0) return null;
+
+    return {
+      name: best.baseToken?.name ?? `Token ${ca.slice(0, 6)}`,
+      symbol: best.baseToken?.symbol ?? ca.slice(0, 4).toUpperCase(),
+      decimals: 6, // Default to 6 for devnet mirror (simplifies math)
+      priceUsd: price,
+      logoUrl: best.info?.imageUrl,
+    };
+  } catch {
+    return null;
+  }
+}
+
+export async function POST(req: NextRequest) {
+  try {
+    if (NETWORK !== "devnet") {
+      return NextResponse.json({ error: "Only available on devnet" }, { status: 403 });
+    }
+
+    const body = await req.json();
+    const { mainnetCA, marketAddress, creatorWallet } = body;
+
+    if (!mainnetCA || !creatorWallet) {
+      return NextResponse.json(
+        { error: "Missing mainnetCA or creatorWallet" },
+        { status: 400 },
+      );
+    }
+
+    // Reject URLs and non-base58 inputs — prevents DexScreener being called with a URL
+    const isUrl = typeof mainnetCA === "string" &&
+      (mainnetCA.startsWith("http://") || mainnetCA.startsWith("https://") || mainnetCA.includes("://"));
+    if (isUrl) {
+      return NextResponse.json(
+        { error: "Paste a valid Solana token address, not a URL" },
+        { status: 400 },
+      );
+    }
+    try {
+      new PublicKey(mainnetCA);
+    } catch {
+      return NextResponse.json(
+        { error: "Invalid token address: must be a valid Solana base58 public key" },
+        { status: 400 },
+      );
+    }
+
+    let creatorPk: PublicKey;
+    try {
+      creatorPk = new PublicKey(creatorWallet);
+    } catch {
+      return NextResponse.json({ error: "Invalid creatorWallet" }, { status: 400 });
+    }
+
+    // Guard: SPL token accounts require an on-curve (Ed25519) owner.
+    // Passing a PDA (off-curve) as the creator wallet causes
+    // TokenOwnerOffCurveError during getAssociatedTokenAddress.
+    // Reject early with a clear 400 before touching the DB or chain.
+    if (!PublicKey.isOnCurve(creatorPk.toBytes())) {
+      return NextResponse.json(
+        { error: "creatorWallet must be a regular wallet, not a program-derived address (PDA)" },
+        { status: 400 },
+      );
+    }
+
+    // Check if we already have a devnet mint for this CA
+    const supabase = getServiceClient();
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const { data: existing } = await (supabase as any)
+      .from("devnet_mints")
+      .select("devnet_mint")
+      .eq("mainnet_ca", mainnetCA)
+      .maybeSingle();
+
+    // Load mint authority (needed for both already_exists airdrop and new mint creation)
+    const mintSigner = getDevnetMintSigner();
+    if (!mintSigner) {
+      // If mint authority not configured and an existing mint is found, return it without airdrop
+      if (existing?.devnet_mint) {
+        return NextResponse.json({
+          status: "already_exists",
+          devnetMint: existing.devnet_mint,
+        });
+      }
+      return NextResponse.json(
+        { error: "Server not configured for minting (DEVNET_MINT_AUTHORITY_KEYPAIR missing)" },
+        { status: 500 },
+      );
+    }
+    const mintAuthPk = new PublicKey(mintSigner.publicKey());
+
+    // Fetch token info from DexScreener
+    const tokenInfo = await fetchTokenInfo(mainnetCA);
+    if (!tokenInfo) {
+      // If we have an existing devnet mint, return it even if token info fetch fails
+      if (existing?.devnet_mint) {
+        return NextResponse.json({
+          status: "already_exists",
+          devnetMint: existing.devnet_mint,
+        });
+      }
+      return NextResponse.json(
+        { error: "Cannot fetch token info. Token may not have liquidity on any DEX." },
+        { status: 400 },
+      );
+    }
+
+    const cfg = getConfig();
+    const connection = new Connection(cfg.rpcUrl, "confirmed");
+
+    // BUG-1 FIX: If devnet mint already exists, airdrop tokens to creator instead of
+    // creating a new mint. devnet-mirror-mint creates the mint during wizard Step 1, so
+    // by the time this endpoint is called (post-market-creation), the mint already exists.
+    if (existing?.devnet_mint) {
+      try {
+        const existingMintPk = new PublicKey(existing.devnet_mint);
+        const decimals = tokenInfo.decimals;
+        const tokensFloat = AIRDROP_USD_VALUE / tokenInfo.priceUsd;
+        const airdropAmount = BigInt(Math.floor(tokensFloat * 10 ** decimals));
+
+        const creatorAta = await getAssociatedTokenAddress(existingMintPk, creatorPk);
+        const airdropTx = new Transaction();
+
+        // Create creator ATA if it doesn't exist
+        const ataInfo = await connection.getAccountInfo(creatorAta);
+        if (!ataInfo) {
+          airdropTx.add(
+            createAssociatedTokenAccountInstruction(
+              mintAuthPk,
+              creatorAta,
+              creatorPk,
+              existingMintPk,
+            ),
+          );
+        }
+
+        airdropTx.add(
+          createMintToInstruction(
+            existingMintPk,
+            creatorAta,
+            mintAuthPk,
+            airdropAmount,
+          ),
+        );
+
+        // Set recentBlockhash and feePayer before signing (required for sendRawTransaction).
+        const { blockhash: airdropBlockhash } = await connection.getLatestBlockhash();
+        airdropTx.recentBlockhash = airdropBlockhash;
+        airdropTx.feePayer = mintAuthPk;
+
+        // Sign and send raw — sendAndConfirmTransaction wipes the sealed signer's signature
+        // by calling tx.sign(signers) internally. Use sendRawTransaction instead.
+        const signedAirdropTx = mintSigner.signTransaction(airdropTx);
+        const airdropTxSig = await connection.sendRawTransaction(
+          (signedAirdropTx as Transaction).serialize(),
+        );
+        await connection.confirmTransaction(airdropTxSig, "confirmed");
+
+        return NextResponse.json({
+          status: "already_exists",
+          devnetMint: existing.devnet_mint,
+          symbol: tokenInfo.symbol,
+          name: tokenInfo.name,
+          decimals,
+          priceUsd: tokenInfo.priceUsd,
+          airdropTokens: tokensFloat,
+          airdropUsd: AIRDROP_USD_VALUE,
+        });
+      } catch (airdropErr) {
+        // Non-fatal — return existing mint even if airdrop fails
+        console.warn("devnet-mint-token: airdrop to existing mint failed:", airdropErr);
+        return NextResponse.json({
+          status: "already_exists",
+          devnetMint: existing.devnet_mint,
+        });
+      }
+    }
+
+    // Create new devnet mint
+    const mintKeypair = Keypair.generate();
+    const decimals = tokenInfo.decimals;
+    const lamports = await getMinimumBalanceForRentExemptMint(connection);
+
+    let tx: Transaction | VersionedTransaction = new Transaction();
+
+    // Set recentBlockhash and feePayer before partial signing
+    const { blockhash } = await connection.getLatestBlockhash();
+    (tx as Transaction).recentBlockhash = blockhash;
+    (tx as Transaction).feePayer = new PublicKey(mintSigner.publicKey());
+
+    // Create mint account
+    tx.add(
+      SystemProgram.createAccount({
+        fromPubkey: mintAuthPk,
+        newAccountPubkey: mintKeypair.publicKey,
+        lamports,
+        space: MINT_SIZE,
+        programId: TOKEN_PROGRAM_ID,
+      }),
+    );
+
+    // Initialize mint
+    tx.add(
+      createInitializeMintInstruction(
+        mintKeypair.publicKey,
+        decimals,
+        mintAuthPk, // mint authority
+        mintAuthPk, // freeze authority
+      ),
+    );
+
+    // Create ATA for creator
+    const creatorAta = await getAssociatedTokenAddress(mintKeypair.publicKey, creatorPk);
+    tx.add(
+      createAssociatedTokenAccountInstruction(
+        mintAuthPk,
+        creatorAta,
+        creatorPk,
+        mintKeypair.publicKey,
+      ),
+    );
+
+    // Calculate airdrop amount: $500 / price = tokens, then scale by decimals
+    const tokensFloat = AIRDROP_USD_VALUE / tokenInfo.priceUsd;
+    const airdropAmount = BigInt(Math.floor(tokensFloat * 10 ** decimals));
+
+    // Mint to creator
+    tx.add(
+      createMintToInstruction(
+        mintKeypair.publicKey,
+        creatorAta,
+        mintAuthPk,
+        airdropAmount,
+      ),
+    );
+
+    // Multi-signer: partialSign mintKeypair FIRST so its signature is in the array,
+    // then let the sealed signer add mintAuthority's sig via partialSign.
+    // sendAndConfirmTransaction wipes all existing sigs (calls tx.sign(signers) internally)
+    // so we use sendRawTransaction + confirmTransaction instead.
+    (tx as Transaction).partialSign(mintKeypair);
+    tx = mintSigner.signTransaction(tx);
+    const sig = await connection.sendRawTransaction((tx as Transaction).serialize());
+    await connection.confirmTransaction(sig, "confirmed");
+
+    const devnetMint = mintKeypair.publicKey.toBase58();
+
+    // Store in DB — INSERT-as-gate: devnet_mints has UNIQUE(mainnet_ca).
+    // Under concurrent requests, the race loser gets Postgres 23505.
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const { error: insertErr } = await (supabase as any).from("devnet_mints").insert({
+      mainnet_ca: mainnetCA,
+      devnet_mint: devnetMint,
+      market_address: marketAddress ?? null,
+      symbol: tokenInfo.symbol,
+      name: tokenInfo.name,
+      decimals,
+      logo_url: tokenInfo.logoUrl ?? null,
+      creator_wallet: creatorWallet,
+    });
+
+    if (insertErr?.code === "23505") {
+      // Race lost — a concurrent request already created and inserted this CA's mint.
+      // The on-chain mint we just created is orphaned (devnet-only, ~0.002 SOL wasted).
+      // Return the winner's mint address so the caller still gets a valid devnetMint.
+      console.warn(
+        `devnet-mint-token: TOCTOU race for ${mainnetCA} — orphaned mint ${devnetMint}, fetching winner`,
+      );
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const { data: winner } = await (supabase as any)
+        .from("devnet_mints")
+        .select("devnet_mint")
+        .eq("mainnet_ca", mainnetCA)
+        .maybeSingle();
+      return NextResponse.json({
+        status: "already_exists",
+        devnetMint: winner?.devnet_mint ?? devnetMint,
+        symbol: tokenInfo.symbol,
+        name: tokenInfo.name,
+        decimals,
+        priceUsd: tokenInfo.priceUsd,
+      });
+    }
+
+    if (insertErr) {
+      // Unexpected DB error — log and surface (mint exists on-chain but not in DB)
+      console.error("devnet-mint-token: DB insert failed:", insertErr.message);
+      Sentry.captureException(insertErr, {
+        tags: { endpoint: "/api/devnet-mint-token", phase: "db-insert" },
+      });
+    }
+
+    // FIX: Also upsert markets table so /api/airdrop can find the mint.
+    // The airdrop route looks up mint_address in the markets table, not devnet_mints.
+    // Best-effort: if this fails, airdrop can still fall back to devnet_mints.
+    if (marketAddress) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const { error: upsertErr } = await (supabase as any).from("markets").upsert(
+        {
+          slab_address: marketAddress,
+          mint_address: devnetMint,
+          symbol: tokenInfo.symbol,
+        },
+        { onConflict: "slab_address" },
+      );
+      if (upsertErr) {
+        console.warn("devnet-mint-token: markets upsert failed (non-fatal):", upsertErr.message);
+      }
+    }
+
+    return NextResponse.json({
+      status: "created",
+      devnetMint,
+      symbol: tokenInfo.symbol,
+      name: tokenInfo.name,
+      decimals,
+      priceUsd: tokenInfo.priceUsd,
+      airdropTokens: tokensFloat,
+      airdropUsd: AIRDROP_USD_VALUE,
+      signature: sig,
+    });
+  } catch (error) {
+    Sentry.captureException(error, {
+      tags: { endpoint: "/api/devnet-mint-token", method: "POST" },
+    });
+    return NextResponse.json(
+      { error: error instanceof Error ? error.message : "Internal server error" },
+      { status: 500 },
+    );
+  }
+}

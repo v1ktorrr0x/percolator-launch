@@ -1,0 +1,97 @@
+# Dependencies
+node_modules/
+.pnp
+.pnp.js
+
+# Testing
+coverage/
+.nyc_output/
+playwright-report/
+test-results/
+
+# Next.js
+.next/
+out/
+build/
+dist/
+!packages/core/dist/
+*.tsbuildinfo
+
+# Production
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# Misc
+.DS_Store
+*.pem
+.keys/
+
+# Debug
+.vscode/
+.idea/
+
+# Local env files
+.env
+.env*.local
+.env.local
+.env.test
+
+# Personal / local-only (prompts, audit notes — never commit or push)
+.private/
+
+# Vercel
+.vercel
+.env.vercel
+.env.vercel.preview
+.env.pulled
+app/.env.pulled
+
+# Turbo
+.turbo
+
+# Supabase CLI temp files
+supabase/.temp/
+
+# Simulator — sensitive bot keypairs
+config/sim-bot-wallets.json
+
+# Slab reinit — ephemeral new keypairs (devnet only, never commit)
+new-slab-keypair-*.json
+
+# Compiled Solana program binaries — build from source, never deploy from these
+deploy-artifacts/*.so
+*.so
+
+Percolator-Deck-Final.pdf
+Percolator-Deck-v2.pdf
+Percolator-Pitch-Deck.pdf
+pitch-deck.html
+render-pdf.cjs
+render-pdf.mjs
+.worktrees/
+program/target/
+percolator/target/
+tests/devnet-e2e-large*.ts
+
+# Agent workspace files — never commit these
+CONTEXT.md
+PROGRESS.md
+HEARTBEAT.md
+SOUL.md
+IDENTITY.md
+AGENTS.md
+TOOLS.md
+
+# Debug/scratch scripts (must never be committed)
+fetch_slab.mjs
+inspect-slabs-tmp.mjs
+*-slab*.mjs
+*-tmp.mjs
+*-debug.mjs
+scratch*.mjs
+docs/MAINNET-BETA-PLAN.md
+docs/MAINNET-ENV.md
