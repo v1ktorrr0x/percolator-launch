@@ -11,6 +11,7 @@
 
 import { useState, useEffect, useCallback, useMemo } from "react";
 import { useWalletCompat } from "@/hooks/useWalletCompat";
+import { explorerTxUrl } from "@/lib/config";
 import type { TraderTradeEntry } from "@/app/api/trader/[wallet]/trades/route";
 
 type TradeType = "all" | "long" | "short";
@@ -243,7 +244,7 @@ export function TradeHistory() {
                   <td className="px-3 py-2.5 text-center">
                     {trade.tx_signature ? (
                       <a
-                        href={`https://explorer.solana.com/tx/${trade.tx_signature}?cluster=devnet`}
+                        href={explorerTxUrl(trade.tx_signature)}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="text-[var(--text-dim)] transition-colors hover:text-[var(--accent)]"
