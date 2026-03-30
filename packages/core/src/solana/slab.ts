@@ -349,7 +349,11 @@ const V1M_ENGINE_EMERGENCY_OI_MODE_OFF = 680;
 const V1M_ENGINE_EMERGENCY_START_SLOT_OFF = 688;
 const V1M_ENGINE_LAST_BREAKER_SLOT_OFF = 696;
 // trade_twap_e6(8) at 704, twap_last_slot(8) at 712, padding(6) = 726
-const V1M_ENGINE_BITMAP_OFF = 726;
+// twap_last_slot ends at engine+720; bitmap ([u64; N]) follows immediately.
+// 720 % 8 == 0 (valid alignment for u64 array). Previous value 726 was wrong
+// (726 % 8 = 6). Both produce the same accountsOff (3560) due to alignment
+// rounding, but bitmap bit-reading was shifted by 6 bytes.
+const V1M_ENGINE_BITMAP_OFF = 720;
 
 // For backward compatibility, export ENGINE_OFF and ENGINE_MARK_PRICE_OFF
 // (used by reinit-slab and other scripts). These refer to V1 layout.
@@ -1208,7 +1212,17 @@ export function parseConfig(data: Uint8Array, layoutHint?: SlabLayout | null): M
   let phase2DeltaSlots = 0;
 
   if (remaining >= 40) {
-    // V1 extended fields (adaptive funding, maturity ramp, auto-unresolve)
+    // V1 extended fields — on-chain order (percolator.rs:3617-3639):
+    //   market_created_slot(u64), oi_ramp_slots(u64),
+    //   adaptive_funding_enabled(u8), _pad(u8), adaptive_scale_bps(u16),
+    //   _pad2(u32), adaptive_max_funding_bps(u64),
+    //   insurance_isolation_bps(u16), _insurance_isolation_padding([u8;14])
+    marketCreatedSlot = readU64LE(data, off);
+    off += 8;
+
+    oiRampSlots = readU64LE(data, off);
+    off += 8;
+
     adaptiveFundingEnabled = readU8(data, off) !== 0;
     off += 1;
     off += 1; // _adaptive_pad
@@ -1218,15 +1232,6 @@ export function parseConfig(data: Uint8Array, layoutHint?: SlabLayout | null): M
     adaptiveMaxFundingBps = readU64LE(data, off);
     off += 8;
 
-    marketCreatedSlot = readU64LE(data, off);
-    off += 8;
-
-    oiRampSlots = readU64LE(data, off);
-    off += 8;
-
-    resolvedSlot = readU64LE(data, off);
-    off += 8;
-    off += 8; // _perc301_reserved
     if (remaining >= 42) {
       insuranceIsolationBps = readU16LE(data, off);
       // PERC-622: Read oracle phase fields from _insurance_isolation_padding
