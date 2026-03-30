@@ -27,16 +27,22 @@ interface SmokeResult {
 
 const results: SmokeResult[] = [];
 
+/** Record a passing check result and print to stdout. */
 function pass(name: string, detail: string) {
   results.push({ name, passed: true, detail });
   console.log(`  ✅ ${name}: ${detail}`);
 }
 
+/** Record a failing check result and print to stderr. */
 function fail(name: string, detail: string) {
   results.push({ name, passed: false, detail });
   console.error(`  ❌ ${name}: ${detail}`);
 }
 
+/**
+ * Fetch a URL with an AbortController-based timeout.
+ * Throws if the request exceeds `timeoutMs` milliseconds.
+ */
 async function fetchWithTimeout(url: string, timeoutMs = TIMEOUT_MS): Promise<Response> {
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), timeoutMs);
@@ -47,6 +53,7 @@ async function fetchWithTimeout(url: string, timeoutMs = TIMEOUT_MS): Promise<Re
   }
 }
 
+/** Verify that /api/health returns HTTP 200 with status "ok" or "degraded". */
 async function checkHealth() {
   console.log("\n📋 CHECK: /api/health");
   try {
@@ -66,6 +73,11 @@ async function checkHealth() {
   }
 }
 
+/**
+ * Verify /api/markets: HTTP 200, correct response shape, minimum market count,
+ * oracle price coverage, and funding rate presence. Also triggers a single-market
+ * detail spot-check on the first returned market.
+ */
 async function checkMarkets() {
   console.log("\n📋 CHECK: /api/markets");
   try {
@@ -143,6 +155,10 @@ async function checkMarkets() {
   }
 }
 
+/**
+ * Spot-check the /api/markets/[slab] detail endpoint for a single market.
+ * Verifies that the endpoint returns HTTP 200 and a valid market object.
+ */
 async function checkSingleMarket(market: Record<string, unknown>) {
   console.log("\n📋 CHECK: /api/markets/[slab]");
   const slabAddress = market.slab_address ?? market.id ?? market.market_address;
@@ -169,6 +185,10 @@ async function checkSingleMarket(market: Record<string, unknown>) {
   }
 }
 
+/**
+ * Main entry point: run all smoke checks in sequence and exit 0 (all passed)
+ * or 1 (one or more failed).
+ */
 async function main() {
   console.log(`\n🚬 Percolator Devnet Smoke Test`);
   console.log(`   Target: ${BASE_URL}`);
