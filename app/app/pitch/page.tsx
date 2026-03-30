@@ -358,7 +358,7 @@ function Slide10Roadmap({ isCurrent }: SlideProps) {
       phase: "Now",
       status: "live",
       title: "Devnet Live",
-      items: ["168 markets active", "191 organic users", "HYPERP oracle deployed", "H + A/K engine verified"],
+      items: ["168 markets created", "HYPERP oracle deployed", "H + A/K engine verified", "516 Kani proofs"],
     },
     {
       phase: "Apr 2026",
