@@ -186,7 +186,8 @@ export const TradeForm: FC<{ slabAddress: string }> = ({ slabAddress }) => {
       setUsdcInput(usd.toFixed(2));
       // margin = notional / leverage
       const marginAmt = n / leverage;
-      setMarginInput(marginAmt.toFixed(decimals > 6 ? 6 : decimals));
+      // Use full token decimals so marginInput matches parsePercToNative(..., decimals) (Prompt 88).
+      setMarginInput(marginAmt.toFixed(decimals));
     } else if (val === "" || val === ".") {
       setUsdcInput("");
       setMarginInput("");
@@ -201,7 +202,8 @@ export const TradeForm: FC<{ slabAddress: string }> = ({ slabAddress }) => {
       setContractsInput(contracts.toFixed(6));
       // margin = contracts / leverage
       const marginAmt = contracts / leverage;
-      setMarginInput(marginAmt.toFixed(decimals > 6 ? 6 : decimals));
+      // Use full token decimals so marginInput matches parsePercToNative(..., decimals) (Prompt 88).
+      setMarginInput(marginAmt.toFixed(decimals));
     } else if (val === "" || val === ".") {
       setContractsInput("");
       setMarginInput("");
@@ -214,7 +216,8 @@ export const TradeForm: FC<{ slabAddress: string }> = ({ slabAddress }) => {
     const n = parseFloat(contractsInput);
     if (!isNaN(n) && n > 0 && priceUsd && priceUsd > 0) {
       const marginAmt = n / leverage;
-      setMarginInput(marginAmt.toFixed(decimals > 6 ? 6 : decimals));
+      // Use full token decimals so marginInput matches parsePercToNative(..., decimals) (Prompt 88).
+      setMarginInput(marginAmt.toFixed(decimals));
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [leverage]);
