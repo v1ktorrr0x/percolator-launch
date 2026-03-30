@@ -1,6 +1,20 @@
 "use client";
 
-import { useEffect, useRef, useState, useCallback } from "react";
+/**
+ * Live price + 24h stats for the active slab (SlabProvider).
+ *
+ * Request budget (Prompt 77 / 84):
+ * - **REST:** `GET /api/prices/:slab` and `GET /api/markets/:slab` are loaded via **SWR**
+ *   with the URL as the cache key. Every mounted consumer shares **one in-flight request
+ *   per key** (see `dedupingInterval`). Before this change, each `useLivePrice()` call
+ *   issued its own parallel pair of fetches → **2×N** HTTP requests for N subscribers.
+ * - **WebSocket:** still **one connection per subscriber** today (Prompt 93 may consolidate).
+ * - **React Strict Mode (dev):** effects can mount twice; SWR still dedupes rapid duplicate
+ *   subscriptions, but you may occasionally see two requests if the gap exceeds deduping.
+ */
+
+import { useEffect, useRef, useState } from "react";
+import useSWR from "swr";
 import { useSlabState } from "@/components/providers/SlabProvider";
 import { resolveMarketPriceE6, sanitizePriceE6 } from "@/lib/oraclePrice";
 import { getBackendUrl } from "@/lib/config";
@@ -29,6 +43,19 @@ const RECONNECT_MAX_MS = 30_000;
 // reconnects when the Railway API recovers and hundreds of clients retry in unison.
 const jitter = (ms: number) => ms * (0.75 + Math.random() * 0.5);
 
+/** SWR fetcher: fail fast on HTTP error (same as previous inline fetch + catch). */
+async function livePriceJsonFetcher<T>(url: string): Promise<T> {
+  const r = await fetch(url);
+  if (!r.ok) throw new Error(`HTTP ${r.status}`);
+  return r.json() as Promise<T>;
+}
+
+const SWR_REST_OPTS = {
+  dedupingInterval: 10_000,
+  revalidateOnFocus: false,
+  shouldRetryOnError: false,
+} as const;
+
 interface PriceState {
   price: number | null;
   /** Alias for `price` — backward compat */
@@ -40,13 +67,18 @@ interface PriceState {
   loading: boolean;
 }
 
+type PricesApiJson = {
+  stats?: { change24h?: number; high24h?: string; low24h?: string } | null;
+};
+type MarketApiJson = { market?: { last_price?: number | null } };
+
 /**
  * Real-time price hook — connects to the Percolator WebSocket price engine.
  * Falls back to on-chain oracle price from SlabProvider if WebSocket is unavailable.
  *
  * Gets the slab address from SlabProvider context (not query params)
  * so it works on both /trade/[slab] and ?market= routes.
- * 
+ *
  */
 export function useLivePrice(): PriceState {
   const [state, setState] = useState<PriceState>({
@@ -62,7 +94,33 @@ export function useLivePrice(): PriceState {
   const { config: mktConfig, slabAddress } = useSlabState();
   // Use the slab address from SlabProvider context — works for both /trade/[slab] and ?market= URLs
   const slabAddr = slabAddress || null;
-  const mint = mktConfig?.collateralMint?.toBase58() ?? null;
+
+  const pricesKey = slabAddr ? `/api/prices/${slabAddr}` : null;
+  const { data: pricesJson } = useSWR<PricesApiJson>(pricesKey, livePriceJsonFetcher, SWR_REST_OPTS);
+
+  const marketKey = slabAddr ? `/api/markets/${slabAddr}` : null;
+  const { data: marketJson } = useSWR<MarketApiJson>(marketKey, livePriceJsonFetcher, SWR_REST_OPTS);
+
+  // Merge 24h stats from deduped REST
+  useEffect(() => {
+    if (!pricesJson?.stats) return;
+    setState((prev) => ({
+      ...prev,
+      change24h: pricesJson.stats?.change24h ?? null,
+      high24h: pricesJson.stats?.high24h ? Number(pricesJson.stats.high24h) / 1_000_000 : null,
+      low24h: pricesJson.stats?.low24h ? Number(pricesJson.stats.low24h) / 1_000_000 : null,
+    }));
+  }, [pricesJson]);
+
+  // PERC-1232: DB last_price display-only fallback (deduped REST)
+  useEffect(() => {
+    const dbPrice = marketJson?.market?.last_price;
+    if (dbPrice == null || dbPrice <= 0) return;
+    setState((prev) => {
+      if (prev.price !== null) return prev;
+      return { ...prev, price: dbPrice, priceUsd: dbPrice, priceE6: BigInt(Math.round(dbPrice * 1_000_000)), loading: false };
+    });
+  }, [marketJson]);
 
   // Seed from on-chain slab data when no live price yet
   useEffect(() => {
@@ -87,7 +145,7 @@ export function useLivePrice(): PriceState {
   useEffect(() => {
     mountedRef.current = true;
     // Only set loading if we don't already have a price
-    setState((prev) => prev.price !== null ? prev : { ...prev, loading: true });
+    setState((prev) => (prev.price !== null ? prev : { ...prev, loading: true }));
 
     if (!slabAddr) return;
 
@@ -106,11 +164,19 @@ export function useLivePrice(): PriceState {
           } else {
             // CONNECTING state — attach close-on-open handler to prevent leak
             const stale = wsRef.current;
-            stale.onopen = () => { try { stale.close(); } catch { /* ignore */ } };
+            stale.onopen = () => {
+              try {
+                stale.close();
+              } catch {
+                /* ignore */
+              }
+            };
             stale.onerror = () => {};
             stale.onmessage = () => {};
           }
-        } catch { /* ignore */ }
+        } catch {
+          /* ignore */
+        }
         wsRef.current = null;
       }
       try {
@@ -186,45 +252,9 @@ export function useLivePrice(): PriceState {
 
     connect();
 
-    // Also fetch 24h stats via REST — use Next.js proxy to avoid CORS issues
-    if (slabAddr) {
-      fetch(`/api/prices/${slabAddr}`)
-        .then((r) => { if (!r.ok) throw new Error("not found"); return r.json(); })
-        .then((json: { stats?: { change24h?: number; high24h?: string; low24h?: string } }) => {
-          if (json.stats && mountedRef.current) {
-            setState((prev) => ({
-              ...prev,
-              change24h: json.stats?.change24h ?? null,
-              high24h: json.stats?.high24h ? Number(json.stats.high24h) / 1_000_000 : null,
-              low24h: json.stats?.low24h ? Number(json.stats.low24h) / 1_000_000 : null,
-            }));
-          }
-        })
-        .catch(() => {});
-
-      // PERC-1232: DB last_price display-only fallback.
-      // When oracle is unavailable (on-chain price is 0, WS feed has no data),
-      // seed the display price from the Supabase markets_with_stats table so the
-      // chart shows e.g. $0.00083 instead of "—". Trading remains blocked via
-      // the oracleStale / oracleUnavailable gate in TradeForm — this only affects display.
-      fetch(`/api/markets/${slabAddr}`)
-        .then((r) => { if (!r.ok) throw new Error("not found"); return r.json(); })
-        .then((json: { market?: { last_price?: number | null } }) => {
-          const dbPrice = json.market?.last_price;
-          if (dbPrice != null && dbPrice > 0 && mountedRef.current) {
-            setState((prev) => {
-              // Only apply if we still have no live price (don't overwrite WS/on-chain data)
-              if (prev.price !== null) return prev;
-              return { ...prev, price: dbPrice, priceUsd: dbPrice, priceE6: BigInt(Math.round(dbPrice * 1_000_000)), loading: false };
-            });
-          }
-        })
-        .catch(() => {});
-    }
-
     // M3: Capture slabAddr at subscription time for cleanup
     const capturedSlabAddr = slabAddr;
-    
+
     return () => {
       mountedRef.current = false;
       wsConnected.current = false;
@@ -241,11 +271,19 @@ export function useLivePrice(): PriceState {
             sock.close();
           } else if (sock.readyState === WebSocket.CONNECTING) {
             // Not yet open — close once it opens to avoid "closed before established" warning
-            sock.onopen = () => { try { sock.close(); } catch { /* ignore */ } };
+            sock.onopen = () => {
+              try {
+                sock.close();
+              } catch {
+                /* ignore */
+              }
+            };
             sock.onerror = () => {};
             sock.onmessage = () => {};
           }
-        } catch { /* ignore */ }
+        } catch {
+          /* ignore */
+        }
       }
     };
   }, [slabAddr]);
