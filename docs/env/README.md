@@ -11,7 +11,10 @@ Each file lists the required environment variables for one mainnet service.
 
 ## Usage
 
-1. Copy the relevant `.example` file
+1. Copy the relevant `.example` file to the exact filename the deploy script expects:
+   - `api.env.mainnet.example` → `.env.mainnet.api` (required by deploy-mainnet-railway.sh)
+   - `keeper.env.mainnet.example` → `.env.mainnet.keeper`
+   - `indexer.env.mainnet.example` → `.env.mainnet.indexer`
 2. Fill in all `<PLACEHOLDER>` values
 3. Set via Railway CLI (`railway variables set KEY=value --service <name>`) or dashboard
 4. For frontend: set in Vercel dashboard → Settings → Environment Variables
