@@ -668,10 +668,24 @@ export async function POST(req: NextRequest) {
   // the deployer string from the body (which attackers can set to any observed pubkey).
   //
   // Bypass: MARKETS_AUTH_BYPASS_SECRET env var allows internal tooling / migration
-  // scripts to skip the sig check. Must never be set in production.
+  // scripts to skip the sig check. MUST NEVER be set in production.
   const bypassSecret = process.env.MARKETS_AUTH_BYPASS_SECRET;
   const bypassHeader = req.headers.get("x-markets-bypass");
-  const isBypass = bypassSecret && bypassHeader === bypassSecret;
+  // Security: bypass is only permitted in non-production environments.
+  // If the env var is accidentally set in production, reject the bypass attempt
+  // and fire a Sentry alert — the auth check still runs.
+  const isProd = process.env.NODE_ENV === "production";
+  if (isProd && bypassSecret) {
+    Sentry.captureMessage(
+      "PERC-8332: MARKETS_AUTH_BYPASS_SECRET is set in production — bypass ignored",
+      {
+        level: "error",
+        tags: { endpoint: "/api/markets", method: "POST", auth: "bypass-prod-leak" },
+        fingerprint: ["perc-8332-bypass-prod-leak"],
+      }
+    );
+  }
+  const isBypass = !isProd && bypassSecret && bypassHeader === bypassSecret;
 
   if (!isBypass) {
     if (!nonce || !signature) {
@@ -710,43 +724,40 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Look up the nonce in the DB
+    // Atomically claim the nonce: single UPDATE filtered on all validity conditions.
+    // This eliminates the TOCTOU race window — if two concurrent requests arrive with
+    // the same nonce, only one UPDATE can match (used_at IS NULL), the other gets count=0.
     const supabaseAuth = getServiceClient();
     const now = new Date();
 
-    const { data: challengeRow, error: challengeErr } = await (supabaseAuth as ReturnType<typeof getServiceClient>)
+    const { count: consumed, error: claimErr } = await (supabaseAuth as ReturnType<typeof getServiceClient>)
       .from("market_challenges" as never)
-      .select("nonce, deployer, expires_at, used_at")
+      .update({ used_at: now.toISOString() } as never)
       .eq("nonce", nonce)
       .eq("deployer", deployer)
-      .single() as { data: { nonce: string; deployer: string; expires_at: string; used_at: string | null } | null; error: unknown };
+      .is("used_at", null)
+      .gt("expires_at", now.toISOString())
+      .select("nonce" as never, { count: "exact" } as never) as { count: number | null; error: unknown };
 
-    if (challengeErr || !challengeRow) {
+    if (claimErr || (consumed ?? 0) === 0) {
+      // Nonce is unknown, already used, or expired — single unified error to avoid oracle enumeration
       return NextResponse.json(
-        { error: "Invalid or unknown nonce. Call GET /api/markets/challenge to get a fresh nonce." },
-        { status: 401 }
-      );
-    }
-
-    // Check nonce has not been used
-    if (challengeRow.used_at) {
-      return NextResponse.json(
-        { error: "Nonce already used. Request a new challenge." },
-        { status: 401 }
-      );
-    }
-
-    // Check nonce has not expired
-    if (new Date(challengeRow.expires_at) < now) {
-      return NextResponse.json(
-        { error: "Nonce expired. Request a new challenge." },
+        { error: "Invalid, expired, or already-used nonce. Call GET /api/markets/challenge to get a fresh nonce." },
         { status: 401 }
       );
     }
 
     // Verify ed25519 signature: deployer signed the nonce bytes
-    const nonceBytes = Buffer.from(nonce, "utf-8");
-    const sigValid = nacl.sign.detached.verify(nonceBytes, signatureBytes, deployerPubkeyBytes);
+    // Use Uint8Array explicitly — nacl.sign.detached.verify throws on Buffer in Node 18+
+    const nonceBytes = new Uint8Array(Buffer.from(nonce, "utf-8"));
+    const sigBytes = new Uint8Array(signatureBytes);
+    let sigValid = false;
+    try {
+      sigValid = nacl.sign.detached.verify(nonceBytes, sigBytes, deployerPubkeyBytes);
+    } catch {
+      // nacl throws on invalid input lengths — treat as signature failure
+      sigValid = false;
+    }
 
     if (!sigValid) {
       Sentry.captureMessage(
@@ -763,12 +774,6 @@ export async function POST(req: NextRequest) {
         { status: 401 }
       );
     }
-
-    // Mark nonce as used (single-use) — do this BEFORE the DB insert to prevent race conditions
-    await (supabaseAuth as ReturnType<typeof getServiceClient>)
-      .from("market_challenges" as never)
-      .update({ used_at: now.toISOString() } as never)
-      .eq("nonce", nonce);
   }
 
   // GH#1398: Reject markets with unreasonably high max_leverage.
