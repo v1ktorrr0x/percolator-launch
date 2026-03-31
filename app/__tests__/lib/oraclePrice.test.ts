@@ -158,3 +158,54 @@ describe("priceE6ToUsd", () => {
     expect(priceE6ToUsd(-1n)).toBeNull();
   });
 });
+
+// GH#1990: applyInvert tests — critical for inverted-market risk math correctness
+import { applyInvert } from "../../lib/oraclePrice";
+
+describe("applyInvert (GH#1990)", () => {
+  it("returns price unchanged when invert=0", () => {
+    expect(applyInvert(100_000_000n, 0)).toBe(100_000_000n);
+  });
+
+  it("returns price unchanged when invert=undefined", () => {
+    expect(applyInvert(100_000_000n, undefined)).toBe(100_000_000n);
+  });
+
+  it("returns 0n when priceE6=0 (division-by-zero guard)", () => {
+    expect(applyInvert(0n, 1)).toBe(0n);
+  });
+
+  it("inverts $100 oracle to 10_000 (USD per USDC ≈ 0.00001)", () => {
+    // $100 raw → inverted = 1e12 / 100e6 = 10_000
+    expect(applyInvert(100_000_000n, 1)).toBe(10_000n);
+  });
+
+  it("inverts $200 oracle to 5_000", () => {
+    // $200 raw → inverted = 1e12 / 200e6 = 5_000
+    expect(applyInvert(200_000_000n, 1)).toBe(5_000n);
+  });
+
+  it("double-invert round-trips approximately for typical prices", () => {
+    // applyInvert(applyInvert(rawE6)) ≈ rawE6 with BigInt truncation error.
+    // Error grows as: err ≈ raw² / 1e12. For raw=$150 (150_000_000 e6):
+    // inverted = 1e12/150e6 = 6_666 (truncated). reinverted = 1e12/6_666 = 150_007_500.
+    // Relative error < 0.01% is acceptable.
+    const raw = 150_000_000n; // $150
+    const inverted = applyInvert(raw, 1);
+    const reinverted = applyInvert(inverted, 1);
+    // Allow up to 0.1% relative error (BigInt integer division accumulates truncation)
+    const diff = reinverted > raw ? reinverted - raw : raw - reinverted;
+    const relErrorBps = (diff * 10000n) / raw;
+    expect(Number(relErrorBps)).toBeLessThan(10); // < 10bps = 0.1%
+  });
+
+  it("inverted mark price relative to inverted entry yields correct PnL direction", () => {
+    // Standard oracle: SOL = $100 → long profits when price goes up
+    // Inverted oracle: USDC/SOL = 1/100 → long profits when SOL goes DOWN (inverted price goes up)
+    const entryInverted = applyInvert(100_000_000n, 1); // 10_000
+    const markInverted_solDown = applyInvert(90_000_000n, 1);  // 11_111 > entry → profit for long
+    const markInverted_solUp = applyInvert(110_000_000n, 1);   // 9_090 < entry → loss for long
+    expect(markInverted_solDown).toBeGreaterThan(entryInverted);
+    expect(markInverted_solUp).toBeLessThan(entryInverted);
+  });
+});

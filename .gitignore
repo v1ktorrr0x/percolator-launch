@@ -95,3 +95,4 @@ inspect-slabs-tmp.mjs
 scratch*.mjs
 docs/MAINNET-BETA-PLAN.md
 docs/MAINNET-ENV.md
+app/.env.vercel-prod

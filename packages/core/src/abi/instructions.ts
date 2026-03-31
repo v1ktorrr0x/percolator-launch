@@ -136,9 +136,22 @@ function encodeFeedId(feedId: string): Uint8Array {
   if (hex.length !== 64) {
     throw new Error(`Invalid feed ID length: expected 64 hex chars, got ${hex.length}`);
   }
+  // GH#1988: Enforce strict hex charset before conversion. Without this, non-hex
+  // characters cause parseInt to return NaN, which Uint8Array silently coerces to 0,
+  // binding the market to incorrect (zeroed) oracle feed bytes.
+  if (!/^[0-9a-fA-F]{64}$/.test(hex)) {
+    throw new Error(
+      `Invalid feed ID: must contain only hex characters [0-9a-fA-F]. Got: ${hex}`,
+    );
+  }
   const bytes = new Uint8Array(32);
   for (let i = 0; i < 64; i += 2) {
-    bytes[i / 2] = parseInt(hex.substring(i, i + 2), 16);
+    const byte = parseInt(hex.substring(i, i + 2), 16);
+    // Defence-in-depth: reject NaN even after regex (should never fire after the regex guard above).
+    if (isNaN(byte)) {
+      throw new Error(`Feed ID parse failed at byte ${i / 2}: invalid hex pair "${hex.substring(i, i + 2)}"`);
+    }
+    bytes[i / 2] = byte;
   }
   return bytes;
 }
