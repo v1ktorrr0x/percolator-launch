@@ -163,9 +163,18 @@ function encodeFeedId(feedId) {
   if (hex.length !== 64) {
     throw new Error(`Invalid feed ID length: expected 64 hex chars, got ${hex.length}`);
   }
+  if (!/^[0-9a-fA-F]{64}$/.test(hex)) {
+    throw new Error(
+      `Invalid feed ID: must contain only hex characters [0-9a-fA-F]. Got: ${hex}`
+    );
+  }
   const bytes = new Uint8Array(32);
   for (let i = 0; i < 64; i += 2) {
-    bytes[i / 2] = parseInt(hex.substring(i, i + 2), 16);
+    const byte = parseInt(hex.substring(i, i + 2), 16);
+    if (isNaN(byte)) {
+      throw new Error(`Feed ID parse failed at byte ${i / 2}: invalid hex pair "${hex.substring(i, i + 2)}"`);
+    }
+    bytes[i / 2] = byte;
   }
   return bytes;
 }
