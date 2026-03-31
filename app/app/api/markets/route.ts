@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { Connection, PublicKey } from "@solana/web3.js";
 import { validateNumericParam } from "@/lib/route-validators";
-import { parseHeader } from "@percolator/sdk";
+import { parseHeader, parseConfig } from "@percolator/sdk";
 import { getServiceClient, getServerNetwork } from "@/lib/supabase";
 import { getConfig } from "@/lib/config";
 import * as Sentry from "@sentry/nextjs";
@@ -893,6 +893,37 @@ export async function POST(req: NextRequest) {
       }
     } catch {
       return NextResponse.json({ error: "Failed to parse slab header" }, { status: 400 });
+    }
+
+    // GH#1987: Cross-check mint_address against on-chain slab config.collateralMint.
+    // Previously only the slab owner/admin was verified — a caller could pass any
+    // mint_address string and it would be inserted into the DB, causing metadata
+    // divergence from the on-chain collateral reality.
+    try {
+      const config = parseConfig(accountInfo.data);
+      const onChainMint = config.collateralMint.toBase58();
+      if (onChainMint !== mint_address) {
+        return NextResponse.json(
+          {
+            error: `mint_address does not match on-chain collateral mint. ` +
+              `On-chain: ${onChainMint}. Provided: ${mint_address}`,
+          },
+          { status: 400 },
+        );
+      }
+    } catch {
+      // If config parse fails (e.g. uninitialized slab), fall through — slab exists
+      // and admin matched, so this is a best-effort guard not a hard block.
+      // Log to Sentry for visibility.
+      Sentry.captureMessage(
+        "GH#1987: Failed to parse slab config for mint cross-check",
+        {
+          level: "warning",
+          tags: { endpoint: "/api/markets", method: "POST", check: "mint-crosscheck" },
+          extra: { slab_address, mint_address },
+          fingerprint: ["gh1987-mint-crosscheck-parse-fail"],
+        }
+      );
     }
   } catch (err) {
     return NextResponse.json({ error: "Failed to verify slab on-chain" }, { status: 400 });

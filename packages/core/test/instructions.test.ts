@@ -342,3 +342,62 @@ describe("newer instruction encoders", () => {
     expect(data[0]).toBe(IX_TAG.AdvanceEpoch);
   });
 });
+
+// GH#1988: encodeFeedId strict hex validation tests
+describe("encodeFeedId (GH#1988 — strict hex validation)", () => {
+  // Access via encodeInitMarket which calls encodeFeedId internally
+  const ZERO_KEY = new PublicKey(new Uint8Array(32));
+  const validFeedId = "e62df6c8b4a85fe1a67db44dc12de5db330f7ac66b72dc658afedf0f4a415b43";
+  const validFeedId_0x = "0xe62df6c8b4a85fe1a67db44dc12de5db330f7ac66b72dc658afedf0f4a415b43";
+
+  // Minimal valid InitMarketArgs using the actual interface fields
+  const baseArgs = {
+    admin: ZERO_KEY, collateralMint: ZERO_KEY,
+    maxStalenessSecs: "60", confFilterBps: 50, invert: 0, unitScale: 0, initialMarkPriceE6: "0",
+    warmupPeriodSlots: "1000", maintenanceMarginBps: "500", initialMarginBps: "1000",
+    tradingFeeBps: "10", maxAccounts: "1000", newAccountFee: "1000000",
+    riskReductionThreshold: "1000000000", maintenanceFeePerSlot: "100",
+    maxCrankStalenessSlots: "50", liquidationFeeBps: "100", liquidationFeeCap: "10000000",
+    liquidationBufferBps: "50", minLiquidationAbs: "1000000",
+  };
+
+  it("accepts a valid 64-char hex feedId", () => {
+    expect(() =>
+      encodeInitMarket({ ...baseArgs, indexFeedId: validFeedId })
+    ).not.toThrow();
+  });
+
+  it("accepts a valid feedId with 0x prefix", () => {
+    expect(() =>
+      encodeInitMarket({ ...baseArgs, indexFeedId: validFeedId_0x })
+    ).not.toThrow();
+  });
+
+  it("throws on non-hex characters (GH#1988 — was silently coercing to 0)", () => {
+    // A feedId with 'z' in it — was previously accepted, NaN coerced to 0
+    const badFeedId = "e62df6c8b4a85fe1a67db44dc12de5db330f7ac66b72dc658afedf0f4a415b4z";
+    expect(() =>
+      encodeInitMarket({ ...baseArgs, indexFeedId: badFeedId })
+    ).toThrow(/must contain only hex characters/);
+  });
+
+  it("throws on feedId with spaces", () => {
+    const badFeedId = "e62df6c8b4a85fe1a67db44dc12de5db330f7ac66b72dc658afedf0f4a415b4 ";
+    expect(() =>
+      encodeInitMarket({ ...baseArgs, indexFeedId: badFeedId })
+    ).toThrow(/must contain only hex characters/);
+  });
+
+  it("throws on feedId that is too short", () => {
+    expect(() =>
+      encodeInitMarket({ ...baseArgs, indexFeedId: "abcd" })
+    ).toThrow(/Invalid feed ID length/);
+  });
+
+  it("encodes valid feedId to correct first byte", () => {
+    const result = encodeInitMarket({ ...baseArgs, indexFeedId: validFeedId });
+    // bytes[65..96] = feedId bytes (after tag(1) + admin(32) + mint(32))
+    // First feedId byte = 0xe6 = 230
+    expect(result[65]).toBe(0xe6);
+  });
+});

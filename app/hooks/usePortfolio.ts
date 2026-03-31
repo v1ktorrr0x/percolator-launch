@@ -21,6 +21,7 @@ import {
 } from "@percolator/sdk";
 import { isSentinelValue } from "@/lib/health";
 import { getConfig } from "@/lib/config";
+import { applyInvert, sanitizePriceE6 } from "@/lib/oraclePrice";
 
 export interface PortfolioPosition {
   slabAddress: string;
@@ -173,7 +174,12 @@ export function usePortfolio(): PortfolioData {
             let maintenanceMarginBps = 500n; // default 5%
             try {
               const config = parseConfig(accountInfo.data);
-              oraclePriceE6 = config.lastEffectivePriceE6;
+              // GH#1990: lastEffectivePriceE6 is the raw oracle price (pre-inversion).
+              // Apply invert flag so oraclePriceE6 is in the same domain as entryPrice
+              // (which is stored post-inversion on-chain). Without this, PnL and
+              // liquidation calculations are directionally wrong for inverted markets.
+              const rawPriceE6 = config.lastEffectivePriceE6;
+              oraclePriceE6 = sanitizePriceE6(applyInvert(rawPriceE6, config.invert));
               const params = parseParams(accountInfo.data);
               maintenanceMarginBps = params.maintenanceMarginBps;
             } catch {
