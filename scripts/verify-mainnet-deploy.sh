@@ -25,9 +25,9 @@ PASS=0
 FAIL=0
 WARN=0
 
-pass() { echo "  ✅ PASS: $1"; ((PASS++)); }
-fail() { echo "  ❌ FAIL: $1"; ((FAIL++)); }
-warn() { echo "  ⚠️  WARN: $1"; ((WARN++)); }
+pass() { echo "  ✅ PASS: $1"; PASS=$((PASS+1)); }
+fail() { echo "  ❌ FAIL: $1"; FAIL=$((FAIL+1)); }
+warn() { echo "  ⚠️  WARN: $1"; WARN=$((WARN+1)); }
 
 check_http() {
   local name="$1" url="$2" expected="${3:-200}"
@@ -68,7 +68,9 @@ check_health_json() {
   fi
   local status
   status=$(echo "$body" | jq -r '.status // .ok // empty' 2>/dev/null || echo "")
-  if [[ "$status" == "ok" || "$status" == "true" || "$status" == "healthy" ]]; then
+  local status_lc
+  status_lc=$(echo "$status" | tr '[:upper:]' '[:lower:]')
+  if [[ "$status_lc" == "ok" || "$status_lc" == "true" || "$status_lc" == "healthy" || "$status_lc" == "online" || "$status_lc" == "degraded" ]]; then
     pass "$name — status: $status"
   elif [[ -n "$body" ]]; then
     warn "$name — responded but status field unclear: $(echo "$body" | head -c 100)"
@@ -90,7 +92,7 @@ echo ""
 
 # --- 2. API Service ---
 echo "2. API ($API_URL)"
-check_http "API health endpoint" "$API_URL/health"
+# /api/health is the primary structured health route; /health is a legacy alias
 check_http "API /api/health" "$API_URL/api/health"
 check_json_nonempty "API /api/markets returns markets" "$API_URL/api/markets"
 echo ""

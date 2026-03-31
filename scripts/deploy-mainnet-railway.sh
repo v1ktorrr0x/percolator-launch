@@ -14,7 +14,7 @@
 
 set -euo pipefail
 
-RAILWAY_PROJECT_ID="b3815507-e4d0-4abc-9913-cbc2a6b553e3"
+RAILWAY_PROJECT_ID="b3815507-e4d0-4abc-9913-cbc2a6b553e3"  # used for railway link
 DRY_RUN=false
 TARGET_SERVICE="all"
 
@@ -31,7 +31,12 @@ usage() {
 while [[ $# -gt 0 ]]; do
   case $1 in
     --dry-run) DRY_RUN=true; shift ;;
-    --service) TARGET_SERVICE="$2"; shift 2 ;;
+    --service)
+      if [[ -z "${2:-}" || "${2:-}" == --* ]]; then
+        echo "ERROR: --service requires a value (api|keeper|indexer|all)"
+        usage
+      fi
+      TARGET_SERVICE="$2"; shift 2 ;;
     *) usage ;;
   esac
 done
@@ -55,6 +60,9 @@ if ! command -v railway &>/dev/null; then
   exit 1
 fi
 
+# Link to the correct Railway project
+run railway link "$RAILWAY_PROJECT_ID"
+
 # Check required env files
 check_env_file() {
   local file="$1"
@@ -75,6 +83,7 @@ check_env_file() {
 set_env_vars() {
   local service="$1"
   local env_file="$2"
+  check_env_file "$env_file"
   log "Setting env vars for $service from $env_file"
 
   while IFS= read -r line; do
@@ -82,7 +91,8 @@ set_env_vars() {
     [[ "$line" =~ ^#.*$ || -z "$line" ]] && continue
     local key="${line%%=*}"
     local value="${line#*=}"
-    run railway variables set "$key=$value" --service "$service"
+    # Use printf to safely handle values with spaces, equals, or special chars
+    run railway variables set "$(printf '%s=%s' "$key" "$value")" --service "$service"
   done < "$env_file"
 }
 
