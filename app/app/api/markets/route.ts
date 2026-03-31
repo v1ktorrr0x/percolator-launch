@@ -912,17 +912,22 @@ export async function POST(req: NextRequest) {
         );
       }
     } catch {
-      // If config parse fails (e.g. uninitialized slab), fall through — slab exists
-      // and admin matched, so this is a best-effort guard not a hard block.
-      // Log to Sentry for visibility.
+      // CR fix (GH#1987): parseConfig failure must fail closed — an unparseable slab
+      // cannot be verified, so reject registration rather than silently falling through.
+      // This prevents an attacker from registering with a spoofed mint by triggering a
+      // parse error on the slab config.
       Sentry.captureMessage(
-        "GH#1987: Failed to parse slab config for mint cross-check",
+        "GH#1987: Failed to parse slab config for mint cross-check — rejecting registration",
         {
-          level: "warning",
+          level: "error",
           tags: { endpoint: "/api/markets", method: "POST", check: "mint-crosscheck" },
           extra: { slab_address, mint_address },
           fingerprint: ["gh1987-mint-crosscheck-parse-fail"],
         }
+      );
+      return NextResponse.json(
+        { error: "Unable to verify mint_address against on-chain slab config — registration rejected." },
+        { status: 400 },
       );
     }
   } catch (err) {
