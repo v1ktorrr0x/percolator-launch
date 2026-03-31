@@ -1,11 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
-// requireAuth removed from POST — on-chain admin verification is sufficient
 import { Connection, PublicKey } from "@solana/web3.js";
 import { validateNumericParam } from "@/lib/route-validators";
 import { parseHeader } from "@percolator/sdk";
 import { getServiceClient, getServerNetwork } from "@/lib/supabase";
 import { getConfig } from "@/lib/config";
 import * as Sentry from "@sentry/nextjs";
+import nacl from "tweetnacl";
 import { isSaneMarketValue, isActiveMarket, isZombieMarket } from "@/lib/activeMarketFilter";
 import { isPhantomOpenInterest, MIN_VAULT_FOR_OI } from "@/lib/phantom-oi";
 import { computeDisplayOiUsd } from "@/lib/oi-display";
@@ -625,8 +625,11 @@ export async function GET(request: NextRequest) {
 }
 
 // POST /api/markets — register a new market after deployment
-// Auth: on-chain verification (deployer == slab admin) is the real gate.
-// No API key required — the client calls this after successful on-chain deployment.
+// Auth: PERC-8332 — nonce+ed25519 wallet-signature proof required (cryptographic ownership).
+//   Step 1: GET /api/markets/challenge?deployer=<pubkey>  → { nonce, expiresAt }
+//   Step 2: Sign nonce bytes (UTF-8) with deployer keypair → base64 signature
+//   Step 3: POST /api/markets with { ...fields, nonce, signature }
+// On-chain slab admin check is kept as a secondary control.
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
@@ -648,6 +651,9 @@ export async function POST(req: NextRequest) {
     mainnet_ca,
     oracle_mode,
     dex_pool_address,
+    // PERC-8332: nonce+signature for deployer wallet-sig auth
+    nonce,
+    signature,
   } = body;
 
   if (!slab_address || !mint_address || !deployer) {
@@ -655,6 +661,114 @@ export async function POST(req: NextRequest) {
       { error: "Missing required fields: slab_address, mint_address, deployer" },
       { status: 400 }
     );
+  }
+
+  // PERC-8332: Require nonce+signature for deployer wallet-sig authentication.
+  // This proves cryptographic ownership of the deployer key instead of trusting
+  // the deployer string from the body (which attackers can set to any observed pubkey).
+  //
+  // Bypass: MARKETS_AUTH_BYPASS_SECRET env var allows internal tooling / migration
+  // scripts to skip the sig check. Must never be set in production.
+  const bypassSecret = process.env.MARKETS_AUTH_BYPASS_SECRET;
+  const bypassHeader = req.headers.get("x-markets-bypass");
+  const isBypass = bypassSecret && bypassHeader === bypassSecret;
+
+  if (!isBypass) {
+    if (!nonce || !signature) {
+      return NextResponse.json(
+        {
+          error:
+            "Missing required fields: nonce, signature. " +
+            "Call GET /api/markets/challenge?deployer=<pubkey> first, then sign the returned nonce.",
+        },
+        { status: 400 }
+      );
+    }
+
+    // Validate deployer pubkey format before DB lookup
+    let deployerPubkeyBytes: Uint8Array;
+    try {
+      deployerPubkeyBytes = new PublicKey(deployer).toBytes();
+    } catch {
+      return NextResponse.json(
+        { error: "Invalid deployer: must be a valid Solana public key" },
+        { status: 400 }
+      );
+    }
+
+    // Decode the base64 signature
+    let signatureBytes: Uint8Array;
+    try {
+      signatureBytes = Buffer.from(signature, "base64");
+      if (signatureBytes.length !== 64) {
+        throw new Error("Signature must be 64 bytes");
+      }
+    } catch {
+      return NextResponse.json(
+        { error: "Invalid signature: must be a base64-encoded 64-byte ed25519 signature" },
+        { status: 400 }
+      );
+    }
+
+    // Look up the nonce in the DB
+    const supabaseAuth = getServiceClient();
+    const now = new Date();
+
+    const { data: challengeRow, error: challengeErr } = await (supabaseAuth as ReturnType<typeof getServiceClient>)
+      .from("market_challenges" as never)
+      .select("nonce, deployer, expires_at, used_at")
+      .eq("nonce", nonce)
+      .eq("deployer", deployer)
+      .single() as { data: { nonce: string; deployer: string; expires_at: string; used_at: string | null } | null; error: unknown };
+
+    if (challengeErr || !challengeRow) {
+      return NextResponse.json(
+        { error: "Invalid or unknown nonce. Call GET /api/markets/challenge to get a fresh nonce." },
+        { status: 401 }
+      );
+    }
+
+    // Check nonce has not been used
+    if (challengeRow.used_at) {
+      return NextResponse.json(
+        { error: "Nonce already used. Request a new challenge." },
+        { status: 401 }
+      );
+    }
+
+    // Check nonce has not expired
+    if (new Date(challengeRow.expires_at) < now) {
+      return NextResponse.json(
+        { error: "Nonce expired. Request a new challenge." },
+        { status: 401 }
+      );
+    }
+
+    // Verify ed25519 signature: deployer signed the nonce bytes
+    const nonceBytes = Buffer.from(nonce, "utf-8");
+    const sigValid = nacl.sign.detached.verify(nonceBytes, signatureBytes, deployerPubkeyBytes);
+
+    if (!sigValid) {
+      Sentry.captureMessage(
+        "PERC-8332: Deployer signature verification failed",
+        {
+          level: "warning",
+          tags: { endpoint: "/api/markets", method: "POST", auth: "sig-fail" },
+          fingerprint: ["perc-8332-sig-fail"],
+          extra: { deployer, nonce },
+        }
+      );
+      return NextResponse.json(
+        { error: "Signature verification failed. Ensure you signed the nonce bytes with the deployer keypair." },
+        { status: 401 }
+      );
+    }
+
+    // Mark nonce as used (single-use) — do this BEFORE the DB insert to prevent race conditions
+    await (supabaseAuth as ReturnType<typeof getServiceClient>)
+      .from("market_challenges" as never)
+      .update({ used_at: now.toISOString() } as never)
+      .eq("nonce", nonce);
   }
 
   // GH#1398: Reject markets with unreasonably high max_leverage.
