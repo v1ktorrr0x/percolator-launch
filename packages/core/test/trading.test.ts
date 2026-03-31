@@ -196,6 +196,86 @@ assert(computeMaxLeverage(500n) === 20, "500 bps → 20x");
 assert(computeMaxLeverage(10000n) === 1, "10000 bps → 1x");
 assert(computeMaxLeverage(200n) === 50, "200 bps → 50x");
 
+// --- GH#1990: Inverted-market risk math ---
+// An inverted market stores entry_price in inverted domain: 1e12 / rawOracleE6.
+// Both entry_price and the live oracle (as seen by the frontend after applyInvert) are
+// in inverted domain, so computeMarkPnl / computeLiqPrice receive consistent inputs.
+// These tests verify the formula is correct for BOTH invert=0 and invert=1 scenarios.
+console.log("--- inverted-market risk math (GH#1990) ---");
+
+function applyInvert(priceE6: bigint, invert: 0 | 1): bigint {
+  if (!invert || priceE6 === 0n) return priceE6;
+  return 1_000_000_000_000n / priceE6;
+}
+
+{
+  // Scenario: SOL/USDC market (invert=0, standard)
+  // Entry at $100, current mark $110 → long profit
+  const rawEntryOracle = USD(100);
+  const rawMarkOracle = USD(110);
+  const entryE6 = applyInvert(rawEntryOracle, 0);
+  const markE6 = applyInvert(rawMarkOracle, 0);
+  const pos = 1_000_000n;
+  const pnl = computeMarkPnl(pos, entryE6, markE6);
+  assert(pnl > 0n, "invert=0 long profit: mark > entry → positive PnL");
+}
+{
+  // Scenario: USDC/SOL market (invert=1 — price = 1/SOL)
+  // Raw Pyth: SOL = $100 → invertedPrice = 1e12/100e6 = 10_000 (≈ $0.000010 per USDC)
+  // Raw Pyth: SOL = $90  → invertedPrice = 1e12/90e6  = 11_111 (USDC price went UP)
+  // Long position in inverted market profits when price goes UP (i.e. SOL goes DOWN)
+  const rawOracle100 = USD(100);
+  const rawOracle90 = USD(90);
+  const entryE6 = applyInvert(rawOracle100, 1);  // inverted entry: 10_000
+  const markE6 = applyInvert(rawOracle90, 1);    // inverted mark: 11_111 (> entry → profit)
+  const pos = 1_000_000n;
+  const pnl = computeMarkPnl(pos, entryE6, markE6);
+  assert(pnl > 0n, "invert=1 long profit: SOL down → inverted price up → positive PnL");
+}
+{
+  // Scenario: invert=1, SOL $100 → $110 — long position loses (SOL up = inverted price down)
+  const rawOracle100 = USD(100);
+  const rawOracle110 = USD(110);
+  const entryE6 = applyInvert(rawOracle100, 1);  // inverted entry: 10_000
+  const markE6 = applyInvert(rawOracle110, 1);   // inverted mark: 9_090 (< entry → loss)
+  const pos = 1_000_000n;
+  const pnl = computeMarkPnl(pos, entryE6, markE6);
+  assert(pnl < 0n, "invert=1 long loss: SOL up → inverted price down → negative PnL");
+}
+{
+  // Scenario: invert=1 liq price is in inverted domain — > 0 and below entry for a long position.
+  // Use raw oracle $0.001 → inverted entryE6 = 1e12/1_000 = 1_000_000_000 ($1000 in e6).
+  // This gives a large enough entryE6 that BigInt division doesn't truncate to zero.
+  const entryE6 = 1_000_000_000_000n / 1_000n; // 1_000_000_000 ($1000 inverted)
+  const capital = 5_000_000n;     // ~5% margin
+  const pos = 100_000_000n;
+  const maintBps = 500n;
+  const liq = computeLiqPrice(entryE6, capital, pos, maintBps);
+  assert(liq > 0n && liq < entryE6, "invert=1 long liq price: positive and below entry");
+}
+{
+  // Scenario: invert=1 pre-trade liq price matches regular liq price when fee=0
+  const rawOracle100 = USD(100);
+  const oracleE6 = applyInvert(rawOracle100, 1);  // inverted oracle for the market
+  const margin = 10_000_000n;
+  const pos = 100_000_000n;
+  const maintBps = 500n;
+  const expected = computeLiqPrice(oracleE6, margin, pos, maintBps);
+  const actual = computePreTradeLiqPrice(oracleE6, margin, pos, maintBps, 0n, "long");
+  assert(actual === expected, "invert=1 pre-trade liq (no fee) equals computeLiqPrice directly");
+}
+{
+  // invert=1 short position: short on inverted market = effectively long on underlying
+  // Entry: inverted 10_000, mark moves DOWN to inverted 9_090 (SOL went up → short profits)
+  const rawOracle100 = USD(100);
+  const rawOracle110 = USD(110);
+  const entryE6 = applyInvert(rawOracle100, 1);  // 10_000
+  const markE6 = applyInvert(rawOracle110, 1);   // 9_090 < entry
+  const pos = -1_000_000n; // short
+  const pnl = computeMarkPnl(pos, entryE6, markE6);
+  assert(pnl > 0n, "invert=1 short profit: SOL up → inverted price down → short profits");
+}
+
 // --- Summary ---
 console.log(`\n${failed === 0 ? "✅" : "❌"} Trading math: ${passed} passed, ${failed} failed`);
 if (failed > 0) process.exit(1);

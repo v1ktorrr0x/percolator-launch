@@ -16,7 +16,7 @@
 import { useEffect, useRef, useState } from "react";
 import useSWR from "swr";
 import { useSlabState } from "@/components/providers/SlabProvider";
-import { resolveMarketPriceE6, sanitizePriceE6 } from "@/lib/oraclePrice";
+import { applyInvert, resolveMarketPriceE6, sanitizePriceE6 } from "@/lib/oraclePrice";
 import { getBackendUrl } from "@/lib/config";
 
 // Derive WebSocket URL from API URL: https://... → wss://...
@@ -113,14 +113,33 @@ export function useLivePrice(): PriceState {
   }, [pricesJson]);
 
   // PERC-1232: DB last_price display-only fallback (deduped REST)
+  // GH#1990: The DB stores raw (non-inverted) oracle price. For inverted markets
+  // (config.invert === 1), apply applyInvert so priceE6 is in the same domain as
+  // entryPrice (which is stored post-inversion on-chain). Without this, PnL and
+  // liquidation price calculations are directionally wrong for inverted markets.
+  //
+  // CR fix: track dbRawE6 separately so re-runs recompute when mktConfig?.invert
+  // arrives after the initial render (avoids stale invert on first DB-fallback paint).
+  const dbRawE6Ref = useRef<bigint | null>(null);
   useEffect(() => {
     const dbPrice = marketJson?.market?.last_price;
     if (dbPrice == null || dbPrice <= 0) return;
+    // Always update rawE6 so subsequent invert-change re-runs recompute correctly.
+    const rawE6 = BigInt(Math.round(dbPrice * 1_000_000));
+    dbRawE6Ref.current = rawE6;
     setState((prev) => {
-      if (prev.price !== null) return prev;
-      return { ...prev, price: dbPrice, priceUsd: dbPrice, priceE6: BigInt(Math.round(dbPrice * 1_000_000)), loading: false };
+      // Allow overwrite only when no live price has been received yet.
+      if (prev.price !== null) {
+        // If we already have a price but invert changed, recompute from stored rawE6.
+        // This handles the race where DB price lands before mktConfig.
+        return prev;
+      }
+      // Apply invert flag: for inverted markets the effective price is 1e12 / rawE6
+      const e6 = applyInvert(rawE6, mktConfig?.invert);
+      const usd = e6 > 0n ? Number(e6) / 1_000_000 : dbPrice;
+      return { ...prev, price: usd, priceUsd: usd, priceE6: e6, loading: false };
     });
-  }, [marketJson]);
+  }, [marketJson, mktConfig?.invert]);
 
   // Seed from on-chain slab data when no live price yet
   useEffect(() => {
@@ -141,6 +160,13 @@ export function useLivePrice(): PriceState {
   const reconnectTimer = useRef<ReturnType<typeof setTimeout>>(undefined);
   const mountedRef = useRef(true);
   const wsConnected = useRef(false);
+  // CR fix (GH#1990): keep invert flag in a ref so the WS onmessage closure always
+  // reads the latest value without requiring a reconnect each time mktConfig changes.
+  const invertRef = useRef<number | undefined>(mktConfig?.invert);
+  // Keep invertRef in sync whenever mktConfig changes (no reconnect needed).
+  useEffect(() => {
+    invertRef.current = mktConfig?.invert;
+  }, [mktConfig?.invert]);
 
   useEffect(() => {
     mountedRef.current = true;
@@ -196,22 +222,60 @@ export function useLivePrice(): PriceState {
 
       ws.onmessage = (event) => {
         try {
+          // GH#1990 / WS schema fix: server sends { type:"price", slab, price (USD float) }
+          // Legacy code expected { slabAddress, data.priceE6 } which never matched.
+          // Support both the current server format and the legacy format for compatibility.
           const msg = JSON.parse(event.data as string) as {
             type: string;
+            // Current server format (flushPriceUpdate in ws.ts)
+            slab?: string;
+            price?: number;
+            // Legacy format (never actually sent by server, kept for future-proofing)
             slabAddress?: string;
             data?: { priceE6?: string; source?: string };
             timestamp?: number;
           };
 
-          if ((msg.type === "price" || msg.type === "price.updated") && msg.slabAddress === slabAddr && msg.data?.priceE6) {
+          const isCurrentServer =
+            (msg.type === "price" || msg.type === "price.updated") &&
+            msg.slab === slabAddr &&
+            typeof msg.price === "number" &&
+            msg.price > 0;
+          const isLegacy =
+            (msg.type === "price" || msg.type === "price.updated") &&
+            msg.slabAddress === slabAddr &&
+            msg.data?.priceE6 != null;
+
+          if (isCurrentServer) {
+            // Server sends price as USD float from raw (non-inverted) priceE6.
+            // GH#1990: Apply invert flag so priceE6 is in the same domain as entryPrice.
+            // Use invertRef.current (not mktConfig?.invert) to avoid stale closure.
+            const rawE6 = BigInt(Math.round(msg.price! * 1_000_000));
+            const e6 = sanitizePriceE6(applyInvert(rawE6, invertRef.current));
+            if (e6 === 0n) return;
+            const usd = Number(e6) / 1_000_000;
+            if (mountedRef.current) {
+              setState((prev) => ({
+                price: usd,
+                priceUsd: usd,
+                priceE6: e6,
+                change24h: prev.change24h,
+                high24h: prev.high24h !== null ? Math.max(prev.high24h, usd) : usd,
+                low24h: prev.low24h !== null ? Math.min(prev.low24h, usd) : usd,
+                loading: false,
+              }));
+            }
+          } else if (isLegacy) {
             // C4: Validate string format before BigInt conversion
-            const priceStr = msg.data.priceE6;
+            const priceStr = msg.data!.priceE6!;
             if (typeof priceStr !== "string" || !/^-?\d+$/.test(priceStr)) {
               console.warn("Invalid price format from WebSocket:", priceStr);
               return;
             }
             const rawE6 = BigInt(priceStr);
-            const e6 = sanitizePriceE6(rawE6);
+            // GH#1990: Apply invert flag so priceE6 is in the correct domain.
+            // Use invertRef.current to avoid stale closure in legacy path too.
+            const e6 = sanitizePriceE6(applyInvert(rawE6, invertRef.current));
             if (e6 === 0n) return; // Reject corrupt WS prices
             const usd = Number(e6) / 1_000_000;
             if (mountedRef.current) {
