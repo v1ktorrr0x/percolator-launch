@@ -101,7 +101,7 @@
 ## Dispatch Architecture
 
 ### Top-Level Routing (`process_instruction`)
-```
+```text
 tag == 0                                   → process_init_market() (direct)
 tag in 1-10, 35                            → dispatch_core_ops()
 tag in 11-31                               → dispatch_admin_ops()

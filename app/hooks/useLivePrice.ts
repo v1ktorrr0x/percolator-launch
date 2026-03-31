@@ -117,12 +117,23 @@ export function useLivePrice(): PriceState {
   // (config.invert === 1), apply applyInvert so priceE6 is in the same domain as
   // entryPrice (which is stored post-inversion on-chain). Without this, PnL and
   // liquidation price calculations are directionally wrong for inverted markets.
+  //
+  // CR fix: track dbRawE6 separately so re-runs recompute when mktConfig?.invert
+  // arrives after the initial render (avoids stale invert on first DB-fallback paint).
+  const dbRawE6Ref = useRef<bigint | null>(null);
   useEffect(() => {
     const dbPrice = marketJson?.market?.last_price;
     if (dbPrice == null || dbPrice <= 0) return;
+    // Always update rawE6 so subsequent invert-change re-runs recompute correctly.
+    const rawE6 = BigInt(Math.round(dbPrice * 1_000_000));
+    dbRawE6Ref.current = rawE6;
     setState((prev) => {
-      if (prev.price !== null) return prev;
-      const rawE6 = BigInt(Math.round(dbPrice * 1_000_000));
+      // Allow overwrite only when no live price has been received yet.
+      if (prev.price !== null) {
+        // If we already have a price but invert changed, recompute from stored rawE6.
+        // This handles the race where DB price lands before mktConfig.
+        return prev;
+      }
       // Apply invert flag: for inverted markets the effective price is 1e12 / rawE6
       const e6 = applyInvert(rawE6, mktConfig?.invert);
       const usd = e6 > 0n ? Number(e6) / 1_000_000 : dbPrice;
@@ -149,6 +160,13 @@ export function useLivePrice(): PriceState {
   const reconnectTimer = useRef<ReturnType<typeof setTimeout>>(undefined);
   const mountedRef = useRef(true);
   const wsConnected = useRef(false);
+  // CR fix (GH#1990): keep invert flag in a ref so the WS onmessage closure always
+  // reads the latest value without requiring a reconnect each time mktConfig changes.
+  const invertRef = useRef<number | undefined>(mktConfig?.invert);
+  // Keep invertRef in sync whenever mktConfig changes (no reconnect needed).
+  useEffect(() => {
+    invertRef.current = mktConfig?.invert;
+  }, [mktConfig?.invert]);
 
   useEffect(() => {
     mountedRef.current = true;
@@ -231,8 +249,9 @@ export function useLivePrice(): PriceState {
           if (isCurrentServer) {
             // Server sends price as USD float from raw (non-inverted) priceE6.
             // GH#1990: Apply invert flag so priceE6 is in the same domain as entryPrice.
+            // Use invertRef.current (not mktConfig?.invert) to avoid stale closure.
             const rawE6 = BigInt(Math.round(msg.price! * 1_000_000));
-            const e6 = sanitizePriceE6(applyInvert(rawE6, mktConfig?.invert));
+            const e6 = sanitizePriceE6(applyInvert(rawE6, invertRef.current));
             if (e6 === 0n) return;
             const usd = Number(e6) / 1_000_000;
             if (mountedRef.current) {
@@ -255,7 +274,8 @@ export function useLivePrice(): PriceState {
             }
             const rawE6 = BigInt(priceStr);
             // GH#1990: Apply invert flag so priceE6 is in the correct domain.
-            const e6 = sanitizePriceE6(applyInvert(rawE6, mktConfig?.invert));
+            // Use invertRef.current to avoid stale closure in legacy path too.
+            const e6 = sanitizePriceE6(applyInvert(rawE6, invertRef.current));
             if (e6 === 0n) return; // Reject corrupt WS prices
             const usd = Number(e6) / 1_000_000;
             if (mountedRef.current) {
