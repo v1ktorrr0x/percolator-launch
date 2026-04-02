@@ -352,6 +352,17 @@ export async function middleware(request: NextRequest) {
     // fires one request too early" in single-instance envs and "never fires"
     // in distributed Edge (each isolate has its own in-memory counter at 0).
     if (!allowed) {
+      // GH#1819: Log rate limit events for monitoring and alerting
+      const logContext = {
+        ip,
+        path: request.nextUrl.pathname,
+        rpcLimit: isRpc,
+        limit,
+        remaining,
+        reset,
+      };
+      console.warn("[RateLimit] Request blocked:", JSON.stringify(logContext));
+
       return new NextResponse(
         JSON.stringify({ error: "Too many requests. Please try again later." }),
         {
