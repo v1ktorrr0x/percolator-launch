@@ -89,3 +89,4 @@ export const WalletProvider: FC<{ children: ReactNode }> = ({ children }) => {
   );
 };
 // wallet connect fix - 1775223675
+// privy fix 1775223899
