@@ -261,13 +261,6 @@ function computeMeteoraDlmmPriceE6(data: Uint8Array): bigint {
     );
   }
 
-  const MAX_ABS_BIN_ID = 500_000;
-  if (activeId > MAX_ABS_BIN_ID || activeId < -MAX_ABS_BIN_ID) {
-    throw new Error(
-      `Meteora DLMM: activeId ${activeId} exceeds safe range (±${MAX_ABS_BIN_ID})`,
-    );
-  }
-
   const SCALE = 1_000_000_000_000_000_000n; // 1e18
   const base = SCALE + (BigInt(binStep) * SCALE) / 10_000n;
 
