@@ -182,52 +182,70 @@ export async function GET(request: NextRequest) {
     //   3. Drop network filter too (migration 20260329180000 not applied)
     // The view-level WHERE clause (migration 20260402170000) already filters
     // indexer_excluded markets when applied, so the PostgREST filter is defense-in-depth.
-    type FallbackLevel = "full" | "no-indexer-excluded" | "no-network" | "bare";
-    const fallbackQueries: { level: FallbackLevel; run: () => ReturnType<ReturnType<typeof supabase.from>['select']> }[] = [
-      {
-        level: "full",
-        run: () => supabase.from("markets_with_stats").select(SELECT_FIELDS)
-          .eq("network", getServerNetwork()).not("slab_address", "is", null).neq("indexer_excluded", true),
-      },
-      {
-        level: "no-indexer-excluded",
-        run: () => supabase.from("markets_with_stats").select(SELECT_FIELDS)
-          .eq("network", getServerNetwork()).not("slab_address", "is", null),
-      },
-      {
-        level: "no-network",
-        run: () => supabase.from("markets_with_stats").select(SELECT_FIELDS)
-          .not("slab_address", "is", null),
-      },
-    ];
+    let { data, error } = await supabase
+      .from("markets_with_stats")
+      .select(SELECT_FIELDS)
+      .eq("network", getServerNetwork())
+      .not("slab_address", "is", null)
+      .neq("indexer_excluded", true);
 
-    let data: Record<string, unknown>[] | null = null;
-    let error: { message?: string } | null = null;
-    let usedLevel: FallbackLevel = "full";
-
-    for (const fb of fallbackQueries) {
-      const result = await fb.run();
-      data = result.data as Record<string, unknown>[] | null;
-      error = result.error as { message?: string } | null;
-      usedLevel = fb.level;
-      if (!error) break; // success — stop falling back
-    }
-
-    // Log degraded state so missing migrations are visible in Sentry
-    if (usedLevel !== "full" && !error) {
-      const migrationHints: Record<string, string> = {
-        "no-indexer-excluded": "PERC-8387: indexer_excluded column missing — apply migration 046 + 20260402170000",
-        "no-network": "PERC-8215: network column missing — apply migration 20260329180000",
-        bare: "Multiple migrations missing — apply all pending Supabase migrations",
-      };
+    // Fallback 1: indexer_excluded column missing (migration 046 / 20260402170000 not applied).
+    // PostgREST error: "Could not find the 'indexer_excluded' column of 'markets_with_stats'"
+    if (error && error.message?.includes("indexer_excluded")) {
       Sentry.captureMessage(
-        migrationHints[usedLevel] ?? `markets query degraded to level: ${usedLevel}`,
+        "PERC-8387: indexer_excluded column missing — apply migration 046 + 20260402170000. " +
+        "Falling back without indexer_excluded filter.",
         {
           level: "warning",
-          tags: { endpoint: "/api/markets", method: "GET", degraded: "true", fallbackLevel: usedLevel },
-          fingerprint: [`markets-query-fallback-${usedLevel}`],
+          tags: { endpoint: "/api/markets", method: "GET", degraded: "true" },
+          fingerprint: ["perc-8387-indexer-excluded-missing"],
         }
       );
+      const fb1 = await supabase
+        .from("markets_with_stats")
+        .select(SELECT_FIELDS)
+        .eq("network", getServerNetwork())
+        .not("slab_address", "is", null);
+      data = fb1.data;
+      error = fb1.error;
+    }
+
+    // Fallback 2: network column also missing (migration 20260329180000 not applied)
+    if (error && error.message?.includes("network")) {
+      Sentry.captureMessage(
+        "PERC-8215: network column missing — apply migration 20260329180000. " +
+        "Falling back to unfiltered query.",
+        {
+          level: "warning",
+          tags: { endpoint: "/api/markets", method: "GET", degraded: "true" },
+          fingerprint: ["perc-8215-network-column-missing"],
+        }
+      );
+      const fb2 = await supabase
+        .from("markets_with_stats")
+        .select(SELECT_FIELDS)
+        .not("slab_address", "is", null);
+      data = fb2.data;
+      error = fb2.error;
+    }
+
+    // Fallback 3: catch-all for any other column-related errors.
+    // If we still have an error that mentions "column" or "does not exist",
+    // try the absolute minimum query to restore service.
+    if (error && (error.message?.includes("column") || error.message?.includes("does not exist"))) {
+      Sentry.captureMessage(
+        `PERC-8387: Unexpected column error in markets query, using bare fallback. Error: ${error.message}`,
+        {
+          level: "error",
+          tags: { endpoint: "/api/markets", method: "GET", degraded: "true" },
+          fingerprint: ["perc-8387-bare-fallback"],
+        }
+      );
+      const fb3 = await supabase
+        .from("markets_with_stats")
+        .select(SELECT_FIELDS);
+      data = fb3.data;
+      error = fb3.error;
     }
 
     if (error) {
