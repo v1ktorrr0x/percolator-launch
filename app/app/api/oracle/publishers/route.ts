@@ -79,9 +79,16 @@ export async function GET(req: NextRequest) {
 
     switch (mode) {
       case "pyth-pinned":
-        if (!feedId) {
+        if (!feedId || !/^(0x)?[0-9a-fA-F]+$/.test(feedId)) {
           return NextResponse.json(
-            { error: "Missing feedId for pyth-pinned mode" },
+            { error: "Missing or invalid feedId for pyth-pinned mode" },
+            { status: 400 },
+          );
+        }
+        // Pyth feed IDs are 32 bytes = 64 hex chars (+ optional 0x prefix)
+        if (feedId.replace(/^0x/, "").length > 128) {
+          return NextResponse.json(
+            { error: "feedId too long" },
             { status: 400 },
           );
         }
