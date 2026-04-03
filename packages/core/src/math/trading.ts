@@ -209,7 +209,12 @@ export function computeEstimatedEntryPrice(
 ): bigint {
   if (oracleE6 === 0n) return 0n;
   const feeImpact = (oracleE6 * tradingFeeBps) / 10000n;
-  return direction === "long" ? oracleE6 + feeImpact : oracleE6 - feeImpact;
+  if (direction === "long") return oracleE6 + feeImpact;
+  // Clamp to 1 to prevent underflow — a zero or negative entry price is nonsensical
+  // and would cause computePreTradeLiqPrice to report "no liquidation risk" (liqPrice=0)
+  // when fee >= 100%, misleading the UI.
+  const shortEntry = oracleE6 - feeImpact;
+  return shortEntry > 0n ? shortEntry : 1n;
 }
 
 /**
