@@ -139,7 +139,8 @@ function parseJupiterMintEntry(
   if (price <= 0) return null;
   let mintSymbol = "?";
   if (typeof row.mintSymbol === "string") mintSymbol = row.mintSymbol;
-  return { price, mintSymbol };}
+  return { price, mintSymbol };
+}
 
 // ---------------------------------------------------------------------------
 // Top Solana tokens with known Pyth feeds (feed ID → symbol)
@@ -281,13 +282,13 @@ export async function resolvePrice(
 ): Promise<PriceRouterResult> {
   const timeoutMs = options?.timeoutMs ?? DEFAULT_RESOLVE_TIMEOUT_MS;
   const timeoutSignal = AbortSignal.timeout(timeoutMs);
-  const effectiveSignal = signal
+  const combinedSignal = signal
     ? combineAbortSignals([signal, timeoutSignal])
     : timeoutSignal;
 
   const [dexSources, jupiterSource] = await Promise.all([
-    fetchDexSources(mint, effectiveSignal),
-    fetchJupiterSource(mint, effectiveSignal),
+    fetchDexSources(mint, combinedSignal),
+    fetchJupiterSource(mint, combinedSignal),
   ]);
 
   const pythSource = lookupPythSource(mint);

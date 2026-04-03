@@ -10,7 +10,9 @@
 import { PublicKey, SystemProgram, SYSVAR_RENT_PUBKEY, SYSVAR_CLOCK_PUBKEY } from '@solana/web3.js';
 import { TOKEN_PROGRAM_ID } from '@solana/spl-token';
 import { safeEnv } from '../config/program-ids.js';
-import { concatBytes } from '../abi/encode.js';// ═══════════════════════════════════════════════════════════════
+import { concatBytes } from '../abi/encode.js';
+
+// ═══════════════════════════════════════════════════════════════
 // Program ID — network-conditional (mirrors program-ids.ts pattern)
 // ═══════════════════════════════════════════════════════════════
 
