@@ -24,7 +24,10 @@ console.log("Testing slab parsing...\n");
 //   RESERVED_OFF = 48 (nonce at 48, lastThrUpdateSlot at 56)
 //   Config starts at offset 72
 function createMockSlab(): Buffer {
-  const buf = Buffer.alloc(480);  // HEADER_LEN(72) + CONFIG_LEN(408) = 480 minimum
+  // Must match a real V0 slab size so detectSlabLayout recognises it.
+  // Smallest V0 tier (64 accounts): ENGINE_OFF=480, BITMAP_OFF=200,
+  // bitmapWords=1, postBitmap=18, ACCOUNT_SIZE=240 → total = 16066.
+  const buf = Buffer.alloc(16320);
 
   // Header (72 bytes)
   // magic: "PERCOLAT" = 0x504552434f4c4154
