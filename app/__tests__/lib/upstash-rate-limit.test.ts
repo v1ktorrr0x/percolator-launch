@@ -127,4 +127,22 @@ describe("createUpstashRateLimiter — in-memory fallback", () => {
     const rB = await limiterB.check("ip1");
     expect(rB.allowed).toBe(true);
   });
+
+  it("falls back to in-memory when Redis throws at runtime", async () => {
+    // Set env vars so the factory tries to create a real Upstash limiter
+    process.env.UPSTASH_REDIS_REST_URL = "https://fake.upstash.io";
+    process.env.UPSTASH_REDIS_REST_TOKEN = "fake-token";
+
+    const limiter = createUpstashRateLimiter({
+      limit: 5,
+      windowMs: 60_000,
+      prefix: "rl:test-redis-error",
+    });
+
+    // First call will try Redis and fail (fake URL) — should fall back gracefully
+    const r1 = await limiter.check("ip1");
+    expect(r1.allowed).toBe(true);
+    expect(r1.remaining).toBe(4);
+    expect(r1.retryAfterSecs).toBeGreaterThanOrEqual(0);
+  });
 });
