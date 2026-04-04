@@ -76,7 +76,7 @@ export function useDexPoolSearch(mint: string | null) {
             dexId,
             pairLabel: `${pair.baseToken?.symbol || "?"} / ${pair.quoteToken?.symbol || "?"}`,
             liquidityUsd: liquidity,
-            priceUsd: parseFloat(pair.priceUsd) || 0,
+            priceUsd: parseFloat(pair.priceUsd ?? "0") || 0,
           });
         }
 
