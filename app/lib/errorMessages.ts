@@ -12,6 +12,29 @@
  * When a Solana transaction fails with a Percolator custom error, the error code number
  * is extracted and looked up here to display context-appropriate text to the user.
  */
+// ── Lighthouse/Blowfish detection (PERC-8445) ──────────────────────────────
+// Inlined from @percolator/sdk runtime/lighthouse.ts to avoid workspace sync issues.
+// Lighthouse v2 (Blowfish wallet guard) injects assertion IXs that fail with 0x1900
+// (Anchor ConstraintAddress). This is NOT a Percolator error.
+const LIGHTHOUSE_PROGRAM_ID_STR = "L2TExMFKdjpN9kozasaurPirfHy9P8sbXoAN1qA3S95";
+
+const LIGHTHOUSE_USER_MESSAGE =
+  "Your wallet's transaction guard (Blowfish/Lighthouse) is blocking this transaction. " +
+  "This is a known compatibility issue — the transaction itself is valid. " +
+  "Try one of these workarounds:\n" +
+  "1. Disable transaction simulation in your wallet settings\n" +
+  "2. Use a wallet without Blowfish protection (e.g., Backpack, Solflare)\n" +
+  "3. The SDK will automatically retry without the guard";
+
+function isLighthouseError(msg: string): boolean {
+  if (msg.includes(LIGHTHOUSE_PROGRAM_ID_STR)) return true;
+  if (/custom\s+program\s+error:\s*0x1900\b/i.test(msg)) return true;
+  if (/"Custom"\s*:\s*6400\b/.test(msg) && /InstructionError/i.test(msg)) return true;
+  return false;
+}
+
+export { LIGHTHOUSE_USER_MESSAGE };
+
 const ERROR_CODE_MAP: Record<number, string> = {
   0: "Invalid market magic — data corrupted.",
   1: "This market was created with an older program version and needs migration. The program has been upgraded — please contact the market admin to migrate this market, or create a new market with the current program.",
@@ -107,6 +130,12 @@ export function humanizeError(rawMsg: string): string {
   // Log for debugging (only in browser)
   if (typeof window !== "undefined") {
     console.warn("[humanizeError] raw:", rawMsg);
+  }
+
+  // PERC-8445: Lighthouse/Blowfish detection MUST run before generic hex extraction.
+  // 0x1900 is Anchor ConstraintAddress from Lighthouse, NOT a Percolator error code.
+  if (isLighthouseError(rawMsg)) {
+    return LIGHTHOUSE_USER_MESSAGE;
   }
 
   const code = extractErrorCode(rawMsg);
