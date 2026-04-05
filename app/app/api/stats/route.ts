@@ -85,15 +85,14 @@ export async function GET(request: NextRequest) {
         .limit(500);
 
       if (fallback.error && fallback.error.message?.includes("network")) {
-        // Tier 3: network column also missing — fully unfiltered
-        console.warn(
-          "[/api/stats] PERC-8215: network column also missing — falling back to fully unfiltered query."
+        // Tier 3: network column also missing — fully unfiltered.
+        // WARNING: Without network column, we cannot distinguish devnet from mainnet.
+        // Return empty stats with a degraded flag rather than silently mixing networks.
+        console.error(
+          "[/api/stats] CRITICAL: both indexer_excluded and network columns missing — " +
+          "cannot serve accurate stats. Apply migrations 20260329180000 and 20260402170000."
         );
-        const STATS_SELECT_NO_NET = STATS_SELECT.replace(", network", "");
-        const fallback2 = await supabase.from("markets_with_stats")
-          .select(STATS_SELECT_NO_NET)
-          .limit(500);
-        statsData_raw = fallback2.data as typeof statsData_raw;
+        statsData_raw = [] as typeof statsData_raw;
       } else {
         statsData_raw = fallback.data as typeof statsData_raw;
       }
