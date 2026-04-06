@@ -634,6 +634,39 @@ export const ACCOUNTS_SET_WALLET_CAP: readonly AccountSpec[] = [
 ] as const;
 
 // ============================================================================
+// PERC-SetDexPool: SetDexPool (tag 74)
+// ============================================================================
+
+/**
+ * SetDexPool: 3 accounts
+ * Admin pins the approved DEX pool address for a HYPERP market.
+ * After this call, UpdateHyperpMark rejects any pool that does not match.
+ */
+export const ACCOUNTS_SET_DEX_POOL: readonly AccountSpec[] = [
+  { name: "admin", signer: true, writable: false },
+  { name: "slab", signer: false, writable: true },
+  { name: "poolAccount", signer: false, writable: false },
+] as const;
+
+// ============================================================================
+// InitMatcherCtx (tag 75)
+// ============================================================================
+
+/**
+ * InitMatcherCtx: 5 accounts
+ * Admin CPI-initializes the matcher context account for an LP slot.
+ * The LP PDA signs via invoke_signed in the program — it must be included in
+ * the transaction's account list even though it carries 0 lamports.
+ */
+export const ACCOUNTS_INIT_MATCHER_CTX: readonly AccountSpec[] = [
+  { name: "admin", signer: true, writable: false },
+  { name: "slab", signer: false, writable: false },
+  { name: "matcherCtx", signer: false, writable: true },
+  { name: "matcherProg", signer: false, writable: false },
+  { name: "lpPda", signer: false, writable: false },
+] as const;
+
+// ============================================================================
 // WELL-KNOWN PROGRAM/SYSVAR KEYS
 // ============================================================================
 
