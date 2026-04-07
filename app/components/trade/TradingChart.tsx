@@ -135,6 +135,9 @@ export const TradingChart: FC<{ slabAddress: string; mintAddress?: string }> = (
           timestamp: pricePointTimestampToMs(p.timestamp),
           price: parseInt(p.price_e6) / 1e6,
         }));
+        // lightweight-charts requires strictly ascending timestamps; sort defensively
+        // in case the API returns prices in an unexpected order.
+        apiPrices.sort((a: PricePoint, b: PricePoint) => a.timestamp - b.timestamp);
         setOraclePrices(apiPrices);
       })
       .catch(() => {});
