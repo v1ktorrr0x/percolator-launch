@@ -61,8 +61,11 @@ export const PreTradeSummary: FC<PreTradeSummaryProps> = ({
 
   if (oracleE6 === 0n || margin === 0n || positionSize === 0n) return null;
 
+  // positionSize is in contracts (index asset units). Convert to USDC notional for display/fees.
+  const notionalNative = (positionSize * oracleE6) / 1_000_000n;
+
   const estEntry = computeEstimatedEntryPrice(oracleE6, tradingFeeBps, direction);
-  const fee = computeTradingFee(positionSize, tradingFeeBps);
+  const fee = computeTradingFee(notionalNative, tradingFeeBps);
   const liqPrice = computePreTradeLiqPrice(
     oracleE6,
     margin,
@@ -74,10 +77,8 @@ export const PreTradeSummary: FC<PreTradeSummaryProps> = ({
 
   const isLong = direction === "long";
 
-  // Convert to USD if toggle enabled
-  const notionalDisplay = showUsd && priceUsd != null
-    ? formatNum((Number(positionSize) / Math.pow(10, decimals)) * priceUsd)
-    : `${formatTokenAmount(positionSize, decimals)} ${symbol}`;
+  // Display notional in USDC (derived from contracts × mark price)
+  const notionalDisplay = `${formatTokenAmount(notionalNative, decimals)} ${symbol}`;
   const feeDisplay = showUsd && priceUsd != null
     ? formatNum((Number(fee) / Math.pow(10, decimals)) * priceUsd)
     : `${formatTokenAmount(fee, decimals)} ${symbol}`;
