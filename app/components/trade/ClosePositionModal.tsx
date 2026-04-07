@@ -12,7 +12,10 @@ interface ClosePositionModalProps {
   entryPrice: bigint;
   currentPrice: bigint;
   capital: bigint;
+  /** Index asset symbol for position size (e.g. "SOL") */
   symbol: string;
+  /** Collateral symbol for PnL/capital amounts (e.g. "USDC"). Falls back to symbol. */
+  collateralSymbol?: string;
   decimals: number;
   priceUsd: number | null;
   isLong: boolean;
@@ -35,6 +38,7 @@ export const ClosePositionModal: FC<ClosePositionModalProps> = ({
   currentPrice,
   capital,
   symbol,
+  collateralSymbol,
   decimals,
   priceUsd,
   isLong,
@@ -81,6 +85,7 @@ export const ClosePositionModal: FC<ClosePositionModalProps> = ({
     if (e.target === e.currentTarget) onCancel();
   };
 
+  const colSym = collateralSymbol ?? symbol;
   const absPosition = abs(positionSize);
 
   const preview = useMemo(() => {
@@ -214,7 +219,7 @@ export const ClosePositionModal: FC<ClosePositionModalProps> = ({
             <span className="text-[var(--text-dim)]">Est. PnL:</span>
             <span className={`font-mono font-medium ${pnlColor}`}>
               {preview.pnl > 0n ? "+" : preview.pnl < 0n ? "-" : ""}
-              {formatTokenAmount(abs(preview.pnl), decimals)} {symbol}
+              {formatTokenAmount(abs(preview.pnl), decimals)} {colSym}
               {preview.pnlUsd !== null && (
                 <span className="ml-1 text-[10px]">
                   ({preview.pnlUsd >= 0 ? "+" : ""}${Math.abs(preview.pnlUsd).toFixed(2)})
@@ -225,7 +230,7 @@ export const ClosePositionModal: FC<ClosePositionModalProps> = ({
           <div className="flex justify-between">
             <span className="text-[var(--text-dim)]">Est. Receive:</span>
             <span className="font-mono font-medium text-[var(--text)]">
-              ~{formatTokenAmount(preview.receive, decimals)} {symbol}
+              ~{formatTokenAmount(preview.receive, decimals)} {colSym}
             </span>
           </div>
         </div>
