@@ -390,10 +390,13 @@ export const TradeForm: FC<{ slabAddress: string }> = ({ slabAddress }) => {
       setTradePhase("confirming");
       setLastSig(sig ?? null);
       setMarginInput("");
-      // GH#trading-race: Trigger immediate slab re-poll so position appears
-      // without waiting up to 30s for the next adaptive poll cycle.
-      refreshSlab();
-      setTimeout(() => { setTradePhase("idle"); refreshSlab(); }, 2000);
+      // GH#trading-race: Single delayed refresh — give the on-chain state
+      // time to settle before re-polling. Avoids the double-refresh that
+      // causes provider state thrashing and modal flicker.
+      setTimeout(() => {
+        refreshSlab();
+        setTradePhase("idle");
+      }, 1500);
     } catch (e) {
       const msg = e instanceof Error ? e.message : String(e);
       console.error("[TradeForm] raw error:", msg);
@@ -779,7 +782,9 @@ export const TradeForm: FC<{ slabAddress: string }> = ({ slabAddress }) => {
       </div>
 
       {/* Close position modal */}
-      {showCloseModal && hasOpenPosition && userAccount && (
+      {/* Latch: don't unmount modal when hasOpenPosition briefly goes false
+          during slab refresh after close. showCloseModal is the sole dismiss gate. */}
+      {showCloseModal && userAccount && (
         <ClosePositionModal
           positionSize={openPositionSize}
           entryPrice={openEntryPriceE6}
@@ -793,8 +798,11 @@ export const TradeForm: FC<{ slabAddress: string }> = ({ slabAddress }) => {
           oracleStale={oracleStale && !mockMode}
           onConfirm={async (percent) => {
             await closePosition(percent);
-            setShowCloseModal(false);
+            // Delay modal close until after slab refresh settles.
+            // Closing immediately causes a flash as hasOpenPosition flips
+            // during the refresh, unmounting/remounting the component.
             refreshSlab();
+            setTimeout(() => { setShowCloseModal(false); refreshSlab(); }, 1500);
           }}
           onCancel={() => setShowCloseModal(false)}
         />
