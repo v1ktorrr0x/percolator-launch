@@ -82,19 +82,18 @@ export const OpenInterestCard: FC<{ slabAddress: string }> = ({
         setError(null);
       } catch (err) {
         setError(err instanceof Error ? err.message : "Unknown error");
-        // Fallback to on-chain data when API unavailable
+        // Fallback to on-chain data when API unavailable.
+        // Use engine.longOi/shortOi directly — the old formula deriving from
+        // totalOI + netLpPos produced negative/wrong values (showed -50% long).
         if (engine) {
-          const totalOi = engine.totalOpenInterest?.toString() ?? "0";
-          const netLp = engine.netLpPos ?? 0n;
-          const totalOiBn = engine.totalOpenInterest ?? 0n;
-          const netLpBn = netLp < 0n ? -netLp : netLp;
-          const longOi = totalOiBn > netLpBn ? (totalOiBn + netLp) / 2n : 0n;
-          const shortOi = totalOiBn > netLpBn ? (totalOiBn - netLp) / 2n : 0n;
+          const longOi = engine.longOi ?? 0n;
+          const shortOi = engine.shortOi ?? 0n;
+          const totalOi = (longOi + shortOi).toString();
           setOiData({
             totalOi,
-            longOi: (longOi < 0n ? 0n : longOi).toString(),
-            shortOi: (shortOi < 0n ? 0n : shortOi).toString(),
-            netLpPosition: netLp.toString(),
+            longOi: longOi.toString(),
+            shortOi: shortOi.toString(),
+            netLpPosition: (engine.netLpPos ?? 0n).toString(),
             historicalOi: [],
           });
         }

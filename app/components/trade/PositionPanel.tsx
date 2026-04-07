@@ -144,14 +144,16 @@ export const PositionPanel: FC<{ slabAddress: string }> = ({ slabAddress }) => {
 
   const pnlBarWidth = Math.min(100, Math.max(0, Math.abs(roe)));
 
-  // 3.1: Leverage = position notional / capital (both in same token units for stablecoin perps)
-  const leverage = hasPosition && account.capital > 0n
-    ? Math.round(Number(absPosition) / Number(account.capital))
+  // 3.1: Leverage = notional / capital. Notional = contracts × markPrice / 1e6.
+  // Old formula used raw contract count which gives ~0 for coin-margined positions.
+  const notionalE6 = absPosition * currentPriceE6;
+  const leverage = hasPosition && account.capital > 0n && currentPriceE6 > 0n
+    ? Math.max(1, Math.round(Number(notionalE6 / 1_000_000n) / Number(account.capital)))
     : 1;
 
   let marginHealthStr = "N/A";
-  if (hasPosition && absPosition > 0n) {
-    const healthPct = Number((account.capital * 100n) / absPosition);
+  if (hasPosition && notionalE6 > 0n) {
+    const healthPct = Number(account.capital * 1_000_000n * 100n / notionalE6);
     marginHealthStr = `${healthPct.toFixed(1)}%`;
   }
 

@@ -225,13 +225,13 @@ export const TradeForm: FC<{ slabAddress: string }> = ({ slabAddress }) => {
     }
   }, [priceUsd, leverage, decimals]);
 
-  // Re-sync USDC field when leverage changes (contracts stay fixed, USDC doesn't change, margin changes)
+  // Re-sync margin when leverage changes (contracts stay fixed, margin = notional / leverage)
   useEffect(() => {
     if (!contractsInput) return;
     const n = parseFloat(contractsInput);
     if (!isNaN(n) && n > 0 && priceUsd && priceUsd > 0) {
-      const marginAmt = n / leverage;
-      // Use full token decimals so marginInput matches parsePercToNative(..., decimals) (Prompt 88).
+      const notionalUsd = n * priceUsd;
+      const marginAmt = notionalUsd / leverage;
       setMarginInput(marginAmt.toFixed(decimals));
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -256,14 +256,20 @@ export const TradeForm: FC<{ slabAddress: string }> = ({ slabAddress }) => {
     const dist = Math.abs(Number(livePriceE6) - Number(openLiqPriceE6)) / Number(livePriceE6);
     return dist < 0.20;
   })();
-  const openLeverage = hasOpenPosition && openCapital > 0n
-    ? Math.max(1, Math.round(Number(abs(openPositionSize)) / Number(openCapital)))
+  const openLeverage = hasOpenPosition && openCapital > 0n && livePriceE6 && livePriceE6 > 0n
+    ? Math.max(1, Math.round(Number(abs(openPositionSize) * livePriceE6 / 1_000_000n) / Number(openCapital)))
     : 1;
   const { closePosition, loading: closeLoading } = useClosePosition(slabAddress);
 
   const marginNative = marginInput ? parsePercToNative(marginInput, decimals) : 0n;
-  // Defensive clamp: positionSize should never be negative, but guard anyway
-  const rawPositionSize = marginNative * BigInt(leverage);
+  // Position size = contracts (index asset units), NOT USDC.
+  // Coin-margined: notional_usdc = margin × leverage, then contracts = notional / markPrice.
+  // Without price division, a "1 USDC" input sends 1M units on-chain which the program
+  // interprets as 1M × $80 = $80M notional — causing undercollateralized errors.
+  const notionalNative = marginNative * BigInt(leverage);
+  const rawPositionSize = livePriceE6 && livePriceE6 > 0n
+    ? (notionalNative * 1_000_000n) / livePriceE6
+    : 0n;
   const positionSize = rawPositionSize < 0n ? 0n : rawPositionSize;
   
   // GH#1133: Use effectiveBalance (wallet ATA when no account) so input isn't
@@ -809,7 +815,7 @@ export const TradeForm: FC<{ slabAddress: string }> = ({ slabAddress }) => {
             tradingFeeBps,
             direction,
           )}
-          tradingFee={(positionSize * tradingFeeBps) / 10000n}
+          tradingFee={livePriceE6 && livePriceE6 > 0n ? ((positionSize * livePriceE6 / 1_000_000n) * tradingFeeBps) / 10000n : 0n}
           symbol={symbol}
           decimals={decimals}
           onConfirm={() => {

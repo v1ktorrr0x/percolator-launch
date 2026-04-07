@@ -67,8 +67,11 @@ export const AccountsCard: FC = () => {
     });
   }, [accounts, maintBps, oraclePrice]);
 
-  const openPositions = useMemo(() => rows.filter((r) => r.direction !== "IDLE"), [rows]);
-  const idleAccounts = useMemo(() => rows.filter((r) => r.direction === "IDLE"), [rows]);
+  // Filter out LP accounts from user-facing lists — LPs are internal counterparties,
+  // not user positions. Showing them confuses users (e.g., "7JVQ SHORT $606 liq price").
+  const userRows = useMemo(() => rows.filter((r) => r.kind !== AccountKind.LP), [rows]);
+  const openPositions = useMemo(() => userRows.filter((r) => r.direction !== "IDLE"), [userRows]);
+  const idleAccounts = useMemo(() => userRows.filter((r) => r.direction === "IDLE"), [userRows]);
   const leaderboard = useMemo(() => [...openPositions].sort((a, b) => b.pnl > a.pnl ? 1 : b.pnl < a.pnl ? -1 : 0), [openPositions]);
 
   const toggleSort = useCallback((key: SortKey) => {
