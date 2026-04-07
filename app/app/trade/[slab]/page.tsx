@@ -500,7 +500,7 @@ function TradePageInner({ slab }: { slab: string }) {
           ════════════════════════════════════════════════════════ */}
       <div className="hidden lg:grid lg:grid-cols-[minmax(0,1fr)_minmax(0,220px)_minmax(0,340px)] gap-4 px-4 lg:px-6 pb-3 pt-2">
         {/* ── Left column: Chart + Positions ── */}
-        <div className="min-w-0 flex flex-col gap-1.5">
+        <div className="min-w-0 flex flex-col gap-0">
           {/* Chart — only mount on desktop to prevent dual ChartEmptyState stacking */}
           {isLargeScreen && (
             <ErrorBoundary label="TradingChart">
