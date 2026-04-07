@@ -282,6 +282,7 @@ export const PositionsTable: FC<{ slabAddress: string }> = ({ slabAddress }) => 
           currentPrice={currentPriceE6}
           capital={account.capital}
           symbol={symbol}
+          collateralSymbol={collateralSymbol}
           decimals={decimals}
           priceUsd={priceUsd}
           isLong={isLong}
