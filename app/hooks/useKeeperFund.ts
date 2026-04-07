@@ -87,7 +87,11 @@ export function useKeeperFund(slabAddress?: string) {
 
   // Fetch keeper fund state
   const refresh = useCallback(async () => {
-    if (!fundAddress) return;
+    if (!fundAddress) {
+      // PDA not derivable yet (programId/slabAddress missing) — stop loading
+      setLoading(false);
+      return;
+    }
     setLoading(true);
     try {
       const info = await connection.getAccountInfo(fundAddress);
