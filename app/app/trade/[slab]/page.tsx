@@ -8,6 +8,7 @@ import { SlabProvider, useSlabState } from "@/components/providers/SlabProvider"
 import { UsdToggleProvider, useUsdToggle } from "@/components/providers/UsdToggleProvider";
 import { TradeForm } from "@/components/trade/TradeForm";
 import { PositionPanel } from "@/components/trade/PositionPanel";
+import { PositionNftPanel } from "@/components/trade/PositionNftPanel";
 import { PositionsTable } from "@/components/trade/PositionsTable";
 import { AccountsCard } from "@/components/trade/AccountsCard";
 import { DepositTrigger } from "@/components/trade/DepositTrigger";
@@ -463,6 +464,13 @@ function TradePageInner({ slab }: { slab: string }) {
           </Collapsible>
         </ErrorBoundary>
 
+        {/* Position NFT */}
+        <ErrorBoundary label="PositionNftPanel">
+          <Collapsible title="Position NFT" defaultOpen={false}>
+            <PositionNftPanel slabAddress={slab} />
+          </Collapsible>
+        </ErrorBoundary>
+
         <ErrorBoundary label="AccountsCard">
           <Collapsible title="Positions & Liqs" defaultOpen={false}>
             <AccountsCard />
@@ -531,6 +539,9 @@ function TradePageInner({ slab }: { slab: string }) {
             </ErrorBoundary>
             <ErrorBoundary label="TradeForm">
               <TradeForm slabAddress={slab} />
+            </ErrorBoundary>
+            <ErrorBoundary label="PositionNftPanel">
+              <PositionNftPanel slabAddress={slab} />
             </ErrorBoundary>
           </div>
 
