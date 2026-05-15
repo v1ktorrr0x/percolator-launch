@@ -5,7 +5,14 @@ import bs58 from "bs58";
 import { Resend } from "resend";
 import { Redis } from "@upstash/redis";
 import { Ratelimit } from "@upstash/ratelimit";
-import { getWaitlistSupabase } from "@/lib/waitlist/supabase";
+import {
+  getWaitlistSupabase,
+  getWaitlistServiceSupabase,
+} from "@/lib/waitlist/supabase";
+import {
+  generateReferralCode,
+  isValidReferralCodeShape,
+} from "@/lib/waitlist/referralCode";
 
 export const runtime = "nodejs";
 
@@ -217,6 +224,13 @@ export async function POST(req: Request) {
   const pubkey = typeof b.pubkey === "string" ? b.pubkey : null;
   const signature = typeof b.signature === "string" ? b.signature : null;
   const message = typeof b.message === "string" ? b.message : null;
+  // Referrer code (optional). Normalize to uppercase since codes are
+  // Crockford base32 uppercase by definition; accept lowercase from the
+  // wire so shared URLs that got lowercased somewhere still attribute.
+  const referredByRaw =
+    typeof b.referred_by_code === "string"
+      ? b.referred_by_code.trim().toUpperCase()
+      : null;
 
   // Validate email shape if present
   if (emailRaw !== null) {
@@ -259,6 +273,53 @@ export async function POST(req: Request) {
     return NextResponse.json(
       { error: "provide an email or a wallet signature" },
       { status: 400 },
+    );
+  }
+
+  // ── Referrer validation (REQUIRED — invite-only) ────────────────────────
+  // The waitlist is invite-only: every new signup must supply a valid
+  // referral code from an existing member. Existing rows from before this
+  // change are grandfathered (their referred_by_code stays NULL). Shape
+  // check is a cheap pre-filter so the existence-check RPC isn't a free
+  // oracle for "is any 8-char string in the table". On idempotent
+  // re-submit, the duplicate branch later silently drops the value
+  // without overwriting any prior referrer — preventing retroactive
+  // self-attribution.
+  if (referredByRaw === null || referredByRaw.length === 0) {
+    return NextResponse.json(
+      {
+        error:
+          "referral code required — Percolator is invite-only. Ask a member for a code or follow @percolatortrade for drops.",
+      },
+      { status: 400 },
+    );
+  }
+  if (!isValidReferralCodeShape(referredByRaw)) {
+    return NextResponse.json(
+      { error: "referral code format invalid" },
+      { status: 400 },
+    );
+  }
+  let referredByCode: string;
+  try {
+    const existsCheck = await getWaitlistSupabase().rpc(
+      "waitlist_referral_code_exists",
+      { p_code: referredByRaw },
+    );
+    if (existsCheck.data !== true) {
+      return NextResponse.json(
+        { error: "referral code not recognised" },
+        { status: 400 },
+      );
+    }
+    referredByCode = referredByRaw;
+  } catch (err) {
+    console.error("[waitlist] referral code existence check failed", err);
+    // Fail closed on RPC failure — better to reject than admit signups
+    // bypassing the invite gate during a partial outage.
+    return NextResponse.json(
+      { error: "referral code check failed, try again" },
+      { status: 503 },
     );
   }
 
@@ -311,45 +372,86 @@ export async function POST(req: Request) {
   }
 
   // ── Insert ──────────────────────────────────────────────────────────────
+  // Generate a fresh referral_code per insert attempt. Two unique constraints
+  // can fire here:
+  //   • waitlist_referral_code_key — astronomically unlikely collision on a
+  //     fresh random 8-char Crockford code; retry with a new one
+  //   • waitlist_pubkey_key or waitlist_email_unique_idx — the same user
+  //     re-submitting; idempotent, mark as duplicate and move on
   const supabase = getWaitlistSupabase();
-  const insertRow: Record<string, unknown> = {
+  const baseRow: Record<string, unknown> = {
     twitter_handle,
     source,
     user_agent: userAgent,
   };
-  if (hasEmail) insertRow.email = emailRaw;
+  if (hasEmail) baseRow.email = emailRaw;
   if (hasWalletPart) {
-    insertRow.pubkey = pubkey;
-    insertRow.signature = signature;
-    insertRow.message = message;
+    baseRow.pubkey = pubkey;
+    baseRow.signature = signature;
+    baseRow.message = message;
+  }
+  baseRow.referred_by_code = referredByCode;
+
+  const MAX_CODE_ATTEMPTS = 8;
+  let referralCode: string | null = null;
+  let isDuplicate = false;
+  for (let attempt = 0; attempt < MAX_CODE_ATTEMPTS; attempt++) {
+    const candidate = generateReferralCode();
+    const { error } = await supabase
+      .from("waitlist")
+      .insert({ ...baseRow, referral_code: candidate });
+    if (!error) {
+      referralCode = candidate;
+      break;
+    }
+    if (error.code !== "23505") {
+      console.error("[waitlist] insert error", error);
+      return NextResponse.json({ error: "insert failed" }, { status: 500 });
+    }
+    // 23505 unique violation — distinguish by constraint name in the message.
+    if (error.message?.includes("waitlist_referral_code_key")) {
+      continue; // referral code collision — retry with a fresh code
+    }
+    // User already on the list (pubkey or email duplicate).
+    isDuplicate = true;
+    break;
   }
 
-  const { error: insertError } = await supabase.from("waitlist").insert(insertRow);
-  // 23505 = unique violation (already on the list) — idempotent. We capture
-  // the duplicate flag here to suppress the confirmation email below: the
-  // pre-fix unconditional send turned every repeat POST with the same email
-  // into another Resend call, which let an attacker flood a single victim's
-  // inbox by replaying the same payload from rotating IPs.
-  const isDuplicate = insertError?.code === "23505";
-  if (insertError && !isDuplicate) {
-    console.error("[waitlist] insert error", insertError);
+  if (!isDuplicate && referralCode === null) {
+    console.error("[waitlist] referral code collision retry exhausted");
     return NextResponse.json({ error: "insert failed" }, { status: 500 });
   }
 
+  // Wallet-path duplicate: the signature proves the caller owns the pubkey,
+  // so returning the existing code is safe and gives idempotent UX
+  // (refreshes / re-submits show the same code). For the email path, returning
+  // the existing code on duplicate would turn the endpoint into a membership
+  // oracle (anyone could probe "is email X on the list and what's their
+  // code"), so on email-path duplicates we leave referralCode null and the
+  // UI directs the user to their inbox.
+  if (isDuplicate && hasWalletPart && referralCode === null) {
+    referralCode = await readOrAssignReferralCode(pubkey!);
+  }
+
   // ── Position lookup ─────────────────────────────────────────────────────
+  // Routed through the service-role client so the underlying functions can
+  // stay revoked from anon (membership-oracle prevention). Falls back to
+  // null if the service env var is missing; UX-wise the success card
+  // gracefully omits the position when null.
   let position: number | null = null;
   try {
+    const service = getWaitlistServiceSupabase();
     if (hasWalletPart) {
-      const { data } = await supabase.rpc("waitlist_position", { p_pubkey: pubkey });
+      const { data } = await service.rpc("waitlist_position", { p_pubkey: pubkey });
       if (typeof data === "number") position = data;
     } else if (hasEmail) {
-      const { data } = await supabase.rpc("waitlist_position_by_email", {
+      const { data } = await service.rpc("waitlist_position_by_email", {
         p_email: emailRaw,
       });
       if (typeof data === "number") position = data;
     }
-  } catch {
-    /* ignore */
+  } catch (err) {
+    console.warn("[waitlist-signup] position lookup unavailable", err);
   }
 
   // ── Confirmation email (fire-and-forget) ────────────────────────────────
@@ -369,12 +471,91 @@ export async function POST(req: Request) {
     !isDuplicate &&
     (await shouldSendConfirmationEmail(emailRaw!))
   ) {
-    sendConfirmationEmail(emailRaw!, position, hasWalletPart).catch((err) =>
-      console.error("[waitlist] confirmation send failed", err),
+    sendConfirmationEmail(emailRaw!, position, hasWalletPart, referralCode).catch(
+      (err) => console.error("[waitlist] confirmation send failed", err),
     );
   }
 
-  return NextResponse.json({ ok: true, position });
+  // Email-path duplicate: withhold both the code AND the position. Returning
+  // either one would let an attacker holding the publishable key probe
+  // arbitrary email addresses for membership (the position number itself
+  // is a yes/no signal — non-null position = "this email is on the list").
+  // Wallet-path duplicate is safe to fully respond to because the wallet
+  // signature already proved ownership.
+  const isEmailDuplicate = isDuplicate && !hasWalletPart;
+  const responseCode = isEmailDuplicate ? null : referralCode;
+  const responsePosition = isEmailDuplicate ? null : position;
+  return NextResponse.json({
+    ok: true,
+    position: responsePosition,
+    referral_code: responseCode,
+    // Wallet-path-only: signals to the UI that this signup was an
+    // idempotent re-submit so it can swap "you're in" copy for "welcome
+    // back". Deliberately NOT set on the email-duplicate branch — a
+    // `returning: true` flag tied to an email would be a clean
+    // membership oracle. The email-flow UI infers "returning" from
+    // referral_code === null instead (which is unavoidable signal we
+    // already accepted).
+    returning: isDuplicate && hasWalletPart,
+  });
+}
+
+/**
+ * Read the existing referral_code for a wallet that's already on the list, or
+ * assign one if the row pre-dates the column (backfill miss / race). Uses the
+ * service-role client because anon SELECT is denied for privacy.
+ *
+ * Only safe to call after the caller's signature over `pubkey` has been
+ * verified by the calling route — otherwise this becomes a code-lookup
+ * oracle for any pubkey.
+ */
+async function readOrAssignReferralCode(pubkey: string): Promise<string | null> {
+  let service;
+  try {
+    service = getWaitlistServiceSupabase();
+  } catch (err) {
+    console.error("[waitlist] service client unavailable", err);
+    return null;
+  }
+
+  const { data, error } = await service
+    .from("waitlist")
+    .select("referral_code")
+    .eq("pubkey", pubkey)
+    .maybeSingle();
+  if (error) {
+    console.error("[waitlist] read existing code failed", error);
+    return null;
+  }
+  if (data?.referral_code) return data.referral_code as string;
+
+  // Row exists but has no code — assign one with collision retry. The
+  // `.is("referral_code", null)` predicate makes the update race-safe: if a
+  // concurrent request already assigned a code, we get 0 rows updated and
+  // re-read on the next loop iteration.
+  for (let attempt = 0; attempt < 8; attempt++) {
+    const candidate = generateReferralCode();
+    const { error: updateError, count } = await service
+      .from("waitlist")
+      .update({ referral_code: candidate }, { count: "exact" })
+      .eq("pubkey", pubkey)
+      .is("referral_code", null);
+    if (!updateError && (count ?? 0) > 0) return candidate;
+    if (updateError && updateError.code !== "23505") {
+      console.error("[waitlist] update code failed", updateError);
+      return null;
+    }
+    // Either 23505 (code collision) or 0 rows updated (concurrent assign).
+    // Re-read to pick up the now-assigned code.
+    const { data: reread } = await service
+      .from("waitlist")
+      .select("referral_code")
+      .eq("pubkey", pubkey)
+      .maybeSingle();
+    if (reread?.referral_code) return reread.referral_code as string;
+  }
+  console.error("[waitlist] assign code retries exhausted");
+  return null;
 }
 
 // ─── Email confirmation send via Resend ──────────────────────────────────────
@@ -383,6 +564,7 @@ async function sendConfirmationEmail(
   email: string,
   position: number | null,
   hasWallet: boolean,
+  referralCode: string | null,
 ): Promise<void> {
   const apiKey = process.env.RESEND_API_KEY?.trim();
   if (!apiKey) {
@@ -390,8 +572,51 @@ async function sendConfirmationEmail(
     return;
   }
   const resend = new Resend(apiKey);
+
+  /** Marks the row's `referral_code_emailed_at` once Resend confirms the
+   * send. Best-effort: a missing service-role key or a transient supabase
+   * error logs and returns — the backfill script will retry on its next
+   * pass. Pulled here (rather than as a separate await chain) so we don't
+   * block the route handler on this update.
+   *
+   * The `.eq("email", email)` match is case-sensitive at the storage layer.
+   * Two things make it correct anyway:
+   *   • New rows: this function only runs on `email` already lowercased by
+   *     the route (see emailRaw = ...toLowerCase() above).
+   *   • Pre-existing rows: the schema migration's one-time
+   *     `update waitlist set email = lower(email)` block normalises legacy
+   *     mixed-case rows before they can be touched here.
+   */
+  const markEmailed = async () => {
+    if (!referralCode) return;
+    try {
+      const service = getWaitlistServiceSupabase();
+      await service
+        .from("waitlist")
+        .update({ referral_code_emailed_at: new Date().toISOString() })
+        .eq("email", email)
+        .is("referral_code_emailed_at", null);
+    } catch (err) {
+      console.warn("[waitlist-signup] mark emailed failed (non-fatal)", err);
+    }
+  };
   const positionLine = position
     ? `<p style="margin: 0 0 16px; font-size: 14px; line-height: 1.5; color: #4A4B62;">You're <strong style="color: #9945FF; font-family: ui-monospace, SFMono-Regular, monospace;">#${position}</strong> on the list.</p>`
+    : "";
+
+  // Referral block — code + share link. Rendered inline as a copy-friendly
+  // monospace pill. The link points at /r/<code>; that route attributes the
+  // referrer for any signup that lands through it (separate follow-up PR).
+  const referralBlock = referralCode
+    ? `<div style="margin: 0 0 20px; padding: 14px 16px; background: #F8F8FC; border: 1px solid #E0E0EC; border-radius: 6px;">
+        <div style="font-family: ui-monospace, SFMono-Regular, monospace; font-size: 10px; letter-spacing: 0.18em; color: #8A8BA8; text-transform: uppercase; margin-bottom: 6px;">YOUR REFERRAL CODE</div>
+        <div style="font-family: ui-monospace, SFMono-Regular, monospace; font-size: 20px; font-weight: 700; letter-spacing: 0.08em; color: #0D0E15;">${referralCode}</div>
+        <div style="margin-top: 10px; font-size: 12.5px; line-height: 1.55; color: #4A4B62;">Share your link: <a href="https://percolator.trade/r/${referralCode}" style="color:#9945FF; text-decoration: underline; font-family: ui-monospace, SFMono-Regular, monospace;">percolator.trade/r/${referralCode}</a></div>
+      </div>`
+    : "";
+
+  const referralText = referralCode
+    ? `\n\nYour referral code: ${referralCode}\nShare your link: https://percolator.trade/r/${referralCode}\n`
     : "";
 
   // If the signup came in with a wallet (Privy email login → embedded
@@ -424,6 +649,7 @@ async function sendConfirmationEmail(
     <div style="padding: 18px 28px 28px;">
       <h1 style="margin: 0 0 12px; font-size: 22px; line-height: 1.2; font-weight: 700; color: #0D0E15;">You're on the list.</h1>
       ${positionLine}
+      ${referralBlock}
       <p style="margin: 0 0 16px; font-size: 14px; line-height: 1.65; color: #4A4B62;">
         Mainnet opens after our external audit clears (targeting Q3 2026). We'll email you here when it does.
       </p>
@@ -438,6 +664,10 @@ async function sendConfirmationEmail(
     You received this because you joined the Percolator waitlist at percolator.trade. If you'd like to be removed, reply with "remove".
   </p>
 </body></html>`,
-    text: `You're on the Percolator waitlist.${position ? `\n\nYou're #${position} on the list.` : ""}\n\nMainnet opens after our external audit clears (targeting Q3 2026). We'll email you here when it does.\n\n${secondaryText}\n\n@percolatortrade · github.com/dcccrypto · percolator.trade/pitch\n\n—\nYou received this because you joined the Percolator waitlist. Reply "remove" to be removed.`,
+    text: `You're on the Percolator waitlist.${position ? `\n\nYou're #${position} on the list.` : ""}${referralText}\nMainnet opens after our external audit clears (targeting Q3 2026). We'll email you here when it does.\n\n${secondaryText}\n\n@percolatortrade · github.com/dcccrypto · percolator.trade/pitch\n\n—\nYou received this because you joined the Percolator waitlist. Reply "remove" to be removed.`,
   });
+
+  // Resend.send resolves on accept — at that point the message is queued
+  // with Resend. Mark the row so the backfill doesn't re-email this user.
+  await markEmailed();
 }
