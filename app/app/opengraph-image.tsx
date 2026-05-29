@@ -28,23 +28,29 @@ export default async function OpengraphImage() {
   );
   const logoSrc = `data:image/png;base64,${logoBuffer.toString("base64")}`;
 
+  // Site type system: Outfit is the logo wordmark (--font-display); JetBrains
+  // Mono is the body/heading face (--font-sans / --font-heading). Match both so
+  // the card reads like the site rather than a generic sans.
   let fonts:
-    | { name: string; data: ArrayBuffer; weight: 500 | 700; style: "normal" }[]
+    | { name: string; data: ArrayBuffer; weight: 400 | 700; style: "normal" }[]
     | undefined;
   try {
-    const [w700, w500] = await Promise.all([
+    const [outfit700, mono400, mono700] = await Promise.all([
       loadGoogleFont("Outfit", 700),
-      loadGoogleFont("Outfit", 500),
+      loadGoogleFont("JetBrains+Mono", 400),
+      loadGoogleFont("JetBrains+Mono", 700),
     ]);
     fonts = [
-      { name: "Outfit", data: w700, weight: 700, style: "normal" },
-      { name: "Outfit", data: w500, weight: 500, style: "normal" },
+      { name: "Outfit", data: outfit700, weight: 700, style: "normal" },
+      { name: "JetBrains Mono", data: mono400, weight: 400, style: "normal" },
+      { name: "JetBrains Mono", data: mono700, weight: 700, style: "normal" },
     ];
   } catch {
     fonts = undefined;
   }
 
-  const fontFamily = fonts ? "Outfit, sans-serif" : "sans-serif";
+  const monoFamily = fonts ? "JetBrains Mono, monospace" : "monospace";
+  const displayFamily = fonts ? "Outfit, sans-serif" : "sans-serif";
   // Site signature gradient (waitlist hero): purple → Solana green.
   const brandGradient =
     "linear-gradient(110deg, #B97AFF 0%, #9945FF 38%, #14F195 100%)";
@@ -64,19 +70,19 @@ export default async function OpengraphImage() {
           // Dual aurora — one purple light top-left, one green wash bottom-right.
           backgroundImage:
             "radial-gradient(ellipse 1000px 760px at 12% 6%, rgba(153,69,255,0.42) 0%, rgba(10,10,15,0) 56%), radial-gradient(ellipse 920px 720px at 100% 104%, rgba(20,241,149,0.22) 0%, rgba(10,10,15,0) 55%)",
-          fontFamily,
+          fontFamily: monoFamily,
         }}
       >
-        {/* Faint grid, fading downward — mirrors the site backdrop */}
+        {/* Grid — mirrors the site backdrop, kept visible */}
         <div
           style={{
             position: "absolute",
             inset: 0,
             display: "flex",
             backgroundImage:
-              "linear-gradient(to right, rgba(225,226,232,0.06) 1px, transparent 1px), linear-gradient(to bottom, rgba(225,226,232,0.06) 1px, transparent 1px)",
+              "linear-gradient(to right, rgba(225,226,232,0.14) 1px, transparent 1px), linear-gradient(to bottom, rgba(225,226,232,0.14) 1px, transparent 1px)",
             backgroundSize: "48px 48px",
-            maskImage: "linear-gradient(to bottom, black 25%, transparent 95%)",
+            maskImage: "linear-gradient(to bottom, black 60%, transparent 100%)",
           }}
         />
 
@@ -96,11 +102,12 @@ export default async function OpengraphImage() {
           <img src={logoSrc} width={258} height={214} alt="Percolator" />
         </div>
 
-        {/* Wordmark */}
+        {/* Wordmark — Outfit, matches the site header wordmark (--font-display) */}
         <div
           style={{
             display: "flex",
             marginTop: 16,
+            fontFamily: displayFamily,
             fontSize: 120,
             fontWeight: 700,
             letterSpacing: "-0.035em",
@@ -111,17 +118,18 @@ export default async function OpengraphImage() {
           Percolator
         </div>
 
-        {/* Tagline — matches the waitlist hero phrasing + gradient accent */}
+        {/* Tagline — JetBrains Mono (site body/heading face) + gradient accent */}
         <div
           style={{
             display: "flex",
-            marginTop: 26,
-            fontSize: 42,
-            fontWeight: 500,
+            marginTop: 30,
+            fontFamily: monoFamily,
+            fontSize: 34,
+            fontWeight: 400,
             letterSpacing: "-0.01em",
           }}
         >
-          <span style={{ color: "#8A8BA8", marginRight: 14 }}>
+          <span style={{ color: "#8A8BA8", marginRight: 16 }}>
             Perp futures for
           </span>
           <span
