@@ -225,6 +225,191 @@ export async function GET(req: Request) {
       }
     }
 
+    // ── Spam / quality signals ────────────────────────────────────────
+    // We only have public-ish fields to work with (no IPs / UAs), so we
+    // squeeze as many independent signals out of email shape, twitter
+    // shape, and timing as possible. Each one would have a different
+    // failure mode for a botnet — a single bypass would still trip
+    // others. The frontend shows them as a panel; operator judges.
+    const DISPOSABLE_DOMAINS = new Set<string>([
+      "mailinator.com","guerrillamail.com","guerrillamail.net","guerrillamail.org",
+      "guerrillamailblock.com","sharklasers.com","grr.la","tempmail.com",
+      "temp-mail.org","temp-mail.io","tempmailo.com","10minutemail.com",
+      "10minutemail.net","yopmail.com","yopmail.net","throwawaymail.com",
+      "trashmail.com","trashmail.de","dispostable.com","fakeinbox.com",
+      "emailondeck.com","mailnesia.com","getnada.com","nada.email",
+      "mintemail.com","mohmal.com","tmail.ws","tmpmail.org","mailpoof.com",
+      "emaildrop.io","tempr.email","mailcatch.com","spam4.me","mvrht.com",
+      "owlpic.com","spamgourmet.com","maildrop.cc","mailtemporaire.fr",
+      "mailtemp.info","my10minutemail.com","mailbox.in.ua","disbox.net",
+      "fakemail.net","tempinbox.com","temp-mail.ru","mailto.plus",
+      "fexpost.com","fexbox.org","inboxbear.com","linshiyouxiang.net",
+      "monemail.fr.nf","incognitomail.com","spambog.com","spambox.us",
+      "tafmail.com","tempmail.dev","tempmail.email","tempmail.us.com",
+      "tempmail.de","tempmail.plus","minutemail.com","jetable.org",
+      "anonbox.net","throwam.com","mailcuk.com","mailsac.com","spambox.org",
+      "byom.de","mytemp.email","tempemail.net","mvrht.net","clrmail.com",
+      "boximail.com","emltmp.com","mailsink.com","mfsa.ru","kepfree.com",
+      "boltbox.com","forexnews.bz","fivemail.de","spamavert.com",
+      "rcpt.at","tempemail.com","tempemail.co","instant-mail.de",
+      "thraml.com","trash-mail.com","fudgerub.com","mailimate.com",
+    ]);
+    // bot-style handle: 6+ trailing digits that aren't just a calendar year.
+    const BOT_HANDLE = /^([a-z][a-z_]{1,})(\d{6,})$/i;
+    const isYearLike = (d: string): boolean =>
+      d.length === 4 && /^(19|20)\d{2}$/.test(d);
+
+    const emailDomainCount = new Map<string, number>();
+    const localPartDomains = new Map<string, Set<string>>(); // local → distinct domains
+    let disposableEmails = 0;
+    const disposableDomainSet = new Set<string>();
+    let botHandleMatches = 0;
+    const botHandleSample: string[] = [];
+    const minuteBuckets = new Map<number, number>(); // unix-minute → count
+    const referrerMinute = new Map<string, Map<number, number>>(); // code → minute → count
+    const referrerHour = new Map<string, Map<number, number>>(); // code → hour → count
+
+    for (const r of all) {
+      // Email signals
+      if (r.email) {
+        const e = r.email.toLowerCase().trim();
+        const at = e.lastIndexOf("@");
+        if (at > 0 && at < e.length - 1) {
+          const local = e.slice(0, at);
+          const domain = e.slice(at + 1);
+          emailDomainCount.set(domain, (emailDomainCount.get(domain) ?? 0) + 1);
+          if (DISPOSABLE_DOMAINS.has(domain)) {
+            disposableEmails++;
+            disposableDomainSet.add(domain);
+          }
+          // Strip the +tag suffix so "alice+1@x" and "alice+2@x" collapse.
+          const localBase = local.split("+")[0]!;
+          if (localBase.length >= 3) {
+            let set = localPartDomains.get(localBase);
+            if (!set) {
+              set = new Set();
+              localPartDomains.set(localBase, set);
+            }
+            set.add(domain);
+          }
+        }
+      }
+      // Twitter handle signals
+      if (r.twitter_handle) {
+        const h = r.twitter_handle.replace(/^@/, "").trim();
+        const m = BOT_HANDLE.exec(h);
+        if (m && !isYearLike(m[2]!)) {
+          botHandleMatches++;
+          if (botHandleSample.length < 8) botHandleSample.push(h);
+        }
+      }
+      // Timing buckets
+      const t = new Date(r.created_at).getTime();
+      if (Number.isFinite(t)) {
+        const minute = Math.floor(t / 60_000);
+        const hour = Math.floor(t / 3_600_000);
+        minuteBuckets.set(minute, (minuteBuckets.get(minute) ?? 0) + 1);
+        if (r.referred_by_code) {
+          const code = r.referred_by_code;
+          let mMap = referrerMinute.get(code);
+          if (!mMap) {
+            mMap = new Map();
+            referrerMinute.set(code, mMap);
+          }
+          mMap.set(minute, (mMap.get(minute) ?? 0) + 1);
+          let hMap = referrerHour.get(code);
+          if (!hMap) {
+            hMap = new Map();
+            referrerHour.set(code, hMap);
+          }
+          hMap.set(hour, (hMap.get(hour) ?? 0) + 1);
+        }
+      }
+    }
+
+    // Top non-mainstream domains (a healthy waitlist is gmail/outlook/yahoo
+    // heavy; an unusual domain leading the chart is a red flag).
+    const topEmailDomains = Array.from(emailDomainCount.entries())
+      .sort(([, a], [, b]) => b - a)
+      .slice(0, 8)
+      .map(([domain, count]) => ({ domain, count }));
+
+    // Worst single-minute and 5-minute spikes across the whole table.
+    let worstMinute: { minute: number; count: number } | null = null;
+    for (const [minute, count] of minuteBuckets) {
+      if (!worstMinute || count > worstMinute.count) worstMinute = { minute, count };
+    }
+    // For 5-min: slide a 5-min window over the sorted minute keys.
+    const sortedMinutes = Array.from(minuteBuckets.keys()).sort((a, b) => a - b);
+    let worst5Min: { startMinute: number; count: number } | null = null;
+    for (let i = 0; i < sortedMinutes.length; i++) {
+      const start = sortedMinutes[i]!;
+      let sum = 0;
+      for (let j = i; j < sortedMinutes.length; j++) {
+        const m = sortedMinutes[j]!;
+        if (m > start + 4) break;
+        sum += minuteBuckets.get(m) ?? 0;
+      }
+      if (!worst5Min || sum > worst5Min.count) {
+        worst5Min = { startMinute: start, count: sum };
+      }
+    }
+
+    // Worst referrer velocity — for every referrer, find their busiest hour;
+    // surface the global champion. Real influencers peak in the dozens; a
+    // bot army shows 100+ in a single hour.
+    let worstReferrerHour: { code: string; hour: number; count: number } | null = null;
+    for (const [code, hMap] of referrerHour) {
+      for (const [hour, count] of hMap) {
+        if (!worstReferrerHour || count > worstReferrerHour.count) {
+          worstReferrerHour = { code, hour, count };
+        }
+      }
+    }
+
+    // local-part appearing across 3+ different email domains = same handle
+    // signing up via multiple throwaway providers.
+    const crossDomainLocals: { local: string; domains: number }[] = [];
+    for (const [local, domains] of localPartDomains) {
+      if (domains.size >= 3) {
+        crossDomainLocals.push({ local, domains: domains.size });
+      }
+    }
+    crossDomainLocals.sort((a, b) => b.domains - a.domains);
+
+    const toIsoMinute = (m: number): string =>
+      new Date(m * 60_000).toISOString().replace(":00.000Z", "Z");
+    const toIsoHour = (h: number): string =>
+      new Date(h * 3_600_000).toISOString().replace(":00:00.000Z", "Z");
+
+    const spam = {
+      email: {
+        disposableCount: disposableEmails,
+        disposableDomains: Array.from(disposableDomainSet).sort(),
+        topDomains: topEmailDomains,
+        crossDomainLocalParts: crossDomainLocals.slice(0, 8),
+      },
+      twitter: {
+        botPatternCount: botHandleMatches,
+        sample: botHandleSample,
+      },
+      velocity: {
+        worstMinute: worstMinute
+          ? { at: toIsoMinute(worstMinute.minute), count: worstMinute.count }
+          : null,
+        worst5Min: worst5Min
+          ? { startAt: toIsoMinute(worst5Min.startMinute), count: worst5Min.count }
+          : null,
+        worstReferrerHour: worstReferrerHour
+          ? {
+              code: worstReferrerHour.code,
+              at: toIsoHour(worstReferrerHour.hour),
+              count: worstReferrerHour.count,
+            }
+          : null,
+      },
+    };
+
     return NextResponse.json({
       totalSignups,
       byMethod: { walletOnly, emailOnly, walletAndEmail, withTwitter },
@@ -248,6 +433,7 @@ export async function GET(req: Request) {
       },
       recency: { last24h, last7d },
       growth: { days: dailyGrowth },
+      spam,
       tierBreakdown,
       integrity: {
         selfReferrals,

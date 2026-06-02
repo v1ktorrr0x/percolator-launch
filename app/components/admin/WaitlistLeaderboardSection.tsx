@@ -87,6 +87,20 @@ interface WaitlistStats {
   };
   recency: { last24h: number; last7d: number };
   growth?: { days: { date: string; count: number; cumulative: number }[] };
+  spam?: {
+    email: {
+      disposableCount: number;
+      disposableDomains: string[];
+      topDomains: { domain: string; count: number }[];
+      crossDomainLocalParts: { local: string; domains: number }[];
+    };
+    twitter: { botPatternCount: number; sample: string[] };
+    velocity: {
+      worstMinute: { at: string; count: number } | null;
+      worst5Min: { startAt: string; count: number } | null;
+      worstReferrerHour: { code: string; at: string; count: number } | null;
+    };
+  };
   tierBreakdown?: { tier: number; count: number; label: string }[];
   integrity: {
     selfReferrals: number;
@@ -99,6 +113,236 @@ interface WaitlistStats {
 
 function tierLabel(tier: number): string {
   return tier >= 0 && tier <= 25 ? String.fromCharCode(65 + tier) : `t${tier}`;
+}
+
+/**
+ * Severity color for a quality-signal threshold.
+ *  - level 0 = green / nominal
+ *  - level 1 = amber / worth a glance
+ *  - level 2 = red / probable inflation
+ */
+function severityColor(level: 0 | 1 | 2): string {
+  return level === 0 ? "var(--long)" : level === 1 ? "#fbbf24" : "var(--short)";
+}
+function severityBg(level: 0 | 1 | 2): string {
+  return level === 0
+    ? "rgba(35,196,124,0.10)"
+    : level === 1
+      ? "rgba(251,191,36,0.10)"
+      : "rgba(238,80,80,0.10)";
+}
+
+function SignalRow({
+  level,
+  label,
+  value,
+  detail,
+}: {
+  level: 0 | 1 | 2;
+  label: string;
+  value: string;
+  detail: string;
+}) {
+  const color = severityColor(level);
+  return (
+    <div
+      className="flex items-center gap-3 px-3 py-2.5"
+      style={{
+        background: severityBg(level),
+        border: `1px solid ${color}40`,
+      }}
+    >
+      <div
+        className="inline-flex h-4 w-4 shrink-0 items-center justify-center text-[10px] font-bold"
+        style={{ color, background: `${color}22`, border: `1px solid ${color}66` }}
+      >
+        {level === 0 ? "✓" : level === 1 ? "~" : "!"}
+      </div>
+      <div className="flex-1 min-w-0">
+        <div className="text-[12.5px] text-[var(--text)]">{label}</div>
+        <div className="text-[10.5px] text-[var(--text-muted)] mt-0.5 break-words">
+          {detail}
+        </div>
+      </div>
+      <div
+        className="font-mono text-[14px] font-bold tabular-nums shrink-0"
+        style={{ color }}
+      >
+        {value}
+      </div>
+    </div>
+  );
+}
+
+/**
+ * Quality / spam-signals panel.
+ *
+ * Surfaces things you'd expect to look weird if a botnet inflated growth:
+ * disposable-mail volume, twitter handles matching the "word + 6+ digit"
+ * default-suggestion bot pattern, one-minute / five-minute signup spikes,
+ * a single referrer hitting hundreds of invites in an hour, and the same
+ * email local-part registered across many throwaway domains.
+ *
+ * Thresholds are conservative — these are heuristics, not proofs. Pair the
+ * verdict here with the 30-day chart shape (smooth = organic, vertical
+ * cliffs = bursty) before pulling rows.
+ */
+function SpamSignals({
+  total,
+  spam,
+}: {
+  total: number;
+  spam: NonNullable<WaitlistStats["spam"]>;
+}) {
+  const disposablePct = total > 0 ? (spam.email.disposableCount / total) * 100 : 0;
+  // Severity thresholds (tweak as the signal base evolves).
+  const disposableLevel: 0 | 1 | 2 =
+    disposablePct >= 5 ? 2 : disposablePct >= 1 ? 1 : 0;
+  const botHandleLevel: 0 | 1 | 2 =
+    spam.twitter.botPatternCount >= 50 ? 2 : spam.twitter.botPatternCount >= 15 ? 1 : 0;
+  const minuteSpike = spam.velocity.worstMinute?.count ?? 0;
+  const minuteLevel: 0 | 1 | 2 =
+    minuteSpike >= 50 ? 2 : minuteSpike >= 20 ? 1 : 0;
+  const fiveMinSpike = spam.velocity.worst5Min?.count ?? 0;
+  const fiveMinLevel: 0 | 1 | 2 =
+    fiveMinSpike >= 150 ? 2 : fiveMinSpike >= 60 ? 1 : 0;
+  const refHourPeak = spam.velocity.worstReferrerHour?.count ?? 0;
+  const refHourLevel: 0 | 1 | 2 =
+    refHourPeak >= 100 ? 2 : refHourPeak >= 40 ? 1 : 0;
+  const crossDomainCount = spam.email.crossDomainLocalParts.length;
+  const crossDomainLevel: 0 | 1 | 2 =
+    crossDomainCount >= 10 ? 2 : crossDomainCount >= 3 ? 1 : 0;
+
+  const levels = [
+    disposableLevel,
+    botHandleLevel,
+    minuteLevel,
+    fiveMinLevel,
+    refHourLevel,
+    crossDomainLevel,
+  ];
+  const verdict = Math.max(...levels) as 0 | 1 | 2;
+  const verdictLabel = verdict === 0 ? "Looks organic" : verdict === 1 ? "Watch closely" : "Signs of inflation";
+  const verdictColor = severityColor(verdict);
+
+  const formatTimeShort = (iso: string): string =>
+    iso.replace("T", " ").replace("Z", "");
+
+  return (
+    <div className={`${card} p-4 mb-4`}>
+      <div className="flex items-baseline justify-between mb-3">
+        <div className={labelStyle}>Spam & Quality Signals</div>
+        <div
+          className="font-mono text-[10px] uppercase tracking-[0.14em]"
+          style={{ color: verdictColor }}
+        >
+          ● {verdictLabel}
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-2 mb-4">
+        <SignalRow
+          level={disposableLevel}
+          label="Disposable / throwaway email domains"
+          value={`${spam.email.disposableCount} (${disposablePct.toFixed(2)}%)`}
+          detail={
+            spam.email.disposableCount === 0
+              ? "no known throwaway-mail providers found"
+              : `domains: ${spam.email.disposableDomains.slice(0, 5).join(", ")}${spam.email.disposableDomains.length > 5 ? "…" : ""}`
+          }
+        />
+        <SignalRow
+          level={botHandleLevel}
+          label="Twitter handles matching bot pattern"
+          value={spam.twitter.botPatternCount.toLocaleString()}
+          detail={
+            spam.twitter.botPatternCount === 0
+              ? "no name+6digit handles found"
+              : `e.g. @${spam.twitter.sample.slice(0, 3).join(", @")}`
+          }
+        />
+        <SignalRow
+          level={minuteLevel}
+          label="Worst single-minute spike"
+          value={`+${minuteSpike}`}
+          detail={
+            spam.velocity.worstMinute
+              ? `at ${formatTimeShort(spam.velocity.worstMinute.at)} UTC`
+              : "—"
+          }
+        />
+        <SignalRow
+          level={fiveMinLevel}
+          label="Worst 5-minute spike"
+          value={`+${fiveMinSpike}`}
+          detail={
+            spam.velocity.worst5Min
+              ? `starting ${formatTimeShort(spam.velocity.worst5Min.startAt)} UTC`
+              : "—"
+          }
+        />
+        <SignalRow
+          level={refHourLevel}
+          label="Top referrer's busiest hour"
+          value={`+${refHourPeak}`}
+          detail={
+            spam.velocity.worstReferrerHour
+              ? `code ${spam.velocity.worstReferrerHour.code} · ${formatTimeShort(spam.velocity.worstReferrerHour.at)} UTC`
+              : "—"
+          }
+        />
+        <SignalRow
+          level={crossDomainLevel}
+          label="Same email handle across ≥3 domains"
+          value={crossDomainCount.toLocaleString()}
+          detail={
+            crossDomainCount === 0
+              ? "no cross-domain reuse"
+              : spam.email.crossDomainLocalParts
+                  .slice(0, 3)
+                  .map((c) => `${c.local}@×${c.domains}`)
+                  .join(" · ")
+          }
+        />
+      </div>
+
+      {/* Top email domains — eyeball check; healthy = gmail/outlook lead */}
+      {spam.email.topDomains.length > 0 && (
+        <div>
+          <div className={`${labelStyle} mb-2`}>Top email domains</div>
+          <div className="flex flex-wrap gap-1.5">
+            {spam.email.topDomains.map(({ domain, count }) => {
+              const isDisposable = spam.email.disposableDomains.includes(domain);
+              return (
+                <div
+                  key={domain}
+                  className="inline-flex items-center gap-1.5 rounded-none border px-2 py-1 font-mono text-[11px]"
+                  style={{
+                    color: isDisposable ? "var(--short)" : "var(--text)",
+                    borderColor: isDisposable
+                      ? "rgba(238,80,80,0.45)"
+                      : "var(--border)",
+                    background: isDisposable
+                      ? "rgba(238,80,80,0.08)"
+                      : "var(--bg)",
+                  }}
+                >
+                  <span>{domain}</span>
+                  <span className="text-[var(--text-muted)]">·</span>
+                  <span className="tabular-nums">{count.toLocaleString()}</span>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
+      <p className="mt-3 text-[11px] text-[var(--text-muted)]">
+        Heuristics, not proof — cross-check with the 30-day chart shape and the
+        leaderboard's top referrer before pulling specific rows.
+      </p>
+    </div>
+  );
 }
 
 /**
@@ -594,6 +838,11 @@ export function WaitlistLeaderboardSection() {
               />
             </div>
           </div>
+
+          {/* Spam & quality signals — heuristics over the full table */}
+          {stats.spam && (
+            <SpamSignals total={stats.totalSignups} spam={stats.spam} />
+          )}
         </>
       ) : (
         <div className={`${card} p-4 mb-4 text-[12px] text-[var(--text-muted)]`}>
