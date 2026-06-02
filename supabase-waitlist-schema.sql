@@ -200,6 +200,10 @@ $$;
 grant execute on function public.waitlist_count() to anon;
 
 -- Position lookup by pubkey ("you're #N on the list").
+-- row_number() runs over the ENTIRE table so wallet and email signups
+-- share one ordering. The previous version filtered `pubkey is not null`
+-- (mirror clause for email) which gave each user a position inside their
+-- own signup-method subset — about half the real list size.
 create or replace function public.waitlist_position(p_pubkey text)
 returns bigint
 language sql
@@ -207,9 +211,8 @@ security definer
 set search_path = public
 as $$
   with ordered as (
-    select pubkey, row_number() over (order by created_at asc) as pos
+    select pubkey, row_number() over (order by created_at asc, id asc) as pos
     from public.waitlist
-    where pubkey is not null
   )
   select pos from ordered where pubkey = p_pubkey;
 $$;
@@ -229,9 +232,8 @@ security definer
 set search_path = public
 as $$
   with ordered as (
-    select email, row_number() over (order by created_at asc) as pos
+    select email, row_number() over (order by created_at asc, id asc) as pos
     from public.waitlist
-    where email is not null
   )
   select pos from ordered where lower(email) = lower(p_email);
 $$;
