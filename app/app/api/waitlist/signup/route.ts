@@ -101,6 +101,117 @@ async function shouldSendConfirmationEmail(email: string): Promise<boolean> {
   return e.success;
 }
 
+// ── Signup-insert abuse limits (Jun-2026 bot-wave hardening) ──────────────
+// The wave POSTed straight to this route, bypassing the Privy widget (and its
+// Turnstile), and hammered a single referral code with thousands of scripted
+// signups at machine cadence. These caps bind server-side regardless of the
+// client:
+//   • per-referral-code — a genuine invite code won't pull dozens of signups
+//     an hour; a farm funnelling hundreds through one code trips this.
+//   • per-IP — bounds a single host even as it rotates emails/wallets.
+// Both fail open when Upstash is unconfigured (matches the email limiters /
+// middleware posture so local dev + CI keep working).
+let _codeLimiter: Ratelimit | null = null;
+let _ipLimiter: Ratelimit | null = null;
+let _abuseLimitersInitialized = false;
+
+function getAbuseLimiters(): {
+  perCode: Ratelimit | null;
+  perIp: Ratelimit | null;
+} {
+  if (_abuseLimitersInitialized) {
+    return { perCode: _codeLimiter, perIp: _ipLimiter };
+  }
+  _abuseLimitersInitialized = true;
+  const url = process.env.UPSTASH_REDIS_REST_URL;
+  const token = process.env.UPSTASH_REDIS_REST_TOKEN;
+  if (!url || !token) return { perCode: null, perIp: null };
+  try {
+    const redis = new Redis({ url, token });
+    _codeLimiter = new Ratelimit({
+      redis,
+      limiter: Ratelimit.slidingWindow(
+        Math.max(1, Number(process.env.WAITLIST_PER_CODE_HOURLY_CAP ?? 40)),
+        "1 h",
+      ),
+      prefix: "rl:wl-code",
+      analytics: false,
+    });
+    _ipLimiter = new Ratelimit({
+      redis,
+      limiter: Ratelimit.slidingWindow(
+        Math.max(1, Number(process.env.WAITLIST_PER_IP_HOURLY_CAP ?? 10)),
+        "1 h",
+      ),
+      prefix: "rl:wl-ip",
+      analytics: false,
+    });
+  } catch {
+    _codeLimiter = null;
+    _ipLimiter = null;
+  }
+  return { perCode: _codeLimiter, perIp: _ipLimiter };
+}
+
+/** Client IP via the trusted-proxy chain (mirrors lib/get-client-ip.ts;
+ *  inlined because this route handler takes a plain Request). */
+function getClientIpFromRequest(req: Request): string {
+  const depth = Math.max(0, Number(process.env.TRUSTED_PROXY_DEPTH ?? 1));
+  if (depth > 0) {
+    const fwd = req.headers.get("x-forwarded-for");
+    if (fwd) {
+      const ips = fwd.split(",").map((s) => s.trim());
+      return ips[Math.max(0, ips.length - depth)] ?? "unknown";
+    }
+  }
+  return req.headers.get("x-real-ip") ?? "unknown";
+}
+
+/** sha256 hex of the client IP. We persist this (never the raw IP) so a
+ *  future wave is dedup-able / traceable without storing PII. */
+function ipHashOf(ip: string): string {
+  return createHash("sha256").update(ip).digest("hex");
+}
+
+// Non-browser / scripted clients have no business on a human signup form.
+// The wave used Python aiohttp/requests/urllib, curl, and a hardcoded
+// Chrome/120 + bare "Mozilla/5.0" spoof. Real browsers and wallet in-app
+// browsers (Phantom/Backpack/Jupiter) never match these.
+const BOT_UA_RE =
+  /(python|aiohttp|requests|urllib|httpx|curl|wget|go-http|okhttp|axios|node-fetch|java\/|libwww|scrapy|headless|\bbot\b|spider)/i;
+function isBotUserAgent(ua: string | null): boolean {
+  if (!ua || ua.trim().length < 12) return true; // missing / stub UA
+  if (BOT_UA_RE.test(ua)) return true;
+  // Chrome/120 is a 2023 build the wave hardcoded; no real 2026 user is on it.
+  // Tunable off via WAITLIST_ALLOW_CHROME120=1 if it ever false-positives.
+  if (
+    process.env.WAITLIST_ALLOW_CHROME120 !== "1" &&
+    /Chrome\/120\.0\.0\.0 Safari/.test(ua)
+  ) {
+    return true;
+  }
+  return false;
+}
+
+// Attacker-controlled catch-alls observed in the wave + classic disposable
+// providers. Email signups on these are rejected outright. (duck.com is
+// deliberately NOT here — it's a relay used by real privacy-minded users;
+// the per-IP / per-code caps handle the alias-farming case instead.)
+const DISPOSABLE_EMAIL_DOMAINS = new Set<string>([
+  "tirtamulya.xyz", "wshu.net", "minitts.net", "mtupu.com", "akaikadot.com",
+  "mailinator.com", "guerrillamail.com", "guerrillamail.net",
+  "guerrillamail.org", "sharklasers.com", "grr.la", "10minutemail.com",
+  "temp-mail.org", "tempmail.com", "yopmail.com", "throwawaymail.com",
+  "trashmail.com", "getnada.com", "nada.email", "dispostable.com",
+  "fakeinbox.com", "maildrop.cc", "mintemail.com", "mohmal.com",
+  "emailondeck.com", "tmail.ws", "spam4.me", "mailsac.com", "fakemail.net",
+]);
+function isDisposableEmailDomain(email: string): boolean {
+  const at = email.lastIndexOf("@");
+  if (at < 0) return false;
+  return DISPOSABLE_EMAIL_DOMAINS.has(email.slice(at + 1).toLowerCase());
+}
+
 /**
  * High-intent waitlist signup.
  *
@@ -230,6 +341,17 @@ export async function POST(req: Request) {
       : null;
   const userAgent = req.headers.get("user-agent")?.slice(0, 200) ?? null;
 
+  // ── Bot user-agent gate ─────────────────────────────────────────────────
+  // Reject scripted clients up front — the wave hit this route directly with
+  // python/curl + spoofed UAs, never touching the Privy widget or Turnstile.
+  if (isBotUserAgent(userAgent)) {
+    return NextResponse.json({ error: "unsupported client" }, { status: 403 });
+  }
+
+  // Client IP (hashed) — powers ip_hash persistence + the per-IP cap below.
+  const clientIp = getClientIpFromRequest(req);
+  const ipHash = clientIp !== "unknown" ? ipHashOf(clientIp) : null;
+
   // ── Parse all candidate fields ──────────────────────────────────────────
   const emailRaw = typeof b.email === "string" ? b.email.trim().toLowerCase() : null;
   const pubkey = typeof b.pubkey === "string" ? b.pubkey : null;
@@ -247,6 +369,12 @@ export async function POST(req: Request) {
   if (emailRaw !== null) {
     if (!emailRaw || !EMAIL_RE.test(emailRaw) || emailRaw.length > 254) {
       return NextResponse.json({ error: "invalid email" }, { status: 400 });
+    }
+    if (isDisposableEmailDomain(emailRaw)) {
+      return NextResponse.json(
+        { error: "disposable email domains are not allowed" },
+        { status: 400 },
+      );
     }
   }
 
@@ -431,6 +559,42 @@ export async function POST(req: Request) {
     );
   }
 
+  // ── Per-IP + per-referral-code rate limits (bot-wave hardening) ──────────
+  // Only reached for NEW signups — returning-wallet lookups already returned
+  // via the sign-in fast path above, so refreshing your own card never burns
+  // budget. A real invite code won't pull dozens of signups an hour and a
+  // single IP won't legitimately register many; these caps kill the
+  // farm-one-code / machine-cadence pattern at the source. Fail-open when
+  // Upstash is unconfigured. IP first (cheap global brake), then code.
+  {
+    const { perCode, perIp } = getAbuseLimiters();
+    if (perIp && ipHash) {
+      const r = await perIp.limit(ipHash);
+      if (!r.success) {
+        console.warn("[waitlist] per-IP signup cap reached", { ipHash });
+        return NextResponse.json(
+          { error: "too many signups from this network — try again later" },
+          { status: 429 },
+        );
+      }
+    }
+    if (perCode) {
+      const r = await perCode.limit(referredByCode);
+      if (!r.success) {
+        console.warn("[waitlist] per-code signup cap reached", {
+          code: referredByCode,
+        });
+        return NextResponse.json(
+          {
+            error:
+              "this referral code has hit its hourly limit — try again later",
+          },
+          { status: 429 },
+        );
+      }
+    }
+  }
+
   // Wallet signature was already verified at the top of this route
   // (before the sign-in fast-path lookup). Only the mainnet spam check
   // remains for new wallet signups — it fires here so existing-user
@@ -460,6 +624,7 @@ export async function POST(req: Request) {
     twitter_handle,
     source,
     user_agent: userAgent,
+    ip_hash: ipHash,
   };
   if (hasEmail) baseRow.email = emailRaw;
   if (hasWalletPart) {
