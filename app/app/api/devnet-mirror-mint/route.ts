@@ -41,6 +41,7 @@ import {
   createInitializeMintInstruction,
 } from "@solana/spl-token";
 import { getConfig } from "@/lib/config";
+import { getClientIp } from "@/lib/get-client-ip";
 import { getServiceClient } from "@/lib/supabase";
 import { getDevnetMintSigner } from "@/lib/devnet-signer";
 import { validateTokenMetadata, validateDexScreenerResponse, validateJupiterTokenResponse } from "@/lib/token-metadata-validators";
@@ -127,8 +128,6 @@ async function checkMintRateLimit(ip: string): Promise<{ allowed: boolean; retry
   // Fallback to in-memory (local dev or Redis unavailable)
   return checkMintRateLimitFallback(ip);
 }
-
-
 
 const NETWORK =
   process.env.NEXT_PUBLIC_DEFAULT_NETWORK?.trim() ??
