@@ -5,7 +5,8 @@ import { PublicKey } from "@solana/web3.js";
 import { useWalletCompat, useConnectionCompat } from "@/hooks/useWalletCompat";
 import {
   encodeWithdrawCollateral,
-  encodeKeeperCrank,
+  encodePermissionlessCrank,
+  CrankAction,
   ACCOUNTS_WITHDRAW_COLLATERAL,
   ACCOUNTS_KEEPER_CRANK,
   buildAccountMetas,
@@ -83,12 +84,12 @@ export function useWithdraw(slabAddress: string) {
           throw new Error(INLINE_ORACLE_PUSH_REMOVED_ERROR);
         }
 
-        // Always prepend permissionless crank before withdraw
-        // Market goes stale after 400 slots (~3 min)
+        // Always prepend permissionless crank before withdraw.
+        // v17: encodePermissionlessCrank replaces encodeKeeperCrank (fundingRateE9 hardcoded 0n).
         instructions.push(buildIx({
           programId,
           keys: buildAccountMetas(ACCOUNTS_KEEPER_CRANK, [wallet.publicKey, slabPk, WELL_KNOWN.clock, oracleAccount]),
-          data: encodeKeeperCrank({ callerIdx: 65535 }),
+          data: encodePermissionlessCrank({ action: CrankAction.FeeSweep, assetIndex: 0, nowSlot: 0n, closeQ: 0n, feeBps: 0n, recoveryReason: 0 }),
         }));
 
         instructions.push(buildIx({

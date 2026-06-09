@@ -115,9 +115,9 @@ export const SlabProvider: FC<{ children: ReactNode; slabAddress: string }> = ({
     }
     let cancelled = false;
 
-    // Current expected slab version — bump when program is upgraded with schema changes.
-    // V12_1 deployed program writes version=0 in the slab header.
-    const EXPECTED_SLAB_VERSION = 0;
+    // v17 program writes version=16 (slab_version u16@8). Updated from v=0 (v12.x).
+    // EXPECTED_SLAB_VERSION matches EXPECTED_SLAB_VERSION=16 exported from the v17 SDK.
+    const EXPECTED_SLAB_VERSION = 16;
 
     function parseSlab(data: Uint8Array, owner?: PublicKey) {
       if (cancelled) return;

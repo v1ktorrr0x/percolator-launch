@@ -39,7 +39,11 @@ import {
   encodeInitLP,
   encodeDepositCollateral,
   encodeTopUpInsurance,
-  encodeKeeperCrank,
+  encodePermissionlessCrank,
+  CrankAction,
+  // v17: encodeSetOraclePriceCap / encodeUpdateConfig throw removedInstruction() in v17 SDK.
+  // These are kept for the v12 slab bootstrap path. The v17 market-bootstrap flow
+  // encodes oracle/config parameters inside encodeInitMarket directly.
   encodeSetOraclePriceCap,
   encodeUpdateConfig,
   ACCOUNTS_INIT_MARKET,
@@ -386,7 +390,8 @@ export async function POST(req: NextRequest) {
     const crankIx1 = buildIx({
       programId,
       keys: crankKeys1,
-      data: encodeKeeperCrank({ callerIdx: 65535 }),
+      // v17: PermissionlessCrank replaces KeeperCrank; fundingRateE9 hardcoded 0n inside encoder.
+      data: encodePermissionlessCrank({ action: CrankAction.FeeSweep, assetIndex: 0, nowSlot: 0n, closeQ: 0n, feeBps: 0n, recoveryReason: 0 }),
     });
 
     const tx1 = new Transaction({ recentBlockhash: blockhash, feePayer: deployerPk });
@@ -479,7 +484,8 @@ export async function POST(req: NextRequest) {
     const crankIx3 = buildIx({
       programId,
       keys: crankKeys3,
-      data: encodeKeeperCrank({ callerIdx: 65535 }),
+      // v17: PermissionlessCrank replaces KeeperCrank; fundingRateE9 hardcoded 0n inside encoder.
+      data: encodePermissionlessCrank({ action: CrankAction.FeeSweep, assetIndex: 0, nowSlot: 0n, closeQ: 0n, feeBps: 0n, recoveryReason: 0 }),
     });
 
     const tx3Instructions = [depositIx, topupIx, pushIx2, crankIx3];

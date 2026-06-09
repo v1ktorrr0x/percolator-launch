@@ -5,7 +5,8 @@ import { PublicKey } from "@solana/web3.js";
 import { useWalletCompat, useConnectionCompat } from "@/hooks/useWalletCompat";
 import {
   encodeTradeCpi,
-  encodeKeeperCrank,
+  encodePermissionlessCrank,
+  CrankAction,
   ACCOUNTS_TRADE_CPI,
   ACCOUNTS_KEEPER_CRANK,
   buildAccountMetas,
@@ -91,13 +92,13 @@ export function useTrade(slabAddress: string) {
           throw new Error(INLINE_ORACLE_PUSH_REMOVED_ERROR);
         }
 
-        // Always prepend a permissionless crank before trading
-        // Market goes stale after 400 slots (~3 min) — each user tx refreshes it
-        // callerIdx=65535 = permissionless, anyone can crank
+        // Always prepend a permissionless crank before trading.
+        // v17: KeeperCrank (tag 5 v12 wire) replaced by PermissionlessCrank (tag 5 v17 wire).
+        // fundingRateE9 is hardcoded 0n inside encodePermissionlessCrank (program rejects nonzero).
         const crankIx = buildIx({
           programId,
           keys: buildAccountMetas(ACCOUNTS_KEEPER_CRANK, [wallet.publicKey, slabPk, WELL_KNOWN.clock, oracleAccount]),
-          data: encodeKeeperCrank({ callerIdx: 65535 }),
+          data: encodePermissionlessCrank({ action: CrankAction.FeeSweep, assetIndex: 0, nowSlot: 0n, closeQ: 0n, feeBps: 0n, recoveryReason: 0 }),
         });
         instructions.push(crankIx);
 
@@ -113,7 +114,9 @@ export function useTrade(slabAddress: string) {
             lpAccount.account.matcherContext,
             lpPda,
           ]),
-          data: encodeTradeCpi({ lpIdx: params.lpIdx, userIdx: params.userIdx, size: params.size.toString(), limitPriceE6: effectiveLimitPriceE6.toString() }),
+          // v17: TradeCpi wire changed — assetIndex (u16) replaces lpIdx; sizeQ+feeBps+limitPrice.
+          // feeBps=0n → program applies the market's configured tradingFeeBps.
+          data: encodeTradeCpi({ assetIndex: 0, sizeQ: params.size.toString(), feeBps: 0n, limitPrice: effectiveLimitPriceE6.toString() }),
         });
         instructions.push(tradeIx);
 

@@ -21,7 +21,12 @@ import {
   encodeTopUpInsurance,
   deriveInsuranceLpMint,
   ACCOUNTS_CREATE_INSURANCE_MINT,
-  encodeKeeperCrank,
+  encodePermissionlessCrank,
+  CrankAction,
+  // v17: encodeSetOraclePriceCap / encodeUpdateConfig / encodeUpdateHyperpMark are
+  // imported for legacy v12 slab paths; they throw removedInstruction() if called
+  // against a v17 program. The v17 market-bootstrap flow embeds oracle/config
+  // parameters inside encodeInitMarket (no separate post-init config TX needed).
   encodeSetOraclePriceCap,
   encodeUpdateConfig,
   encodeUpdateHyperpMark,
@@ -693,7 +698,8 @@ export function useCreateMarket() {
             instructions.push(new TransactionInstruction({ programId, keys: hyperpKeys, data: Buffer.from(hyperpData) }));
           } else {
             // KeeperCrank for Pyth and admin modes
-            const crankData = encodeKeeperCrank({ callerIdx: 65535 });
+            // v17: PermissionlessCrank replaces KeeperCrank; fundingRateE9 hardcoded 0n inside encoder.
+            const crankData = encodePermissionlessCrank({ action: CrankAction.FeeSweep, assetIndex: 0, nowSlot: 0n, closeQ: 0n, feeBps: 0n, recoveryReason: 0 });
             const oracleAccount = isAdminOracle ? slabPk : derivePythPushOraclePDA(params.oracleFeed)[0];
             const crankKeys = buildAccountMetas(ACCOUNTS_KEEPER_CRANK, [
               wallet.publicKey, slabPk, WELL_KNOWN.clock, oracleAccount,
@@ -883,7 +889,8 @@ export function useCreateMarket() {
             finalInstructions.push(new TransactionInstruction({ programId, keys: hyperpKeys, data: Buffer.from(hyperpData) }));
           } else {
             const oracleAccount = isAdminOracle ? slabPk : derivePythPushOraclePDA(params.oracleFeed)[0];
-            const crankData = encodeKeeperCrank({ callerIdx: 65535 });
+            // v17: PermissionlessCrank replaces KeeperCrank; fundingRateE9 hardcoded 0n inside encoder.
+            const crankData = encodePermissionlessCrank({ action: CrankAction.FeeSweep, assetIndex: 0, nowSlot: 0n, closeQ: 0n, feeBps: 0n, recoveryReason: 0 });
             const crankKeys = buildAccountMetas(ACCOUNTS_KEEPER_CRANK, [
               wallet.publicKey, slabPk, WELL_KNOWN.clock, oracleAccount,
             ]);

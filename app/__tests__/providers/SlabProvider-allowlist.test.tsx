@@ -18,11 +18,12 @@ const ALLOWED_PROGRAM = "FxfD37s1AZTeWfFQps9Zpebi2dNQ9QSSDtfMKdbsfKrD"; // devne
 const ATTACKER_PROGRAM = "11111111111111111111111111111112";
 const SLAB_ADDRESS = "So11111111111111111111111111111111111111112";
 
-// Stub the SDK parsers so we don't have to hand-craft 992_560-byte buffers.
+// Stub the SDK parsers so we don't have to hand-craft large v17 slab buffers.
 // The gate runs BEFORE parseHeader, so legitimate parses succeed and
 // attacker slabs are rejected on the owner check regardless of bytes.
+// v17: EXPECTED_SLAB_VERSION = 16 — mock must return version=16 to pass the version check.
 vi.mock("@percolatorct/sdk", () => ({
-  parseHeader: () => ({ version: 0 }),
+  parseHeader: () => ({ version: 16 }),
   parseConfig: () => ({
     collateralMint: new PublicKey("11111111111111111111111111111111"),
     vaultPubkey: new PublicKey("11111111111111111111111111111111"),
