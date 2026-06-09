@@ -271,6 +271,9 @@ function isAllowedOnWaitlistHost(pathname: string): boolean {
   if (pathname === "/") return true;
   if (pathname.startsWith("/api/")) return true;
   if (pathname.startsWith("/_next/")) return true;
+  // Vercel Web Analytics beacons (/_vercel/insights/*). Without this they'd
+  // 302 to /waitlist and no analytics would be recorded on the waitlist host.
+  if (pathname.startsWith("/_vercel/")) return true;
   if (WAITLIST_HOST_ALLOWED_METADATA_ROUTES.has(pathname)) return true;
   if (/\.(?:svg|png|jpg|jpeg|gif|webp|ico|css|js|woff2?|ttf|map)$/i.test(pathname)) return true;
   for (const p of WAITLIST_HOST_ALLOWED_PREFIXES) {
@@ -484,7 +487,10 @@ function addSecurityHeaders(response: NextResponse, nonce?: string) {
     // by `components/waitlist/TurnstileGate.tsx` on the /waitlist surface
     // to render the bot-defence challenge; without this entry the script
     // is blocked and every submit button stays disabled.
-    `script-src 'self' ${scriptNonce}'unsafe-inline' https://cdn.vercel-insights.com https://challenges.cloudflare.com`,
+    // Analytics: googletagmanager.com loads gtag.js (GA4);
+    // static.cloudflareinsights.com loads the Cloudflare Web Analytics beacon.
+    // Vercel Web Analytics loads from same-origin /_vercel/* (covered by 'self').
+    `script-src 'self' ${scriptNonce}'unsafe-inline' https://cdn.vercel-insights.com https://challenges.cloudflare.com https://www.googletagmanager.com https://static.cloudflareinsights.com`,
     "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
     "font-src 'self' https://fonts.gstatic.com",
     "img-src 'self' data: https: blob:",
@@ -497,7 +503,7 @@ function addSecurityHeaders(response: NextResponse, nonce?: string) {
     // challenges.cloudflare.com is appended for the Turnstile widget's
     // XHR back-channel (telemetry + challenge-state checks). Same
     // origin as the script load.
-    "connect-src 'self' https://*.solana.com wss://*.solana.com https://*.supabase.co wss://*.supabase.co https://*.vercel-insights.com https://api.coingecko.com https://api.geckoterminal.com https://*.helius-rpc.com wss://*.helius-rpc.com https://api.dexscreener.com https://hermes.pyth.network https://*.up.railway.app wss://*.up.railway.app https://api.percolatorlaunch.com wss://api.percolatorlaunch.com https://lite.jup.ag https://token.jup.ag https://tokens.jup.ag https://auth.privy.io https://embedded-wallets.privy.io https://*.privy.systems https://*.rpc.privy.systems https://explorer-api.walletconnect.com wss://relay.walletconnect.com wss://relay.walletconnect.org wss://www.walletlink.org https://challenges.cloudflare.com blob:",
+    "connect-src 'self' https://*.solana.com wss://*.solana.com https://*.supabase.co wss://*.supabase.co https://*.vercel-insights.com https://api.coingecko.com https://api.geckoterminal.com https://*.helius-rpc.com wss://*.helius-rpc.com https://api.dexscreener.com https://hermes.pyth.network https://*.up.railway.app wss://*.up.railway.app https://api.percolatorlaunch.com wss://api.percolatorlaunch.com https://lite.jup.ag https://token.jup.ag https://tokens.jup.ag https://auth.privy.io https://embedded-wallets.privy.io https://*.privy.systems https://*.rpc.privy.systems https://explorer-api.walletconnect.com wss://relay.walletconnect.com wss://relay.walletconnect.org wss://www.walletlink.org https://challenges.cloudflare.com https://www.googletagmanager.com https://*.google-analytics.com https://*.analytics.google.com https://cloudflareinsights.com blob:",
     // Removed https://*.vercel.app wildcard (issue #635) — no legitimate use case for embedding
     // arbitrary Vercel-hosted content in iframes. frame-src controls outbound iframe embedding.
     // challenges.cloudflare.com is the iframe origin the Turnstile widget

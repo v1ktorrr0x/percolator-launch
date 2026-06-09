@@ -13,6 +13,11 @@ import { CursorGlow } from "@/components/ui/CursorGlow";
 import { MusicPlayer } from "@/components/ui/MusicPlayer";
 import { MainnetBetaBanner } from "@/components/layout/MainnetBetaBanner";
 import { ChromeGate } from "@/components/layout/ChromeGate";
+import { JsonLd } from "@/components/seo/JsonLd";
+import { organizationSchema, websiteSchema } from "@/lib/structured-data";
+import { Analytics } from "@vercel/analytics/next";
+import { GoogleAnalytics } from "@/components/analytics/GoogleAnalytics";
+import { CloudflareAnalytics } from "@/components/analytics/CloudflareAnalytics";
 
 const geistSans = Geist({ variable: "--font-geist-sans", subsets: ["latin"], display: "swap" });
 const geistMono = Geist_Mono({ variable: "--font-geist-mono", subsets: ["latin"], display: "swap" });
@@ -33,15 +38,23 @@ export const metadata: Metadata = {
   // direct 200 (X's card renderer won't follow a 301 on the image URL, which
   // left the card image blank).
   metadataBase: new URL("https://percolator.trade"),
-  title: "Percolator | Permissionless Perpetual Markets on Solana",
+  // `default` is the home-page title; `template` appends " | Percolator" to any
+  // bare title set by a child route segment (see lib/seo.ts → pageMetadata).
+  title: {
+    default: "Percolator | Permissionless Perpetual Markets on Solana",
+    template: "%s | Percolator",
+  },
   description: "Launch and trade perpetual futures for any Solana token. Fully on-chain, permissionless, transparent.",
   keywords: ["Solana", "perpetual futures", "DeFi", "trading", "perps", "on-chain"],
+  applicationName: "Percolator",
+  alternates: { canonical: "/" },
   icons: {
     icon: '/icon.png',
     apple: '/icon.png',
   },
   openGraph: {
     url: "https://percolator.trade",
+    siteName: "Percolator",
     title: "Percolator — Permissionless Perps on Solana",
     description: "Launch and trade perpetual futures for any Solana token.",
     type: "website",
@@ -49,6 +62,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
+    site: "@PercolatorTrade",
     title: "Percolator — Permissionless Perps on Solana",
     description: "Launch and trade perpetual futures for any Solana token.",
   },
@@ -57,6 +71,11 @@ export const metadata: Metadata = {
     follow: true,
     googleBot: { index: true, follow: true },
   },
+  // GSC verification — set NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION in Vercel env.
+  // Renders <meta name="google-site-verification" …> only when present.
+  verification: process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION
+    ? { google: process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION }
+    : undefined,
 };
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
@@ -80,6 +99,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         />
       </head>
         <body suppressHydrationWarning className="min-h-screen antialiased" data-nonce={nonce}>
+        <JsonLd data={[organizationSchema(), websiteSchema()]} />
         <Providers>
           <CursorGlow />
           <div className="relative z-[1] flex min-h-screen flex-col">
@@ -96,6 +116,9 @@ export default async function RootLayout({ children }: { children: React.ReactNo
             <MusicPlayer />
           </ChromeGate>
         </Providers>
+        <GoogleAnalytics nonce={nonce} />
+        <CloudflareAnalytics nonce={nonce} />
+        <Analytics />
       </body>
     </html>
   );
