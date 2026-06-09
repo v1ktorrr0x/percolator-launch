@@ -9,6 +9,8 @@ import { resolveActiveWallet, usePreferredWallet } from "@/hooks/usePreferredWal
 import { useWaitlistWhoami } from "@/hooks/useWaitlistWhoami";
 import { TurnstileGate } from "@/components/waitlist/TurnstileGate";
 import bs58 from "bs58";
+import { track } from "@/lib/analytics";
+import { ANALYTICS_EVENTS } from "@/lib/analytics-config";
 
 /**
  * Reads the inbound referrer code from the URL.
@@ -688,6 +690,10 @@ function EmailFlow({
           position: json.position ?? null,
           referralCode: json.referral_code ?? null,
         });
+        track(ANALYTICS_EVENTS.WAITLIST_JOINED, {
+          method: "email",
+          position: json.position ?? null,
+        });
       } catch (e: unknown) {
         const msg = e instanceof Error ? e.message : "submit failed";
         setState({ kind: "error", reason: msg });
@@ -988,6 +994,11 @@ function SignupFlow({
         kind: "done",
         position: json.position ?? null,
         referralCode: json.referral_code ?? null,
+        returning: json.returning === true,
+      });
+      track(ANALYTICS_EVENTS.WAITLIST_JOINED, {
+        method: "wallet",
+        position: json.position ?? null,
         returning: json.returning === true,
       });
     } catch (e: unknown) {

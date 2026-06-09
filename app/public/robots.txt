@@ -1,7 +1,11 @@
 User-agent: *
 Allow: /
+Disallow: /admin
+Disallow: /api/
 Disallow: /faucet
 Disallow: /devnet-mint
 Disallow: /openclaw
 Disallow: /pitch
-Sitemap: https://percolatorlaunch.com/sitemap.xml
+Disallow: /pitch-2
+Disallow: /demo-shots
+Sitemap: https://percolator.trade/sitemap.xml
