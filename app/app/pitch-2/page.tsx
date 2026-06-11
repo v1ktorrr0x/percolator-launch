@@ -1006,8 +1006,8 @@ function SlideOrigin(_: SlideProps) {
       <div className="pitch-slide-inner">
         <div className="pitch-label">Origin</div>
         <h2 className="pitch-title">
-          Solana&apos;s co-founder wrote the math. We won his bounties.
-          He&apos;s still engaged.
+          Solana&apos;s co-founder built the risk engine. We&apos;re
+          bringing his vision to life.
         </h2>
 
         <p
@@ -1018,15 +1018,11 @@ function SlideOrigin(_: SlideProps) {
             marginBottom: "1.5rem",
           }}
         >
-          We chose this because it sits where a market gap meets our
-          own background. We come from the memecoin and long-tail
-          token world, so we knew firsthand there&apos;s real unmet
-          demand to trade these assets with leverage: thousands of
-          long-tail tokens launch on Solana and never get a perp
-          listing, because listing is gatekept everywhere. What gave
-          us conviction to build the permissionless alternative was
-          the engine itself. Anatoly Yakovenko wrote the risk math and
-          open-sourced a reference program at{" "}
+          Anatoly Yakovenko designed Percolator, a risk engine built
+          so perp markets can be as permissionless as token creation:
+          every market is isolated, bad debt stays contained to the
+          market that caused it, and safety fails closed instead of
+          trusting operators or oracles. He open-sourced it at{" "}
           <a
             href="https://github.com/aeyakovenko/percolator-prog"
             target="_blank"
@@ -1039,17 +1035,18 @@ function SlideOrigin(_: SlideProps) {
           >
             aeyakovenko/percolator-prog
           </a>
-          , and its design isolates every market in its own risk pool,
-          so one blowup can&apos;t touch any other. We built on top of
-          it: the trading app, the LP vault, transferable NFT
-          positions, dispute resolution, keepers, and the SDK. Later,
-          Toly posted public bounties for
-          mainnet-market work, and we won two of them.{" "}
+          {" "}and invited the ecosystem to break it. We took that
+          seriously: we found and patched engine bugs, built our own
+          stake program for the insurance layer, and won two of his
+          public bounties.{" "}
           <strong style={{ color: "rgba(255,255,255,0.95)" }}>David</strong>{" "}
           won the KeeperCrank fix.{" "}
           <strong style={{ color: "rgba(255,255,255,0.95)" }}>Khubair</strong>{" "}
-          won a pre-audit critical bug review. Toly has publicly
-          engaged with our work over 20 times since February:
+          won a pre-audit critical bug review. Around the engine we
+          built the product layer: the trading app, the LP vault,
+          transferable NFT positions, dispute resolution, keepers, and
+          the SDK. Toly has publicly engaged with the work over 20
+          times since February:
         </p>
 
         <div className="pitch-toly-photo-grid">

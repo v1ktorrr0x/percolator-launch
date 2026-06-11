@@ -25,7 +25,7 @@ Last full verification pass: **2026-06-11** (on-chain census, engine proof count
 | ~$0.002 Solana compute per trade | VERIFIED 2026-05 | ~0.000009 SOL per fill on a real mainnet tx |
 | ~60-second permissionless market creation | SHIPPED | Devnet flow |
 | Transferable Token-2022 NFT positions | SHIPPED | Never say "first on Solana" (unverified) |
-| Both founders won Toly bounties; 20+ public Toly engagements since Feb | VERIFIED | Tweet screenshots in `/images/toly/`. TODO: link tiles to actual tweet URLs, not x.com/toly |
+| Both founders won Toly bounties; 20+ public Toly engagements since Feb; "found and patched engine bugs, built our own stake program" | VERIFIED | Tweet screenshots in `/images/toly/`. Stake program = dcccrypto/percolator-stake (Toly RT'd it: "Look, a contribution! Don't trust, verify!"). Origin framing per his READMEs: "bad debt contained to the domain that caused it", fails closed, no oracle discretion. Tiles link to x.com/toly per user choice |
 
 ## Engine / risk claims (watch these — iterative work in flight)
 
