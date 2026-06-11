@@ -1053,11 +1053,7 @@ function SlideOrigin(_: SlideProps) {
           NFT positions, dispute resolution, keepers, the SDK, and the
           trading app. We&apos;ve been breaking and patching the
           engine the whole way, and we&apos;ve won several of his
-          public bounties, including{" "}
-          <strong style={{ color: "rgba(255,255,255,0.95)" }}>David</strong>&apos;s
-          KeeperCrank fix and{" "}
-          <strong style={{ color: "rgba(255,255,255,0.95)" }}>Khubair</strong>&apos;s
-          pre-audit critical review. Some of it, in his words:
+          public bounties. Some of it, in his words:
         </p>
 
         <div className="pitch-toly-photo-grid">
