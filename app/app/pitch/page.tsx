@@ -1015,7 +1015,7 @@ function SlideOrigin(_: SlideProps) {
             fontSize: "0.95rem",
             lineHeight: 1.7,
             color: "rgba(255,255,255,0.75)",
-            marginBottom: "1.5rem",
+            marginBottom: "1rem",
           }}
         >
           Anatoly Yakovenko designed Percolator, a risk engine built
@@ -1035,23 +1035,31 @@ function SlideOrigin(_: SlideProps) {
           >
             aeyakovenko/percolator-prog
           </a>
-          {" "}and invited the ecosystem to break it. He works on the
-          risk engine and nothing else; everything around it is left
-          for builders. So we became the builders. In four months
-          we&apos;ve shipped 22 public repos around his engine:
-          upstream bug finds and patches, our own stake program for
-          the insurance layer, an on-chain matcher, 51 instructions
-          that don&apos;t exist in his reference program, four
-          programs live on mainnet, and multiple bounty wins along
-          the way, including{" "}
+          . He works on the engine and nothing else; everything around
+          it is left for whoever shows up to build.
+        </p>
+
+        <p
+          style={{
+            fontSize: "0.95rem",
+            lineHeight: 1.7,
+            color: "rgba(255,255,255,0.75)",
+            marginBottom: "1.5rem",
+          }}
+        >
+          We showed up in February. One of the first things we shipped
+          was our own stake program for the insurance layer, and Toly
+          reposted it: &ldquo;Look, a contribution! Don&apos;t trust,
+          verify!&rdquo; So we kept shipping: the matcher, the LP
+          vault, transferable NFT positions, dispute resolution, the
+          keepers, the SDK, the trading app. Along the way we kept
+          breaking the engine and patching it, and when he posted
+          public bounties we won, more than once.{" "}
           <strong style={{ color: "rgba(255,255,255,0.95)" }}>David</strong>&apos;s
           KeeperCrank fix and{" "}
           <strong style={{ color: "rgba(255,255,255,0.95)" }}>Khubair</strong>&apos;s
-          pre-audit critical bug review. The product around it is ours
-          end to end: trading app, LP vault, transferable NFT
-          positions, dispute resolution, keepers, and the SDK. Toly
-          has publicly engaged with the work over 20 times since
-          February:
+          pre-audit critical review both got his public shout-out.
+          He&apos;s engaged with the work more than 20 times since:
         </p>
 
         <div className="pitch-toly-photo-grid">
