@@ -317,6 +317,21 @@ function Slide02Team(_: SlideProps) {
 // Followers are organic, no paid spend.
 
 function Slide03Traction(_: SlideProps) {
+  // Live verified-signup count from the waitlist DB (same origin as the
+  // deck). Rounded down to the nearest hundred so the "+" stays honest;
+  // falls back to the last verified census if the endpoint is unreachable.
+  const [waitlist, setWaitlist] = useState(8000);
+  useEffect(() => {
+    fetch("/api/waitlist/count")
+      .then((r) => (r.ok ? r.json() : null))
+      .then((d) => {
+        if (d && typeof d.count === "number" && d.count >= 1000) {
+          setWaitlist(Math.floor(d.count / 100) * 100);
+        }
+      })
+      .catch(() => {});
+  }, []);
+
   return (
     <div className="pitch-slide">
       <div className="pitch-slide-inner">
@@ -351,7 +366,7 @@ function Slide03Traction(_: SlideProps) {
               backgroundClip: "text",
             }}
           >
-            <NumberCounter target={7900} suffix="+" />
+            <NumberCounter target={waitlist} suffix="+" />
           </div>
           <div
             style={{
@@ -722,7 +737,10 @@ function Slide06Money(_: SlideProps) {
           </div>
         </div>
 
-        <div className="pitch-revenue-econ" style={{ marginTop: "1.5rem" }}>
+        <div
+          className="pitch-revenue-econ"
+          style={{ marginTop: "1.5rem", gridTemplateColumns: "1fr 1fr" }}
+        >
           <div className="pitch-revenue-econ-stat">
             <div className="pitch-revenue-econ-num mono">&gt;95%</div>
             <div className="pitch-revenue-econ-label">gross margin per trade</div>
@@ -730,10 +748,6 @@ function Slide06Money(_: SlideProps) {
           <div className="pitch-revenue-econ-stat">
             <div className="pitch-revenue-econ-num mono">~$0.002</div>
             <div className="pitch-revenue-econ-label">Solana compute / trade</div>
-          </div>
-          <div className="pitch-revenue-econ-stat">
-            <div className="pitch-revenue-econ-num mono">$0</div>
-            <div className="pitch-revenue-econ-label">market-maker rebate spend</div>
           </div>
         </div>
       </div>

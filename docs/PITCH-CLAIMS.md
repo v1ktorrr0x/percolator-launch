@@ -19,7 +19,7 @@ Last full verification pass: **2026-06-11** (on-chain census, engine proof count
 | 420 Kani proof harnesses | VERIFIED 2026-06-11 | `grep -rc '#\[kani::proof\]' tests/proofs_*.rs` on the current engine branch (`~/percolator`). Re-count on every engine sync; this number has drifted 3× before |
 | 22 public repos | VERIFIED 2026-06-11 | `gh repo list dcccrypto --visibility public --json name -q '.[].name' \| grep -ci percolator` |
 | 51 fork-only instructions, 4 programs on mainnet | VERIFIED 2026-06-11 | Commit f36b673c re-verification |
-| 7,900+ verified waitlist signups (since May launch), 4,500+ bots purged | VERIFIED 2026-06-11 | Waitlist DB + signature-check pipeline. Waitlist opened ~2026-05-08 |
+| 8,000+ verified waitlist signups (LIVE-WIRED), 4,500+ bots purged | AUTO since 2026-06-11 | Deck fetches `/api/waitlist/count` (Supabase `waitlist_count` RPC, verified post-purge signups; 8,033 at wiring time), rounded down to the nearest hundred, fallback 8,000. No manual updates needed. Waitlist opened ~2026-05-08 |
 | 6,500+ organic X followers, $0 paid | VERIFIED 2026-06-11 | @percolatortrade |
 | SOL/USDC market created on mainnet in May | VERIFIED | J51cB2 slab, program `ESa89R5…`. Do NOT say "first": an earlier lab market (`CDu48T84…`) existed Apr 20–25 and its tx history is public. Slab has no successful txs since May 12, so do not say "live today" either |
 | ~$0.002 Solana compute per trade | VERIFIED 2026-05 | ~0.000009 SOL per fill on a real mainnet tx |
