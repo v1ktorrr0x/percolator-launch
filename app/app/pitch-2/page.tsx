@@ -542,9 +542,9 @@ function Slide05Product(_: SlideProps) {
             </div>
             <div className="pflow-step-title">Traders get the leverage</div>
             <div className="pflow-step-desc">
-              One cross-margin USDC account, up to 10&times;, on tokens
-              no other venue lists. Positions mint as transferable
-              Token-2022 NFTs.
+              One cross-margin USDC account, with leverage set per
+              market by its risk profile, on tokens no other venue
+              lists. Positions mint as transferable Token-2022 NFTs.
             </div>
             <div className="pflow-example-card pflow-example-card-live">
               <div className="pflow-example-label mono">fees on every trade</div>
