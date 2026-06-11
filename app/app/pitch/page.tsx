@@ -102,7 +102,7 @@ function NumberCounter({
 //   7  Traction (devnet census + mainnet line + verified-waitlist hero)
 //   8  Why Now (Drift April hack reframe; long-tail empty; shared-LP failing)
 //   9  Competition (matrix: who can list, LP model, long tail, cost)
-//  10  Business Model (10 bps; scenario table; fee routing today vs Q4)
+//  10  Business Model (illustrative scenario table; fee routing today vs V1)
 //  11  Moat (answers "where does value accrue when code is open?")
 //  12  Go-to-Market (book depth, MM strategy, who you trade against)
 //  13  Roadmap & What's Next (no raise details; risks box removed 2026-06-11)
@@ -130,9 +130,9 @@ function Slide01OneLiner(_: SlideProps) {
         <p className="pitch-hero-body">
           Barely any Solana tokens have a perp, while hundreds have
           real spot liquidity and no leverage. The reason is
-          architectural: every venue socialises
-          listing risk across one shared capital base, an LP pool or an
-          exchange-wide insurance fund, so they all have to curate.
+          architectural: every venue socialises listing risk across
+          one shared capital base (an LP pool or an exchange-wide
+          insurance fund), so they all have to curate.
           Percolator isolates LP capital per market, so anyone can list
           anything, and no market can drain another.
         </p>
@@ -579,8 +579,8 @@ function Slide06Money(_: SlideProps) {
       <div className="pitch-slide-inner">
         <div className="pitch-label">Business Model</div>
         <h2 className="pitch-title">
-          10 bps per trade, about 1 bp of it to the protocol treasury.
-          &gt;95% gross margin because we don&apos;t pay market makers.
+          A fee on every trade, split on-chain. &gt;95% gross margin
+          because we don&apos;t pay market makers.
         </h2>
 
         <div className="pitch-matrix-wrap">
@@ -623,15 +623,14 @@ function Slide06Money(_: SlideProps) {
         </div>
 
         <p className="pitch-matrix-sub" style={{ marginTop: "0.75rem" }}>
-          Math: perp volume per market &times; 10 bps trade fee, of
-          which the protocol treasury keeps ~10% (1 bp of notional).
-          The rest routes to LPs, the creator, and insurance.
-          Break-even on operating cost (~$50K/month: audit, 2
-          engineers, infra) lands at roughly <strong>17 markets doing
-          $1M/day each</strong>, between Conservative and Base. Scale
-          past the curated V1 cohort comes when permissionless
-          listings open, gated on the audit plus per-market caps and
-          funding.
+          Illustrative math: a 10 bps trade fee with roughly a tenth
+          of it to the protocol treasury produces the revenue column
+          above; the rest routes to LPs, the creator, and insurance.
+          The exact fee and split are set per market at vault
+          creation and are still being tuned ahead of V1. Break-even
+          on operating costs lands in the tens of markets, between
+          Conservative and Base. Scale past the curated V1 cohort
+          comes when permissionless listings open.
         </p>
 
         <div
@@ -781,10 +780,11 @@ function Slide09WhyNow(_: SlideProps) {
             <div className="pitch-whynow-label">
               Solana perp volume set records after the hack, with the
               first $20B week in May. The flow moved to Pacifica,
-              Jupiter, and points-chasing newcomers within weeks. Bulk
-              raised $8M from 6th Man, Robot Ventures, and Wintermute
-              and took $26M in pre-deposits before mainnet even
-              opened. New venues get rewarded immediately.
+              Jupiter, and points-chasing newcomers within weeks.
+              Bulk raised $8M (6th Man Ventures, Robot Ventures,
+              Wintermute) and took $26M in pre-deposits before its
+              mainnet even opened. New venues get rewarded
+              immediately.
             </div>
           </div>
           <div className="pitch-whynow-stat">
@@ -808,10 +808,8 @@ function Slide09WhyNow(_: SlideProps) {
               <strong style={{ color: "rgba(255,255,255,0.9)" }}>
                 no perp anywhere
               </strong>
-              . Barely any Solana-native tokens have a live perp on
-              any Solana venue today. Pacifica, the volume leader,
-              lists ~48 crypto markets and the rest are equities and
-              FX. The supply is empty.
+              . Pacifica, the volume leader, lists ~48 crypto markets
+              and the rest are equities and FX. The supply is empty.
             </div>
           </div>
         </div>
@@ -880,8 +878,9 @@ function SlideGTM(_: SlideProps) {
                 Market-maker partnerships (post-V1, not day-zero)
               </div>
               <p className="pitch-solution-desc">
-                Once a market clears $1M/day volume, we open dedicated
-                MM slots: programmatic LP topping with tighter
+                Once a market clears a sustained volume threshold,
+                we open dedicated MM slots: programmatic LP topping
+                with tighter
                 mark-deviation tolerances, paid via priority fee share
                 on that MM&apos;s deposit.{" "}
                 <strong style={{ color: "rgba(255,255,255,0.9)" }}>
@@ -904,8 +903,8 @@ function SlideGTM(_: SlideProps) {
                 Creator-first GTM, not trader-first. Every long-tail
                 listing is the creator&apos;s job to attract their
                 community, the model Pump.fun proved on spot, applied
-                to perps. Creator rev-share lever: 30% creator share
-                for the curated V1 cohort, 20% standard once
+                to perps. Creator rev-share lever: a boosted share for
+                the curated V1 cohort, a standard share once
                 permissionless listings open. Listing costs rent and
                 gas, recouped from the creator&apos;s fee share as the
                 market trades.
@@ -1469,8 +1468,6 @@ function SlideRoadmapAsk(_: SlideProps) {
             <div className="pitch-roadmap-desc">1,000-market stretch case: cross-margining, MM partnerships, the default rail for every-token perps.</div>
           </div>
         </div>
-
-
       </div>
     </div>
   );

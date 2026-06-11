@@ -42,7 +42,7 @@ Last full verification pass: **2026-06-11** (on-chain census, engine proof count
 | Funding rates | GATED (unstated in deck) | Hard-disabled in deployed engine (`funding_rate_e9 != 0` rejected; `balanced_exposure` gate). Q&A landmine: answer is "skew-velocity funding ships at mainnet V1" |
 | Four-way fee split at `CreateLpVault` | GATED | Deck labels it "at mainnet V1 (Q3–Q4 · post-audit)" — keep that label |
 | Audit Q3; mainnet V1 (curated cohort) Q3–Q4 2026; permissionless listings 2027 | TARGET | Firm selection underway as of 2026-06-11. **V1 is deliberately curated** — permissionless is the protocol's native capability (live on devnet, 220 markets) and opens after V1 proves caps/funding/insurance on real flow. Don't claim permissionless mainnet listing at V1 |
-| 10 bps fee, ~1 bp (~10%) to protocol treasury | TARGET | The scenario table and 17-market break-even only work at the 1 bp protocol take — keep the 10% share stated wherever the table appears |
+| Fee level + splits: ILLUSTRATIVE ONLY (de-specified 2026-06-11) | TARGET | Deck no longer commits to numbers: BM title is fee-generic, the scenario table footnote labels 10 bps / ~tenth-to-protocol as "illustrative… still being tuned ahead of V1", the 30/20 creator split became "boosted/standard", the $1M/day MM threshold became "a sustained volume threshold", and the $50K-month/17-market break-even became "tens of markets". Exact fee + split are per-market at `CreateLpVault`. Don't reintroduce hard economics numbers until they're final |
 
 ## Competitive / market claims
 

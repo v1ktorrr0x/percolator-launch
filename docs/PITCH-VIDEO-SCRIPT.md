@@ -99,7 +99,7 @@
 - "We built the whole thing" — Toly built the risk engine; we built the product layer around it. Give him credit.
 - "Perp launcher" — we're not just a launcher; we're a permissionless perp DEX
 - "Revolutionary / disruptive / game-changing" — none of that
-- "We charge X for Y" without follow-through — be specific about the fee split
+- Hard fee numbers ("we charge 10 bps", "30% to creators") — economics are still being tuned; describe the mechanism (fee on every trade, split on-chain between LPs / creator / insurance / protocol) without committing numbers
 - Em dashes when you can use a comma or a period instead — they read as written-not-spoken
 
 ---
