@@ -463,6 +463,18 @@ function Slide05Product(_: SlideProps) {
           can launch in about 60 seconds.
         </h2>
 
+        <div className="pflow-shot-wrap">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src="/images/product/launch-market.webp"
+            alt="The live Launch a Market flow: deploy a perpetual futures market in about 60 seconds, with Quick Launch and Manual Setup paths"
+            className="pflow-shot"
+          />
+          <div className="pflow-shot-cap mono">
+            The Launch a Market flow, live on mainnet closed beta
+          </div>
+        </div>
+
         <div className="pflow-wrap">
           <div className="pflow-step">
             <div className="pflow-num-wrap">
@@ -1958,6 +1970,25 @@ export default function PitchPage() {
         }
 
         .pflow-arrow-svg { display: block; }
+
+        .pflow-shot-wrap { margin-bottom: 1.5rem; }
+
+        .pflow-shot {
+          display: block;
+          width: 100%;
+          border: 1px solid rgba(153, 69, 255, 0.25);
+          border-radius: 12px;
+          box-shadow: 0 8px 40px rgba(153, 69, 255, 0.12);
+        }
+
+        .pflow-shot-cap {
+          margin-top: 0.5rem;
+          font-size: 0.62rem;
+          letter-spacing: 0.1em;
+          text-transform: uppercase;
+          color: rgba(255, 255, 255, 0.35);
+          text-align: center;
+        }
 
         /* ── Why Now ── */
         .pitch-whynow-stats {
