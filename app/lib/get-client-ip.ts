@@ -5,7 +5,7 @@
  * `x-forwarded-for` chain (rightmost hop is most-trusted). Falls back to
  * `x-real-ip` if the forwarded-for header is absent, then "unknown".
  *
- * Must stay in sync with app/app/api/devnet-mirror-mint/route.ts (getClientIp).
+ * Used by API routes for trusted-proxy-aware rate limiting.
  */
 import type { NextRequest } from "next/server";
 
@@ -14,11 +14,9 @@ export function getClientIp(req: NextRequest): string {
   if (PROXY_DEPTH > 0) {
     const forwarded = req.headers.get("x-forwarded-for");
     if (forwarded) {
-      const ips = forwarded.split(",").map((s) =>
-      s.trim()).filter(Boolean);
+      const ips = forwarded.split(",").map((s) => s.trim()).filter(Boolean);
       if (ips.length > 0) {
-        const idx = Math.max(0, ips.length - 
-      PROXY_DEPTH);
+        const idx = Math.max(0, ips.length - PROXY_DEPTH);
         return ips[idx] ?? "unknown";
       }
     }
