@@ -41,7 +41,6 @@ import {
   createInitializeMintInstruction,
 } from "@solana/spl-token";
 import { getConfig } from "@/lib/config";
-import { getClientIp } from "@/lib/get-client-ip";
 import { getServiceClient } from "@/lib/supabase";
 import { getDevnetMintSigner } from "@/lib/devnet-signer";
 import { validateTokenMetadata, validateDexScreenerResponse, validateJupiterTokenResponse } from "@/lib/token-metadata-validators";
