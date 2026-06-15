@@ -223,28 +223,47 @@ export function useTrade(slabAddress: string) {
           // accountB = LP's portfolio, found by scanning the LP's config storage.
           // The LP portfolio stores PortfolioMatcherConfigV16 appended at the end.
           //
-          // LP portfolio discovery: derive lpPda as the LP's portfolio pubkey.
-          // In v17 bring-up, LPs are initialized at the deriveLpPda address so
-          // the frontend can find them without a GPAs scan.
-          const [lpPda] = deriveLpPda(programId, slabPk, params.lpIdx);
-          accountB = lpPda;
-
-          // Fetch LP portfolio on-chain to read matcher config.
-          const lpPortfolioInfo = await connection.getAccountInfo(lpPda);
-          if (!lpPortfolioInfo) {
+          // LP portfolio discovery: scan all v17 portfolio accounts for this market
+          // and find the one that has an enabled PortfolioMatcherConfigV16.
+          // v17 LP portfolios are standalone keypair-addressed accounts (NOT PDAs),
+          // so deriveLpPda has no relationship to the real LP account address.
+          // We use getProgramAccounts filtered by magic + market_group_id, then
+          // iterate to find the portfolio with an enabled matcher config.
+          //
+          // NOTE: We intentionally do NOT filter by owner here — the LP portfolio
+          // owner is a separate wallet, not the taker. We scan all portfolios for
+          // this market and select the first one with an active matcher config.
+          let lpPortfolioData: Buffer | null = null;
+          let lpPortfolioPk: PublicKey | null = null;
+          try {
+            const allPortfolios = await connection.getProgramAccounts(programId, {
+              filters: [
+                { memcmp: { offset: 0, bytes: V17_PORTFOLIO_MAGIC.toString("base64"), encoding: "base64" } },
+                { memcmp: { offset: PORTFOLIO_PROVENANCE_MARKET_GROUP_OFF, bytes: slabPk.toBase58() } },
+              ],
+            });
+            for (const { pubkey, account } of allPortfolios) {
+              const data = Buffer.from(account.data);
+              const cfg = readPortfolioMatcherConfig(data);
+              if (cfg) {
+                lpPortfolioData = data;
+                lpPortfolioPk = pubkey;
+                break;
+              }
+            }
+          } catch (scanErr) {
             throw new Error(
-              `LP portfolio account not found at ${lpPda.toBase58()}. ` +
-              "The LP may not be initialized on this market.",
+              `Failed to scan LP portfolio accounts on-chain: ${scanErr instanceof Error ? scanErr.message : String(scanErr)}`,
             );
           }
-          const lpPortfolioData = Buffer.from(lpPortfolioInfo.data);
-          const matcherCfg = readPortfolioMatcherConfig(lpPortfolioData);
-          if (!matcherCfg) {
+          if (!lpPortfolioPk || !lpPortfolioData) {
             throw new Error(
-              `LP portfolio at ${lpPda.toBase58()} does not have matcher config enabled. ` +
+              "No LP portfolio with an active matcher config found for this market. " +
               "The LP must call SetMatcherConfig before trading.",
             );
           }
+          accountB = lpPortfolioPk;
+          const matcherCfg = readPortfolioMatcherConfig(lpPortfolioData)!;
           matcherProg = matcherCfg.matcherProgram;
           matcherCtx = matcherCfg.matcherContext;
 
