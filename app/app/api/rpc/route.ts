@@ -265,6 +265,36 @@ function validateRequest(req: Record<string, unknown>): { jsonrpc: string; error
       id: req?.id ?? null,
     };
   }
+  // #2204: getProgramAccounts must be bounded. An unfiltered getProgramAccounts over a busy
+  // program returns every account and is fully materialized in this Node process — a single
+  // request can exhaust memory regardless of the per-IP rate limit. Require a non-empty
+  // `filters` array containing at least one `dataSize` or `memcmp` so the upstream node bounds
+  // the result set. (The app always queries with a dataSize + market memcmp; only an abusive
+  // caller omits them.)
+  if (method === "getProgramAccounts") {
+    const params = req?.params;
+    const cfg = Array.isArray(params) ? (params[1] as Record<string, unknown> | undefined) : undefined;
+    const filters = cfg?.filters;
+    const bounded =
+      Array.isArray(filters) &&
+      filters.some(
+        (f) =>
+          f != null &&
+          typeof f === "object" &&
+          ("dataSize" in (f as object) || "memcmp" in (f as object)),
+      );
+    if (!bounded) {
+      console.warn("[/api/rpc] Blocked unbounded getProgramAccounts (no dataSize/memcmp filter)");
+      return {
+        jsonrpc: "2.0",
+        error: {
+          code: -32602,
+          message: "getProgramAccounts requires a bounding filter (dataSize or memcmp)",
+        },
+        id: req?.id ?? null,
+      };
+    }
+  }
   return null;
 }
 
