@@ -373,11 +373,48 @@ function isAllowedOrigin(req: NextRequest): boolean {
   if (!hostname) return false;
 
   if (hostname === "localhost" || hostname === "127.0.0.1") {
-    return true;
+    // #2210: only trust a localhost Origin in DEVELOPMENT. In production this was an
+    // unconditional bypass — any non-browser caller could send `Origin: http://localhost`
+    // and drain the paid Helius key. Origin is client-controlled/spoofable, so localhost
+    // is accepted only on a non-production deployment (local dev / preview).
+    return process.env.NODE_ENV !== "production";
   }
 
   // Accept the apex domain and its subdomains only.
   return hostname === "percolatorlaunch.com" || hostname.endsWith(".percolatorlaunch.com");
+}
+
+/**
+ * #2210: best-effort per-IP rate limit. The Origin/Referer check is defense-in-depth
+ * ONLY — Origin is a client-controlled header, so a non-browser caller can spoof an
+ * allowed value (e.g. `Origin: https://percolatorlaunch.com`) and still pass. To bound
+ * paid-Helius-quota drain we cap requests per source IP. In-memory + per-instance (not a
+ * hard global guarantee — infra-level rate limiting should layer on top), but it removes
+ * the "unbounded anonymous drain" property. Tunable via RPC_RATE_LIMIT_PER_WINDOW.
+ */
+const RATE_LIMIT_WINDOW_MS = 10_000;
+const RATE_LIMIT_MAX = Number(process.env.RPC_RATE_LIMIT_PER_WINDOW ?? "200"); // per IP / 10s
+const rateBuckets = new Map<string, { count: number; resetAt: number }>();
+
+function rateLimited(req: NextRequest): boolean {
+  if (!Number.isFinite(RATE_LIMIT_MAX) || RATE_LIMIT_MAX <= 0) return false; // disabled
+  const ip = (
+    req.headers.get("x-forwarded-for")?.split(",")[0] ??
+    req.headers.get("x-real-ip") ??
+    "unknown"
+  ).trim();
+  const now = Date.now();
+  const b = rateBuckets.get(ip);
+  if (!b || now > b.resetAt) {
+    // Opportunistic cleanup of expired buckets to bound memory.
+    if (rateBuckets.size > 5000) {
+      for (const [k, v] of rateBuckets) if (now > v.resetAt) rateBuckets.delete(k);
+    }
+    rateBuckets.set(ip, { count: 1, resetAt: now + RATE_LIMIT_WINDOW_MS });
+    return false;
+  }
+  b.count++;
+  return b.count > RATE_LIMIT_MAX;
 }
 
 export async function POST(req: NextRequest) {
@@ -386,6 +423,14 @@ export async function POST(req: NextRequest) {
     return NextResponse.json(
       { jsonrpc: "2.0", error: { code: -32600, message: "Forbidden" }, id: null },
       { status: 403 }
+    );
+  }
+
+  // #2210: per-IP rate limit — Origin is spoofable, so cap drain rate regardless.
+  if (rateLimited(req)) {
+    return NextResponse.json(
+      { jsonrpc: "2.0", error: { code: -32005, message: "Rate limit exceeded" }, id: null },
+      { status: 429 }
     );
   }
 
