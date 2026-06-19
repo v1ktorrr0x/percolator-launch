@@ -128,13 +128,9 @@ export function Slide01OneLiner(_: SlideProps) {
           Perpetual futures for every token on Solana.
         </p>
         <p className="pitch-hero-body">
-          Barely any Solana tokens have a perp, while hundreds have
-          real spot liquidity and no leverage. The reason is
-          architectural: every venue socialises listing risk across
-          one shared capital base (an LP pool or an exchange-wide
-          insurance fund), so they all have to curate.
-          Percolator isolates LP capital per market, so anyone can list
-          anything, and no market can drain another.
+          Almost no Solana token can be traded with leverage today.
+          Percolator lets anyone launch a perp market for any token,
+          with each market&apos;s risk kept to itself.
         </p>
         <p className="pitch-url">percolator.trade</p>
       </div>
@@ -151,9 +147,9 @@ export function SlideProblem(_: SlideProps) {
       <div className="pitch-slide-inner">
         <div className="pitch-label">Problem</div>
         <h2 className="pitch-title">
-          Every perp venue pools its risk capital. That&apos;s why
-          they&apos;re all curated, and why three of them have been
-          drained.
+          Every perp venue shares one pool of capital. So they all
+          curate which tokens they list, and when that breaks, the
+          pool gets drained.
         </h2>
 
         <div className="pitch-matrix-wrap">
@@ -196,11 +192,10 @@ export function SlideProblem(_: SlideProps) {
         </div>
 
         <p className="pitch-matrix-sub">
-          Solana made spot creation permissionless. Perp creation never
-          followed: when one listing can hurt everyone&apos;s capital,
-          someone has to say no. That&apos;s why Drift, Jupiter, and
-          Pacifica all converge on the same 30&ndash;50 tickers, by
-          architectural necessity, not by taste.
+          Launching a token on Solana is permissionless. Launching a
+          perp is not. When one bad market can drain the shared pool,
+          someone has to choose the listings, so every venue ends up
+          offering the same 30 to 50 large caps.
         </p>
       </div>
     </div>
@@ -431,10 +426,9 @@ export function Slide03Traction(_: SlideProps) {
               </div>
             </div>
             <div className="pitch-traction-network-meta mono">
-              220 valid slabs counted by magic-byte filter across the
-              three slab-tier program deployments, every one
-              verifiable on chain. Each market seeds its own LP
-              vault, isolated per listing.
+              All 220 are real markets created on devnet by 71
+              different wallets, every one verifiable on chain. Each
+              one seeds its own isolated vault.
             </div>
           </div>
         </div>
@@ -475,8 +469,8 @@ export function Slide05Product(_: SlideProps) {
       <div className="pitch-slide-inner">
         <div className="pitch-label">The Product</div>
         <h2 className="pitch-title">
-          Leverage on any token, in one account, and a market anyone
-          can launch in about 60 seconds.
+          Each market is its own island. Anyone can launch one in
+          about a minute.
         </h2>
 
         <div className="pflow-shot-wrap">
@@ -498,9 +492,8 @@ export function Slide05Product(_: SlideProps) {
             </div>
             <div className="pflow-step-title">Creators launch the market</div>
             <div className="pflow-step-desc">
-              Any SPL token with DEX liquidity. No listing committee,
-              and no oracle listing required: the index pins to the
-              token&apos;s own DEX pool.
+              Any token with on-chain liquidity. No committee, no
+              waiting. The market prices off the token&apos;s own pool.
             </div>
             <div className="pflow-example-card">
               <div className="pflow-example-label mono">time to market</div>
@@ -534,9 +527,9 @@ export function Slide05Product(_: SlideProps) {
             </div>
             <div className="pflow-step-title">LPs seed the depth</div>
             <div className="pflow-step-desc">
-              Deposit USDC into that one market&apos;s vault and earn
-              its fees, JLP-style. Exposure ends at that market&apos;s
-              edge. No other listing can touch it.
+              Deposit USDC into one market&apos;s vault and earn its
+              fees. Your exposure stops at that market. Nothing else
+              can touch it.
             </div>
             <div className="pflow-example-card">
               <div className="pflow-example-label mono">LP model</div>
@@ -570,10 +563,8 @@ export function Slide05Product(_: SlideProps) {
             </div>
             <div className="pflow-step-title">Traders get the leverage</div>
             <div className="pflow-step-desc">
-              One cross-margin USDC account, with leverage set per
-              market by its risk profile, including tokens no other
-              venue lists. Positions mint as transferable Token-2022
-              NFTs.
+              Trade with leverage on tokens no other venue carries.
+              Each position is an NFT you can transfer or sell.
             </div>
             <div className="pflow-example-card pflow-example-card-live">
               <div className="pflow-example-label mono">fees on every trade</div>
@@ -587,10 +578,9 @@ export function Slide05Product(_: SlideProps) {
         </div>
 
         <div className="pitch-create-footer">
-          The loop compounds: every trade pays the creator and the LPs
-          who made the market possible, which recruits the next
-          creator. It&apos;s running on devnet now; the mainnet
-          program is in closed beta.
+          Every trade pays the creator and the LPs who backed the
+          market, which pulls in the next creator. Live on devnet
+          today, in closed beta on mainnet.
         </div>
       </div>
     </div>
@@ -649,14 +639,11 @@ export function Slide06Money(_: SlideProps) {
         </div>
 
         <p className="pitch-matrix-sub" style={{ marginTop: "0.75rem" }}>
-          Illustrative math: a 10 bps trade fee with roughly a tenth
-          of it to the protocol treasury produces the revenue column
-          above; the rest routes to LPs, the creator, and insurance.
-          The exact fee and split are set per market at vault
-          creation and are still being tuned ahead of V1. Break-even
-          on operating costs lands in the tens of markets, between
-          Conservative and Base. Scale past the curated V1 cohort
-          comes when permissionless listings open.
+          Illustrative: a small fee on every trade, a slice to the
+          protocol and the rest to LPs, the creator, and insurance.
+          The exact split is set per market and still being tuned. We
+          break even in the tens of active markets, and the table
+          scales from there.
         </p>
 
         <div
@@ -695,9 +682,8 @@ export function Slide06Money(_: SlideProps) {
                 color: "rgba(255,255,255,0.7)",
               }}
             >
-              Trade fee &rarr; per-market insurance fund &rarr; LPs
-              accrue via vault crank. Single-stream, fully on-chain,
-              isolated per market.
+              Today, in beta, the trade fee flows to each market&apos;s
+              own insurance and LPs, fully on-chain.
             </div>
           </div>
           <div
@@ -727,10 +713,9 @@ export function Slide06Money(_: SlideProps) {
                 color: "rgba(255,255,255,0.7)",
               }}
             >
-              Four-way split (LP vault, market creator, protocol
-              treasury, insurance), atomic on-chain in the settlement
-              transaction. Exact percentages set per market
-              at <span className="mono">CreateLpVault</span>.
+              At V1, a four-way split across the LP vault, the
+              creator, the protocol, and insurance, settled on-chain
+              with every trade.
             </div>
           </div>
         </div>
@@ -761,8 +746,8 @@ export function Slide09WhyNow(_: SlideProps) {
       <div className="pitch-slide-inner">
         <div className="pitch-label">Why Now</div>
         <h2 className="pitch-title">
-          Solana&apos;s largest perp DEX was drained in April. The
-          volume re-routed within weeks. The long tail still has
+          Solana&apos;s largest perp venue was drained in April. The
+          volume came back within weeks, and the long tail still has
           nowhere to go.
         </h2>
         <div className="pitch-whynow-stats">
@@ -785,10 +770,9 @@ export function Slide09WhyNow(_: SlideProps) {
               <strong style={{ color: "rgba(255,255,255,0.9)" }}>
                 $295M
               </strong>{" "}
-              by a DPRK durable-nonce attack on its admin multisig. It
-              went down in April and is relaunching as a USDT-settled
-              exchange backed by Tether. The category leader reset to
-              zero overnight.
+              in a state-sponsored attack on its admin keys. It is
+              relaunching with Tether&apos;s backing, but its traders
+              scattered the day it went down.
             </div>
           </div>
           <div className="pitch-whynow-stat">
@@ -803,11 +787,10 @@ export function Slide09WhyNow(_: SlideProps) {
             </svg>
             <div className="pitch-whynow-num mono">$20B in one week</div>
             <div className="pitch-whynow-label">
-              Solana perp volume set records after the hack, peaking
-              with the first $20B week in May. The flow moved to
-              Pacifica, Jupiter, and points-chasing newcomers, and
-              Bulk took $26M in pre-deposits before its mainnet even
-              opened. New venues get rewarded immediately.
+              Solana perp volume set records after the hack, with the
+              first $20B week in May. The flow moved to whoever could
+              take it, and a brand-new venue pulled in $26M of deposits
+              before it had even opened. New venues get rewarded fast.
             </div>
           </div>
           <div className="pitch-whynow-stat">
@@ -838,9 +821,8 @@ export function Slide09WhyNow(_: SlideProps) {
           </div>
         </div>
         <div className="pitch-whynow-closing">
-          Demand is proven and distribution re-shuffles in weeks. The
-          unserved long tail is still sitting there. That&apos;s the
-          window.
+          The demand is proven and it moves fast. The market nobody
+          serves is still wide open.
         </div>
       </div>
     </div>
@@ -855,8 +837,8 @@ export function SlideGTM(_: SlideProps) {
       <div className="pitch-slide-inner">
         <div className="pitch-label">Go-to-Market</div>
         <h2 className="pitch-title">
-          Creators acquire markets. LP vaults provide depth.
-          Traders face the vault, not an order book.
+          Creators bring the markets, LP vaults provide the depth, and
+          every trade runs against the vault.
         </h2>
 
         <div className="pitch-solution-stack">
@@ -1045,13 +1027,12 @@ export function SlideOrigin(_: SlideProps) {
             marginBottom: "1.5rem",
           }}
         >
-          We showed up in February and started building everything the
-          engine needs to become a venue: our own stake program for
-          the insurance layer, the matcher, the LP vault, transferable
-          NFT positions, dispute resolution, keepers, the SDK, and the
-          trading app. We&apos;ve been breaking and patching the
-          engine the whole way, and we&apos;ve won several of his
-          public bounties.
+          We showed up in February and built everything around the
+          engine that a real venue needs: the stake program, the
+          matcher, the LP vault, NFT positions, the keepers, the SDK,
+          and the app. We&apos;ve found and fixed bugs in the engine
+          along the way, and won several of Toly&apos;s public
+          bounties.
         </p>
 
         <div className="pitch-toly-photo-grid">
@@ -1223,9 +1204,9 @@ export function SlideMath(_: SlideProps) {
                 <span className="mono">vault &ge; open_collateral + insurance</span>{" "}
                 is enforced in the engine&apos;s integrity-check path.
                 A wipeout on one market is mathematically incapable of
-                touching another market&apos;s vault. That&apos;s a
-                Solana account-model constraint, not a business
-                policy.
+                touching another market&apos;s vault. The accounts are
+                physically separate on Solana, so isolation holds by
+                construction.
               </p>
             </div>
           </div>
@@ -1383,8 +1364,8 @@ export function SlideCompetition(_: SlideProps) {
       <div className="pitch-slide-inner">
         <div className="pitch-label">Competition</div>
         <h2 className="pitch-title">
-          The whole field runs the same shared-risk playbook. Nobody
-          lets the long tail list itself.
+          Everyone runs the same shared-pool design, so none of them
+          can open up the long tail.
         </h2>
 
         <div className="pitch-matrix-wrap">
@@ -1446,12 +1427,13 @@ export function SlideCompetition(_: SlideProps) {
         </div>
 
         <p className="pitch-matrix-sub">
-          This isn&apos;t a feature gap, it&apos;s an architecture gap.
-          The best-funded new entrant is marketing permissionless
-          perps on shared-risk architecture; we&apos;re the version
-          where a listing&apos;s risk ends at that market&apos;s edge.
-          Copying that means migrating live trader capital, which no
-          incumbent can do to its own users.
+          Every venue here shares one pool of risk, so every one of
+          them has to curate. To match real isolation, an incumbent
+          would have to move live trader capital out of its pool,
+          which it can&apos;t do without breaking its own users. And a
+          fork of our code still opens with empty vaults; the
+          liquidity and the creators who seeded it don&apos;t copy
+          over.
         </p>
       </div>
     </div>
@@ -1500,6 +1482,133 @@ export function SlideRoadmapAsk(_: SlideProps) {
           Each phase gates the next: no V1 before the audit clears,
           and no open listings before caps and funding have run on
           real flow.
+        </p>
+      </div>
+    </div>
+  );
+}
+
+// ─── Slide · Opportunity (the long-tail business case) ───────────────────────
+
+export function SlideOpportunity(_: SlideProps) {
+  return (
+    <div className="pitch-slide">
+      <div className="pitch-slide-inner">
+        <div className="pitch-label">Opportunity</div>
+        <h2 className="pitch-title">
+          Small-cap perps, and why they won&apos;t be dead markets.
+        </h2>
+
+        <p
+          className="pitch-body-text"
+          style={{ marginBottom: "1.25rem", maxWidth: "760px" }}
+        >
+          Most of these markets will be small. That works, for three
+          reasons.
+        </p>
+
+        <div className="pitch-solution-stack">
+          <div className="pitch-solution-item">
+            <div className="pitch-solution-num purple">1</div>
+            <div>
+              <div className="pitch-solution-name">The demand already exists</div>
+              <p className="pitch-solution-desc">
+                We expect a market only where a token already has real
+                spot volume and a community trading it. Those holders
+                want leverage and have nowhere to get it.
+              </p>
+            </div>
+          </div>
+          <div className="pitch-solution-item">
+            <div className="pitch-solution-num cyan">2</div>
+            <div>
+              <div className="pitch-solution-name">The creator brings the liquidity</div>
+              <p className="pitch-solution-desc">
+                Whoever launches the market seeds the first vault and
+                rallies their own community, because they earn on every
+                trade. We don&apos;t have to fund a thousand markets
+                ourselves.
+              </p>
+            </div>
+          </div>
+          <div className="pitch-solution-item">
+            <div className="pitch-solution-num purple">3</div>
+            <div>
+              <div className="pitch-solution-name">A quiet market costs nothing</div>
+              <p className="pitch-solution-desc">
+                Because each market is isolated, one with no volume just
+                sits there harmlessly. It can&apos;t be drained or used
+                to attack the rest, so a few breakouts carry the
+                economics and the rest are free to leave running.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <p className="pitch-matrix-sub" style={{ marginTop: "1.25rem" }}>
+          Hyperliquid lets anyone list a perp too, but it takes a stake
+          worth tens of millions, so only a handful ever launch. At
+          rent and gas, the real long tail can finally exist.
+        </p>
+      </div>
+    </div>
+  );
+}
+
+// ─── Slide · How it stays safe (VC plain-English variant of SlideMath) ───────
+
+export function SlideMathVC(_: SlideProps) {
+  return (
+    <div className="pitch-slide">
+      <div className="pitch-slide-inner">
+        <div className="pitch-label">How it stays safe</div>
+        <h2 className="pitch-title">
+          When a trader blows up, the loss is absorbed automatically,
+          in one step, and never leaves that market.
+        </h2>
+
+        <div className="pitch-solution-stack">
+          <div className="pitch-solution-item">
+            <div className="pitch-solution-num purple">1</div>
+            <div>
+              <div className="pitch-solution-name">Every market is walled off</div>
+              <p className="pitch-solution-desc">
+                Each market keeps its own collateral, liquidity, and
+                insurance in separate on-chain accounts. A blow-up in
+                one can never reach another, because they are physically
+                separate accounts on Solana.
+              </p>
+            </div>
+          </div>
+          <div className="pitch-solution-item">
+            <div className="pitch-solution-num cyan">2</div>
+            <div>
+              <div className="pitch-solution-name">Losses settle in one step</div>
+              <p className="pitch-solution-desc">
+                If a trader is liquidated past their collateral, the
+                shortfall is spread across the other side of that one
+                market in a single update, with no liquidation queue and
+                no one stepping in by hand.
+              </p>
+            </div>
+          </div>
+          <div className="pitch-solution-item">
+            <div className="pitch-solution-num purple">3</div>
+            <div>
+              <div className="pitch-solution-name">You can&apos;t pump and cash out</div>
+              <p className="pitch-solution-desc">
+                Profit is locked for a short window before it can be
+                withdrawn, so an attacker can&apos;t move a thin price
+                and extract in the same block. The move that drained
+                Mango hits a wall here.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <p className="pitch-team-footer" style={{ marginTop: "1.5rem" }}>
+          The engine carries 420 formal proofs covering its core
+          invariants, with an external audit targeted for Q3.
         </p>
       </div>
     </div>
