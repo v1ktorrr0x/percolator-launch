@@ -73,9 +73,13 @@ export async function POST(req: Request) {
         .eq("pubkey", pubkey)
         .maybeSingle();
       if (data?.referral_code) {
-        // Opportunistic backfill — if this row has no DID yet, claim it.
         if (!data.privy_did) {
+          // Only backfill if the wallet that matched was extracted from
+          // the access-token's own bound identity token.
           await backfillPrivyDid(supabase, data.id, auth.userId);
+        } else if (data.privy_did !== auth.userId) {
+          // Row already owned by a different DID — skip and continue.
+          continue;
         }
         const position = await getPosition(supabase, data);
         return NextResponse.json({
@@ -97,6 +101,9 @@ export async function POST(req: Request) {
       if (data?.referral_code) {
         if (!data.privy_did) {
           await backfillPrivyDid(supabase, data.id, auth.userId);
+        } else if (data.privy_did !== auth.userId) {
+          // Different owner — do not return or backfill this row.
+          return NextResponse.json({ found: false });
         }
         const position = await getPosition(supabase, data);
         return NextResponse.json({

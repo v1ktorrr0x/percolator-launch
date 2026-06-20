@@ -2,12 +2,15 @@ import { NextRequest, NextResponse } from "next/server";
 import { getServiceClient } from "@/lib/supabase";
 import { requireAdminSession } from "@/lib/admin-session";
 import { getClientIp } from "@/lib/get-client-ip";
-import { createMemoryRateLimiter } from "@/lib/memory-rate-limit";
+import { createUpstashRateLimiter } from "@/lib/upstash-rate-limit";
 
 export const dynamic = 'force-dynamic';
 
-// 3 applications per IP per hour
-const rateLimiter = createMemoryRateLimiter({ limit: 3, windowMs: 3600_000 });
+const rateLimiter = createUpstashRateLimiter({
+  limit: 3,
+  windowMs: 3_600_000,
+  prefix: "rl:applications",
+});
 
 function sanitize(str: string): string {
   return str.replace(/[<>]/g, "").trim();
@@ -48,11 +51,34 @@ export async function POST(req: NextRequest) {
   try {
     const ip = getClientIp(req);
 
-    if (rateLimiter.isLimited(ip)) {
+    const rl = await rateLimiter.check(ip);
+    if (!rl.allowed) {
       return NextResponse.json(
-        { error: "Rate limited — max 3 applications per hour" },
-        { status: 429 }
+        { error: "Rate limited — max 3 applications per hour", retryAfterSecs: rl.retryAfterSecs },
+        { status: 429 },
       );
+    }
+
+    // Require Turnstile before parsing the large body.
+    const turnstileToken = req.headers.get("x-turnstile-token");
+    if (!turnstileToken) {
+      return NextResponse.json({ error: "Bot check required" }, { status: 403 });
+    }
+    const verify = await fetch(
+      "https://challenges.cloudflare.com/turnstile/v0/siteverify",
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: new URLSearchParams({
+          secret: process.env.TURNSTILE_SECRET_KEY ?? "",
+          response: turnstileToken,
+          remoteip: ip,
+        }),
+      },
+    );
+    const { success } = await verify.json() as { success: boolean };
+    if (!success) {
+      return NextResponse.json({ error: "Bot check failed" }, { status: 403 });
     }
 
     const body = await req.json();

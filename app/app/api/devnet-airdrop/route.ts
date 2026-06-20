@@ -88,19 +88,24 @@ async function tryClaimGate(
   supabase: ReturnType<typeof getServiceClient>,
   walletAddress: string,
   mintAddress: string,
-): Promise<{ allowed: boolean; retryAfterSecs: number; claimId?: number }> {
+): Promise<{ allowed: boolean; retryAfterSecs: number | null; claimId?: number }> {
   const windowStart = new Date(Date.now() - RATE_LIMIT_WINDOW_MS).toISOString();
 
   try {
     // Pre-check (GH#1803-style): active claim in window → deny before INSERT so a
     // transient INSERT error cannot fail-open into the mint path for rate-limited wallets.
-    const { data: activeClaim } = await supabase
+    const { data: activeClaim, error: preCheckError } = await supabase
       .from("devnet_airdrop_claims")
       .select("claimed_at")
       .eq("wallet", walletAddress)
       .eq("mint", mintAddress)
       .gte("claimed_at", windowStart)
       .maybeSingle();
+
+    if (preCheckError) {
+      console.warn(`[devnet-airdrop] pre-check SELECT error: ${preCheckError.message}`);
+      return { allowed: false, retryAfterSecs: null };
+    }
 
     if (activeClaim) {
       const age = Date.now() - new Date(activeClaim.claimed_at as string).getTime();
@@ -146,14 +151,14 @@ async function tryClaimGate(
         return { allowed: false, retryAfterSecs: Math.ceil(RATE_LIMIT_WINDOW_MS / 1000) };
       }
 
-      // Unexpected DB error — fail open to avoid blocking users; capture for alerting.
+      // Unexpected DB error — fail closed
       const dbErr = new Error(`[devnet-airdrop] gate INSERT failed: ${error.message}`);
       console.warn(dbErr.message);
       Sentry.captureException(dbErr, {
         tags: { endpoint: "/api/devnet-airdrop", step: "try_claim_gate" },
         extra: { supabase_code: error.code, walletAddress, mintAddress },
       });
-      return { allowed: true, retryAfterSecs: 0 };
+      return { allowed: false, retryAfterSecs: null };
     }
 
     return { allowed: true, retryAfterSecs: 0, claimId: data?.id };
@@ -164,7 +169,7 @@ async function tryClaimGate(
       tags: { endpoint: "/api/devnet-airdrop", step: "try_claim_gate" },
       extra: { walletAddress, mintAddress },
     });
-    return { allowed: true, retryAfterSecs: 0 };
+    return { allowed: false, retryAfterSecs: null };
   }
 }
 
@@ -507,6 +512,12 @@ export async function POST(req: NextRequest) {
     //    This eliminates the TOCTOU race in the previous SELECT→UPSERT flow.
     const { allowed, retryAfterSecs, claimId } = await tryClaimGate(supabase, walletAddress, mintAddress);
     if (!allowed) {
+      if (retryAfterSecs === null) {
+        return NextResponse.json(
+          { error: "Service temporarily unavailable — please retry" },
+          { status: 503 },
+        );
+      }
       const h = Math.floor(retryAfterSecs / 3600);
       const m = Math.floor((retryAfterSecs % 3600) / 60);
       return NextResponse.json(

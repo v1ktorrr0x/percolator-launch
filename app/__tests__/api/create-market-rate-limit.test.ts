@@ -26,12 +26,11 @@ describe("getClientIp", () => {
     getClientIp = mod.getClientIp as unknown as (req: Request) => string;
   });
 
-  it("extracts rightmost hop with depth 1 (anti-spoofing)", () => {
+  it("peels trusted proxy hop with depth 1", () => {
     const req = new Request("http://localhost/", {
       headers: { "x-forwarded-for": "1.2.3.4, 5.6.7.8" },
     });
-    // depth=1: rightmost hop → ips[1] = 5.6.7.8
-    expect(getClientIp(req as never)).toBe("5.6.7.8");
+    expect(getClientIp(req as never)).toBe("1.2.3.4");
   });
 
   it("falls back to x-real-ip when x-forwarded-for is absent", () => {

@@ -77,13 +77,18 @@ async function tryAirdropClaimGate(
   try {
     // Pre-check (same idea as GH#1803 / tryFaucetGate): if an active claim exists,
     // deny before INSERT so a transient INSERT error cannot fail-open into the mint path.
-    const { data: activeClaim } = await supabase
+    const { data: activeClaim, error: preCheckError } = await supabase
       .from("airdrop_claims")
       .select("claimed_at")
       .eq("wallet", walletAddress)
       .eq("market_address", marketAddress)
       .gte("claimed_at", windowStart)
       .maybeSingle();
+
+    if (preCheckError) {
+      console.warn(`[airdrop] pre-check SELECT error: ${preCheckError.message}`);
+      return { allowed: false, nextClaimAt: null };
+    }
 
     if (activeClaim) {
       const nextClaimAt = new Date(
@@ -124,16 +129,16 @@ async function tryAirdropClaimGate(
         return { allowed: false, nextClaimAt };
       }
 
-      // Unexpected DB error — fail open to avoid blocking users; log for alerting.
+      // Unexpected DB error — fail closed
       console.warn(`[airdrop] claim gate INSERT error (code=${error.code}): ${error.message}`);
-      return { allowed: true, nextClaimAt: null };
+      return { allowed: false, nextClaimAt: null };
     }
 
     return { allowed: true, nextClaimAt: null, claimId: (data as { id: number; claimed_at: string } | null)?.id };
   } catch (err) {
     console.warn("[airdrop] tryAirdropClaimGate threw:", err instanceof Error ? err.message : String(err));
-    // Fail open — don't block users on unexpected errors
-    return { allowed: true, nextClaimAt: null };
+    // Fail closed
+    return { allowed: false, nextClaimAt: null };
   }
 }
 
@@ -295,9 +300,15 @@ export async function POST(req: NextRequest) {
       marketAddress,
     );
     if (!allowed) {
+      const isRateLimited = rateLimitNextClaimAt !== null;
       return NextResponse.json(
-        { error: "Already claimed in the last 24 hours", nextClaimAt: rateLimitNextClaimAt },
-        { status: 429 },
+        {
+          error: isRateLimited
+            ? "Already claimed in the last 24 hours"
+            : "Service temporarily unavailable — please retry",
+          ...(isRateLimited && { nextClaimAt: rateLimitNextClaimAt }),
+        },
+        { status: isRateLimited ? 429 : 503 },
       );
     }
 
