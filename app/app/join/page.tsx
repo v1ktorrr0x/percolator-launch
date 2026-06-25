@@ -4,7 +4,7 @@ import { useState, useRef } from "react";
 import Link from "next/link";
 import { ScrollReveal } from "@/components/ui/ScrollReveal";
 
-const card = "rounded-sm bg-[var(--panel-bg)] border border-[var(--border)] p-6";
+const card = "glass-card glass-card--hover p-6";
 const h2Style = "text-lg font-bold text-[var(--text)] mb-4";
 const textMuted = "text-[13px] leading-relaxed text-[var(--text-secondary)]";
 const labelStyle = "block text-[11px] font-medium uppercase tracking-[0.15em] text-[var(--text-muted)] mb-1.5";
@@ -182,18 +182,15 @@ export default function JoinPage() {
   return (
     <div className="min-h-[calc(100dvh-48px)] relative">
       <div className="absolute inset-x-0 top-0 h-48 bg-grid pointer-events-none" />
-      <div className="relative mx-auto max-w-6xl px-4 py-10">
+      <div className="relative mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 pt-8 pb-16">
         {/* Header */}
         <ScrollReveal>
           <div className="mb-8">
-            <div className="mb-2 text-[10px] font-medium uppercase tracking-[0.25em] text-[var(--accent)]/60">
-              // careers
-            </div>
-            <h1 className="text-xl font-medium tracking-[-0.01em] text-[var(--text)] sm:text-2xl" style={{ fontFamily: "var(--font-heading)" }}>
-              <span className="font-bold">Join</span>{" "}
-              <span className="font-normal text-[var(--text-muted)]">Us</span>
+            <div className="eyebrow mb-4">careers</div>
+            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-white font-jakarta uppercase">
+              <span className="text-white/40 font-light">JOIN </span>US
             </h1>
-            <p className="mt-2 text-[13px] text-[var(--text-secondary)]">
+            <p className="mt-3 text-sm sm:text-base text-white/70 max-w-xl leading-relaxed font-inter">
               Help build the future of perpetual futures on Solana.
             </p>
           </div>

@@ -1,6 +1,7 @@
 'use client';
 
 import { AnimatedNumber } from '@/components/ui/AnimatedNumber';
+import { PageHeader } from '@/components/ui/PageHeader';
 import type { EarnStats } from '@/hooks/useEarnStats';
 
 interface EarnHeaderProps {
@@ -14,23 +15,15 @@ export function EarnHeader({ stats, loading }: EarnHeaderProps) {
       {/* Background grid fade */}
       <div className="absolute inset-x-0 top-0 h-48 bg-grid pointer-events-none" />
 
-      <div className="relative mx-auto max-w-6xl px-4 pt-10 pb-6">
-        {/* Section tag */}
-        <div className="mb-2 text-[10px] font-medium uppercase tracking-[0.25em] text-[var(--accent)]/60">
-          // earn
-        </div>
-
-        {/* Title */}
-        <h1
-          className="text-xl font-medium tracking-[-0.01em] text-[var(--text)] sm:text-2xl"
-          style={{ fontFamily: 'var(--font-heading)' }}
-        >
-          <span className="font-normal text-[var(--text-secondary)]">LP </span>Vaults
-        </h1>
-        <p className="mt-2 text-[13px] text-[var(--text-secondary)] max-w-lg">
-          Provide liquidity to Percolator markets. Earn trading fees from every
-          perpetual trade. Fully on-chain, transparent yield.
-        </p>
+      <div className="relative mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 pt-8 pb-6">
+        <PageHeader
+          eyebrow="earn"
+          eyebrowAccent="cyan"
+          mutedPrefix="LP"
+          title="VAULTS"
+          subtitle="Provide liquidity to Percolator markets. Earn trading fees from every perpetual trade — fully on-chain, transparent yield."
+          width="full"
+        />
 
         {/* Stats row */}
         <div className="mt-6 grid grid-cols-2 gap-px border border-[var(--border)] bg-[var(--border)] sm:grid-cols-4" aria-label="Earn statistics">

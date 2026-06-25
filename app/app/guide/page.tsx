@@ -35,20 +35,15 @@ export default function GuidePage() {
   return (
     <div className="min-h-[calc(100dvh-48px)] relative">
       <div className="absolute inset-x-0 top-0 h-48 bg-grid pointer-events-none" />
-      <main className="relative mx-auto max-w-4xl px-4 py-10 space-y-16">
+      <div className="relative mx-auto max-w-4xl px-4 pt-8 pb-16 space-y-16">
       {/* Header */}
       <ScrollReveal>
         <div className="mb-8">
-          <div className="mb-2 text-[10px] font-medium uppercase tracking-[0.25em] text-[var(--accent)]/60">
-            // documentation
-          </div>
-          <h1
-            className="text-xl font-medium tracking-[-0.01em] text-[var(--text)] sm:text-2xl"
-            style={{ fontFamily: "var(--font-heading)" }}
-          >
-            <span className="font-normal text-[var(--text-muted)]">Percolator </span>Guide
+          <div className="eyebrow mb-4">documentation</div>
+          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-white font-jakarta uppercase">
+            <span className="text-white/40 font-light">PERCOLATOR </span>GUIDE
           </h1>
-          <p className="mt-2 text-[13px] text-[var(--text-secondary)]">
+          <p className="mt-3 text-sm sm:text-base text-white/70 max-w-xl leading-relaxed font-inter">
             Everything you need to know about launching and trading perpetual futures markets on Solana.
           </p>
         </div>
@@ -141,7 +136,7 @@ export default function GuidePage() {
               desc: "Each market has an insurance fund that absorbs losses from liquidations, protecting the system against socialized losses.",
             },
           ].map((item) => (
-            <div key={item.title} className="bg-[var(--panel-bg)] p-5 transition-colors hover:bg-[var(--bg-elevated)]">
+            <div key={item.title} className="glass-card glass-card--hover p-5">
               <h3 className="text-[13px] font-semibold text-[var(--text)] mb-2">{item.title}</h3>
               <p className="text-[12px] leading-relaxed text-[var(--text-secondary)]">{item.desc}</p>
             </div>
@@ -172,7 +167,7 @@ export default function GuidePage() {
               desc: "Auto-detected for tokens with DEX pools (PumpSwap, Raydium, Meteora). No configuration needed — the pool address is used as the price source.",
             },
           ].map((item) => (
-            <div key={item.mode} className="bg-[var(--panel-bg)] p-5 flex items-start gap-4">
+            <div key={item.mode} className="glass-card p-5 flex items-start gap-4">
               <div
                 className="mt-0.5 h-2 w-2 flex-shrink-0 rounded-full"
                 style={{ backgroundColor: item.color }}
@@ -248,7 +243,7 @@ export default function GuidePage() {
             { step: "05", title: "Push Oracle Prices", desc: "Go to /my-markets. Click 'push price' on your market to set the oracle price manually." },
             { step: "06", title: "Open Trades", desc: "Navigate to the trade page, deposit collateral, and open your first leveraged position." },
           ].map((item) => (
-            <div key={item.step} className="bg-[var(--panel-bg)] flex items-start gap-4 p-5 transition-colors hover:bg-[var(--bg-elevated)]">
+            <div key={item.step} className="glass-card flex items-start gap-4 p-5">
               <span
                 className="flex h-7 w-7 flex-shrink-0 items-center justify-center border border-[var(--accent)]/20 bg-[var(--accent)]/[0.04] text-[11px] font-bold text-[var(--accent)]"
               >
@@ -324,7 +319,7 @@ export default function GuidePage() {
           </Link>
         </div>
       </div>
-      </main>
+      </div>
     </div>
   );
 }

@@ -2,17 +2,13 @@ import "@/lib/polyfills";
 import type { Metadata } from "next";
 import { headers } from "next/headers";
 import { Geist, Geist_Mono } from "next/font/google";
-import { Space_Grotesk, JetBrains_Mono, Inter_Tight, Outfit } from "next/font/google";
+import { Space_Grotesk, JetBrains_Mono, Inter_Tight, Outfit, Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
 import { Providers } from "./providers";
-import { Header } from "@/components/layout/Header";
-import { Footer } from "@/components/layout/Footer";
-import { MobileBottomNav } from "@/components/layout/MobileBottomNav";
-import { TickerBanner } from "@/components/layout/TickerBanner";
+import { ClientLayout } from "@/components/layout/ClientLayout";
+import { ChromeGate } from "@/components/layout/ChromeGate";
 import { CursorGlow } from "@/components/ui/CursorGlow";
 import { MusicPlayer } from "@/components/ui/MusicPlayer";
-import { MainnetBetaBanner } from "@/components/layout/MainnetBetaBanner";
-import { ChromeGate } from "@/components/layout/ChromeGate";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { organizationSchema, websiteSchema } from "@/lib/structured-data";
 import { Analytics } from "@vercel/analytics/next";
@@ -25,6 +21,7 @@ const spaceGrotesk = Space_Grotesk({ variable: "--font-space-grotesk", subsets: 
 const jetbrainsMono = JetBrains_Mono({ variable: "--font-jetbrains-mono", subsets: ["latin"], weight: ["400", "500", "600", "700"], display: "swap" });
 const interTight = Inter_Tight({ variable: "--font-inter-tight", subsets: ["latin"], weight: ["400", "500", "600", "700", "800", "900"], display: "swap" });
 const outfit = Outfit({ variable: "--font-outfit", subsets: ["latin"], weight: ["300", "400", "500", "600", "700", "800"], display: "swap" });
+const plusJakartaSans = Plus_Jakarta_Sans({ variable: "--font-plus-jakarta-sans", subsets: ["latin"], weight: ["300", "400", "500", "600", "700", "800"], display: "swap" });
 
 // PERC-695 (bug bounty — CSP static nonce): Force dynamic rendering so each request
 // generates a fresh layout render with the new per-request nonce from middleware.
@@ -81,8 +78,10 @@ export const metadata: Metadata = {
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
   const nonce = (await headers()).get("x-nonce") ?? undefined;
   return (
-    <html lang="en" suppressHydrationWarning className={`${geistSans.variable} ${geistMono.variable} ${spaceGrotesk.variable} ${jetbrainsMono.variable} ${interTight.variable} ${outfit.variable}`}>
+    <html lang="en" suppressHydrationWarning className={`${geistSans.variable} ${geistMono.variable} ${spaceGrotesk.variable} ${jetbrainsMono.variable} ${interTight.variable} ${outfit.variable} ${plusJakartaSans.variable}`}>
       <head>
+        <link rel="stylesheet" href="https://db.onlinewebfonts.com/c/8b75d9dcff6a48c35a46656192adf019?family=FSP+DEMO+-+PODIUM+Sharp+4.11" type="text/css"/>
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
         <script
           nonce={nonce}
           dangerouslySetInnerHTML={{
@@ -102,16 +101,9 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         <JsonLd data={[organizationSchema(), websiteSchema()]} />
         <Providers>
           <CursorGlow />
-          <div className="relative z-[1] flex min-h-screen flex-col">
-            <ChromeGate>
-              <TickerBanner />
-              <MainnetBetaBanner />
-            </ChromeGate>
-            <Header />
-            <main className="flex-1 pb-[60px] md:pb-0">{children}</main>
-            <Footer />
-            <MobileBottomNav />
-          </div>
+          <ClientLayout>
+            {children}
+          </ClientLayout>
           <ChromeGate>
             <MusicPlayer />
           </ChromeGate>

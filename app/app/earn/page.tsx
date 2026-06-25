@@ -60,10 +60,10 @@ export default function EarnPage() {
       {/* Header with stats banner */}
       <EarnHeader stats={stats} loading={loading} />
 
-      <div className="mx-auto max-w-6xl px-4 pb-16">
+      <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 pb-16">
         {/* Platform-wide OI cap meter */}
         <ScrollReveal>
-          <div className="mb-8 border border-[var(--border)] bg-[var(--panel-bg)] rounded-sm p-5 hud-corners">
+          <div className="mb-8 glass-card p-5">
             <OiCapMeter
               currentOI={stats.totalOI}
               maxOI={stats.maxOI}
@@ -78,10 +78,10 @@ export default function EarnPage() {
             <ScrollReveal>
               <div className="mb-4 flex items-center justify-between">
                 <h2
-                  className="text-sm font-medium text-[var(--text)]"
+                  className="text-lg sm:text-xl font-bold tracking-tight text-white"
                   style={{ fontFamily: 'var(--font-heading)' }}
                 >
-                  <span className="text-[var(--text-secondary)]">Active </span>Vaults
+                  <span className="text-white/40 font-light">Active </span>Vaults
                 </h2>
                 <span className="text-[11px] text-[var(--text-secondary)]">
                   {stats.markets.length} market{stats.markets.length !== 1 ? 's' : ''}
@@ -99,10 +99,10 @@ export default function EarnPage() {
 
             {/* How it works */}
             <ScrollReveal>
-              <div className="border border-[var(--border)] bg-[var(--panel-bg)] rounded-sm p-5 hud-corners">
+              <div className="glass-card p-5">
                 <div className="h-px bg-gradient-to-r from-transparent via-[var(--accent)]/30 to-transparent -mx-5 -mt-5 mb-5" />
                 <h3
-                  className="text-sm font-medium text-[var(--text)] mb-4"
+                  className="text-base font-bold tracking-tight text-white mb-4"
                   style={{ fontFamily: 'var(--font-heading)' }}
                 >
                   How It Works

@@ -16,7 +16,7 @@ export default function CreateLoading() {
         </div>
 
         {/* Wizard container skeleton */}
-        <div className="border border-[var(--border)] bg-[var(--panel-bg)] p-6">
+        <div className="glass-card p-6">
           {/* Progress steps */}
           <div className="mb-8 flex items-center justify-between">
             {[1, 2, 3, 4].map((i) => (

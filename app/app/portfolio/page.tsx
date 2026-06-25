@@ -109,15 +109,13 @@ export default function PortfolioPage() {
     return (
       <div className="min-h-[calc(100dvh-48px)] relative">
         <div className="absolute inset-x-0 top-0 h-48 bg-grid pointer-events-none" />
-          <div className="relative mx-auto max-w-4xl px-4 py-10">
-          <div className="mb-2 text-[10px] font-medium uppercase tracking-[0.25em] text-[var(--accent)]/60">
-            // portfolio
-          </div>
-          <h1 className="text-xl font-medium tracking-[-0.01em] text-[var(--text)] sm:text-2xl" style={{ fontFamily: "var(--font-heading)" }}>
-            <span className="font-normal text-[var(--text)]">Your </span>Positions
+          <div className="relative mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 pt-8 pb-16">
+          <div className="eyebrow mb-4">portfolio</div>
+          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-white font-jakarta uppercase">
+            <span className="text-white/40 font-light">YOUR </span>POSITIONS
           </h1>
-          <p className="mt-2 mb-8 text-[13px] text-[var(--text-secondary)]">View all your positions across markets</p>
-          <div className="border border-[var(--border)] bg-[var(--panel-bg)] p-10 text-center">
+          <p className="mt-3 mb-8 text-sm sm:text-base text-white/70 max-w-xl leading-relaxed font-inter">View all your positions across markets</p>
+          <div className="glass-card p-10 text-center">
             <p className="mb-4 text-[13px] text-[var(--text-secondary)]">Connect your wallet to view positions</p>
             <ConnectButton />
           </div>
@@ -131,21 +129,19 @@ export default function PortfolioPage() {
       {/* Grid background */}
       <div className="absolute inset-x-0 top-0 h-48 bg-grid pointer-events-none" />
 
-      <div className="relative mx-auto max-w-5xl px-4 py-10">
+      <div className="relative mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 pt-8 pb-16">
         {/* Header */}
         <ScrollReveal>
           <div className="mb-8 flex items-start justify-between gap-4">
             <div>
-              <div className="mb-2 text-[10px] font-medium uppercase tracking-[0.25em] text-[var(--accent)]/60">
-                // portfolio
-              </div>
-              <h1 className="text-xl font-medium tracking-[-0.01em] text-[var(--text)] sm:text-2xl" style={{ fontFamily: "var(--font-heading)" }}>
-                <span className="font-normal text-[var(--text)]">Your </span>Positions
+              <div className="eyebrow mb-4">portfolio</div>
+              <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-white font-jakarta uppercase">
+                <span className="text-white/40 font-light">YOUR </span>POSITIONS
               </h1>
-              <p className="mt-2 text-[13px] text-[var(--text-secondary)]">
+              <p className="mt-3 text-sm sm:text-base text-white/70 max-w-xl leading-relaxed font-inter">
                 All positions across Percolator markets
                 {atRiskCount > 0 && (
-                  <span className="ml-2 inline-flex items-center gap-1 rounded-sm bg-[var(--short)]/10 px-2 py-0.5 text-[10px] font-bold text-[var(--short)]">
+                   <span className="ml-2 inline-flex items-center gap-1 rounded-sm bg-[var(--short)]/10 px-2 py-0.5 text-[10px] font-bold text-[var(--short)] normal-case">
                     ⚠ {atRiskCount} at risk
                   </span>
                 )}
@@ -245,7 +241,7 @@ export default function PortfolioPage() {
               ))}
             </div>
           ) : activePositions.length === 0 ? (
-            <div className="border border-[var(--border)] bg-[var(--panel-bg)] p-10 text-center">
+            <div className="glass-card p-10 text-center">
               <h3 className="mb-1 text-[15px] font-semibold text-[var(--text)]">No positions yet</h3>
               <p className="mb-4 text-[13px] text-[var(--text-secondary)]">Browse markets to start trading.</p>
               <Link href="/markets">
@@ -456,9 +452,7 @@ export default function PortfolioPage() {
         {/* Trade history + stats */}
         <ScrollReveal delay={0.3}>
           <div className="mt-8">
-            <h2 className="mb-3 text-[10px] font-medium uppercase tracking-[0.25em] text-[var(--accent)]/60">
-              // trade history
-            </h2>
+            <h2 className="eyebrow mb-4">trade history</h2>
             {/* PERC-481: Aggregate stats banner */}
             {(traderStats.stats || traderStats.loading) && (
               <div className="mb-2">

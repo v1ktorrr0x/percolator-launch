@@ -1,0 +1,32 @@
+# Tasks
+
+- [x] Update style system
+  - [x] Add Podium and Inter fonts to `globals.css` @theme
+  - [x] Inject critical keyframe animations and utility classes to `globals.css`
+  - [x] Add font stylesheets to `<head>` in `layout.tsx`
+- [x] Implement conditional layout wrapper
+  - [x] Create `ClientLayout.tsx` component
+  - [x] Update `layout.tsx` to wrap children with `ClientLayout`
+  - [x] Adjust ClientLayout for scrollable homepage
+- [x] Rebuild homepage (`page.tsx`) with scrolling, ScrollReveal, and brand colors
+- [/] Integrate Aurora Component
+  - [ ] Install `ogl` dependency in `@percolator/app`
+  - [ ] Create `Aurora.css` in `app/components/ui`
+  - [ ] Create `Aurora.tsx` in `app/components/ui` (TypeScript version)
+  - [ ] Update `app/app/page.tsx` to dynamically render `<Aurora />` as a background blend layer
+- [x] Implement Premium Bento Grid adaptation
+  - [x] Refactor Bento Layout to Dynamic BentoGrid/BentoCard Architecture
+  - [x] Implement the `BentoGrid` and `BentoCard` components with `colSpan`/`rowSpan` and animation supports.
+  - [x] Convert the static `cardData` mapping structure to a declarative JSX `<BentoGrid>` list inside `MagicBento.tsx`.
+  - [x] Export the `BentoGrid` and `BentoCard` components for reusability.
+  - [x] Verify the app compiles and typechecks successfully.
+  - [x] Fix compilation issues (missing closing tag in `InsuranceFundAnimation`)
+  - [x] Restructure card layout: graphic slot at the top, details (Icon, Title, Description, Label) at the bottom
+  - [x] Adapt simulated chat for No Permission Needed
+  - [x] Adapt console terminal for Deploy Instantly
+  - [x] Adapt active insurance card stack for Insurance Fund
+  - [x] Adapt bezier analytics chart for Liquidation Guard
+  - [x] Clean up CSS overrides and verify successful compile
+- [ ] Verification
+  - [ ] Run application build command
+  - [ ] Generate Walkthrough documentation
