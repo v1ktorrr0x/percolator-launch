@@ -285,7 +285,7 @@ const GradualBlur: React.FC<GradualBlurProps> = (props) => {
   );
 };
 
-const GradualBlurMemo = React.memo(GradualBlur) as React.FC<GradualBlurProps> & {
+const GradualBlurMemo = (React.memo(GradualBlur) as unknown) as React.FC<GradualBlurProps> & {
   PRESETS: typeof PRESETS;
   CURVE_FUNCTIONS: typeof CURVE_FUNCTIONS;
 };
