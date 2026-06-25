@@ -15,6 +15,8 @@ const ConnectButton = dynamic(
   () => import("@/components/wallet/ConnectButton").then((m) => m.ConnectButton),
   { ssr: false }
 );
+// Component added by Ansh - github.com/ansh-dhanani
+import GradualBlur from '../ui/GradualBlur';
 
 /* ── Navigation groups ── */
 /** Pages hidden on mainnet beta — devnet-only faucets and internal pages */
@@ -149,13 +151,21 @@ export const Header: FC = () => {
   return (
     <header
       ref={headerRef}
-      className={[
-        "sticky top-0 z-50 isolate transition-all duration-300",
-        scrolled
-          ? "border-b border-[var(--border)] bg-[var(--bg)]/95 backdrop-blur-md shadow-sm shadow-black/20"
-          : "border-b border-transparent bg-transparent",
-      ].join(" ")}
+      className="sticky top-0 z-50 isolate w-full bg-transparent"
     >
+      {/* Smooth gradual blur background when scrolled */}
+      <GradualBlur
+        target="parent"
+        position="top"
+        height="4rem"
+        strength={2}
+        divCount={5}
+        curve="bezier"
+        exponential={true}
+        opacity={1}
+        zIndex={-1}
+        className={`transition-opacity duration-300 ${scrolled ? 'opacity-100' : 'opacity-0'}`}
+      />
       <div className="flex h-14 w-full items-center justify-between gap-3 pl-2 pr-2 sm:px-4 lg:px-6">
         {/* Left */}
         <div className="flex min-w-0 flex-1 items-center gap-4 md:gap-6">

@@ -141,20 +141,17 @@ function StakeHero({ pools, totalUserDeposited }: { pools: StakePool[]; totalUse
 
   return (
     <section className="relative overflow-hidden py-12 lg:py-16">
-      <div className="mx-auto max-w-[1100px] px-6">
+      <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
         <ScrollReveal>
-          <div className="mb-2 text-[10px] font-medium uppercase tracking-[0.25em] text-[var(--accent)]/60">
-            // insurance lp
-          </div>
+          <div className="eyebrow mb-4">insurance lp</div>
           <h1
-            className="mb-4 text-3xl font-medium tracking-[-0.02em] sm:text-4xl lg:text-[56px]"
-            style={{ fontFamily: "var(--font-heading)" }}
+            className="mb-4 text-3xl font-extrabold tracking-[-0.02em] sm:text-4xl lg:text-[56px] text-white font-jakarta uppercase"
           >
-            <span className="text-[var(--text)]">Stake. Earn.</span>
+            <span>Stake. Earn.</span>
             <br />
             <span className="text-[var(--cyan)]">Back the Fund.</span>
           </h1>
-          <p className="mb-8 max-w-[520px] text-base leading-[1.6] text-[var(--text-secondary)]">
+          <p className="mb-8 max-w-[520px] text-base leading-[1.6] text-white/70 font-inter">
             Deposit collateral into insurance pools to earn LP rewards and back the Percolator insurance fund.
           </p>
 
@@ -228,7 +225,7 @@ function YourPositionPanel({
   if (!connected) return null;
   if (!position) {
     return (
-      <div className="border border-[var(--border)]/50 bg-[var(--panel-bg)] p-6 text-center">
+      <div className="glass-card p-6 text-center">
         <p className="text-[11px] uppercase tracking-[0.15em] text-[var(--text-muted)]">No open positions</p>
         <p className="mt-1 text-[10px] text-[var(--text-dim)]">Deposit into a pool to get started</p>
         <a
@@ -568,7 +565,7 @@ function PoolCard({ pool }: { pool: StakePool }) {
   const capRatio = pool.capTotal > 0 ? pool.capUsed / pool.capTotal : 0;
 
   return (
-    <article className="group relative border border-[var(--border)] bg-[var(--panel-bg)] p-4 sm:p-5 transition-colors duration-200 hover:bg-[var(--bg-elevated)] hover:border-[var(--border-hover)] min-w-[280px]">
+    <article className="group relative glass-card glass-card--hover p-4 sm:p-5 min-w-[280px]">
       <div className="mb-4 flex items-center justify-between">
         <div className="flex items-center gap-2.5">
           <div className="flex h-8 w-8 items-center justify-center rounded-full border border-[var(--accent)]/15 bg-[var(--accent)]/[0.04] text-[12px]">

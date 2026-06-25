@@ -4,7 +4,7 @@ import Link from "next/link";
 import { ScrollReveal } from "@/components/ui/ScrollReveal";
 import { CodeBlock } from "@/components/ui/CodeBlock";
 
-const card = "rounded-sm bg-[var(--panel-bg)] border border-[var(--border)] p-6";
+const card = "glass-card glass-card--hover p-6";
 const h2Style = "text-lg font-bold text-[var(--text)] mb-4";
 const h3Style = "text-sm font-semibold text-[var(--accent)] mb-2 uppercase tracking-wider";
 const textMuted = "text-[13px] leading-relaxed text-[var(--text-secondary)]";
@@ -14,18 +14,16 @@ export default function AgentsPage() {
   return (
     <div className="min-h-[calc(100dvh-48px)] relative">
       <div className="absolute inset-x-0 top-0 h-48 bg-grid pointer-events-none" />
-      <div className="relative mx-auto max-w-4xl px-4 py-10 space-y-8">
+      <div className="relative mx-auto max-w-4xl px-4 pt-8 pb-16 space-y-8">
         {/* Header */}
         <ScrollReveal>
           <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
             <div>
-              <div className="mb-2 text-[10px] font-medium uppercase tracking-[0.25em] text-[var(--accent)]/60">
-                // contribute
-              </div>
-              <h1 className="text-xl font-medium tracking-[-0.01em] text-[var(--text)] sm:text-2xl" style={{ fontFamily: "var(--font-heading)" }}>
-                <span className="font-normal text-[var(--text-muted)]">Agent </span>Contribution Guide
+              <div className="eyebrow mb-4">contribute</div>
+              <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-white font-jakarta uppercase">
+                <span className="text-white/40 font-light">AGENT </span>CONTRIBUTION GUIDE
               </h1>
-              <p className="mt-2 text-[13px] text-[var(--text-secondary)]">
+              <p className="mt-3 text-sm sm:text-base text-white/70 max-w-xl leading-relaxed font-inter">
                 Use your AI agent to improve Percolator Launch. Fork, build, submit PRs.
               </p>
             </div>

@@ -5,11 +5,11 @@
 :root {
   /* ─── Solana Terminal Palette ─── */
   --bg: #0A0A0F;
-  --bg-elevated: #0F1018;
-  --bg-surface: #141820;
-  --panel-bg: #0D0E15;
-  --border: #1C1F2E;
-  --border-subtle: #14161F;
+  --bg-elevated: rgba(15, 16, 24, 0.50);
+  --bg-surface: rgba(20, 24, 32, 0.55);
+  --panel-bg: rgba(13, 14, 21, 0.45);
+  --border: rgba(255, 255, 255, 0.08);
+  --border-subtle: rgba(255, 255, 255, 0.04);
   --border-hover: #2A2E42;
 
   --accent: #9945FF;
@@ -199,10 +199,13 @@ html {
   --color-theme-nav-text: var(--text);
   --color-theme-panel: var(--panel-bg);
 
-  --font-sans: var(--font-jetbrains-mono), var(--font-geist-mono), monospace;
+  --font-sans: "Inter", var(--font-plus-jakarta-sans), sans-serif;
   --font-mono: var(--font-jetbrains-mono), var(--font-geist-mono), monospace;
-  --font-display: var(--font-outfit), var(--font-space-grotesk), system-ui;
-  --font-heading: var(--font-jetbrains-mono), var(--font-geist-mono), monospace;
+  --font-display: var(--font-plus-jakarta-sans), sans-serif;
+  --font-heading: var(--font-plus-jakarta-sans), sans-serif;
+  --font-podium: "FSP DEMO - PODIUM Sharp 4.11", sans-serif;
+  --font-inter: "Inter", sans-serif;
+  --font-jakarta: var(--font-plus-jakarta-sans), sans-serif;
 }
 
 body {
@@ -211,6 +214,135 @@ body {
   font-family: var(--font-sans);
   font-variant-numeric: tabular-nums;
   font-feature-settings: "tnum";
+}
+
+/* ─── Typography Hierarchy Overrides ─── */
+h1, .h1 {
+  font-family: var(--font-heading);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  color: #FFFFFF;
+}
+
+h2, .h2 {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: #FFFFFF;
+}
+
+h3, .h3 {
+  font-family: var(--font-heading);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: #FFFFFF;
+}
+
+p, .p-desc {
+  line-height: 1.6;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+/* ─── Global Glassmorphism for Panels & Cards ─── */
+.border,
+.rounded-sm,
+.rounded-xl {
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+}
+
+/* ─────────────────────────────────────────────────────────────
+   PREMIUM HERO LANGUAGE — shared surface + label primitives
+   The homepage hero is the canonical look. These utilities let
+   every page speak the same language: soft glass surfaces that
+   let the Aurora bleed through, tinted depth, a 1px top edge
+   highlight (simulated refraction), and a single tracked eyebrow.
+   ───────────────────────────────────────────────────────────── */
+
+/* Section eyebrow — replaces the old mono "// section" label.
+   Sans, heavily tracked, accent-tinted. Pair with .eyebrow--cyan
+   for live/data surfaces or default purple for build/action. */
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: var(--font-sans);
+  font-size: 0.75rem;
+  font-weight: 600;
+  line-height: 1;
+  text-transform: uppercase;
+  letter-spacing: 0.3em;
+  color: rgba(153, 69, 255, 0.85);
+}
+.eyebrow--cyan { color: rgba(20, 241, 149, 0.85); }
+.eyebrow::before {
+  content: "";
+  width: 18px;
+  height: 1px;
+  background: linear-gradient(90deg, currentColor, transparent);
+  opacity: 0.7;
+}
+
+/* Premium glass card — the hero card surface.
+   Soft translucent black so the Aurora shows through, hairline
+   border, inner top highlight, and a tinted drop shadow. */
+.glass-card {
+  position: relative;
+  background: rgba(10, 11, 18, 0.55);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+  box-shadow:
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.05),
+    0 18px 44px -22px rgba(0, 0, 0, 0.72),
+    0 0 0 1px rgba(153, 69, 255, 0.04);
+}
+
+/* Hover-reactive variant — lifts and glows in brand purple. */
+.glass-card--hover {
+  transition: border-color 0.25s ease, box-shadow 0.25s ease, transform 0.25s ease;
+}
+.glass-card--hover:hover {
+  border-color: rgba(153, 69, 255, 0.35);
+  box-shadow:
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.07),
+    0 28px 64px -26px rgba(0, 0, 0, 0.82),
+    0 0 30px -6px rgba(153, 69, 255, 0.20);
+  transform: translateY(-2px);
+}
+
+/* Tighter radius for nested/inner surfaces (premium radius rhythm). */
+.glass-card-sm {
+  background: rgba(10, 11, 18, 0.45);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 10px;
+}
+
+[data-theme="light"] .eyebrow { color: rgba(123, 56, 204, 0.95); }
+[data-theme="light"] .eyebrow--cyan { color: rgba(5, 150, 105, 0.95); }
+[data-theme="light"] .glass-card {
+  background: rgba(255, 255, 255, 0.72);
+  border-color: rgba(0, 0, 0, 0.07);
+  box-shadow:
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.6),
+    0 18px 44px -24px rgba(31, 23, 56, 0.30),
+    0 0 0 1px rgba(153, 69, 255, 0.05);
+}
+[data-theme="light"] .glass-card--hover:hover {
+  border-color: rgba(153, 69, 255, 0.30);
+  box-shadow:
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.8),
+    0 28px 64px -28px rgba(31, 23, 56, 0.40),
+    0 0 30px -8px rgba(153, 69, 255, 0.18);
+}
+[data-theme="light"] .glass-card-sm {
+  background: rgba(255, 255, 255, 0.6);
+  border-color: rgba(0, 0, 0, 0.06);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .glass-card--hover:hover { transform: none; }
 }
 
 /* ─── Tabular Numbers — enforce on all numeric displays ─── */
@@ -365,6 +497,32 @@ body::before {
 .delay-500 { animation-delay: 500ms; }
 .delay-600 { animation-delay: 600ms; }
 .delay-800 { animation-delay: 800ms; }
+
+/* ─── VANGUARD Cinematic Stagger Animations ─── */
+@keyframes fade-up {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@utility animate-fade-up {
+  animation: fade-up 0.8s ease-out forwards;
+}
+@utility animate-fade-up-delay-1 {
+  animation: fade-up 0.8s ease-out 0.2s forwards;
+  opacity: 0;
+}
+@utility animate-fade-up-delay-2 {
+  animation: fade-up 0.8s ease-out 0.4s forwards;
+  opacity: 0;
+}
+@utility animate-fade-up-delay-3 {
+  animation: fade-up 0.8s ease-out 0.6s forwards;
+  opacity: 0;
+}
+@utility animate-fade-up-delay-4 {
+  animation: fade-up 0.8s ease-out 0.8s forwards;
+  opacity: 0;
+}
 
 /* ─── HUD Corner Brackets (cards) ─── */
 .hud-corners {
@@ -758,6 +916,7 @@ input[type="range"]:focus-visible::-webkit-slider-thumb {
     scroll-behavior: auto;
   }
   *, *::before, *::after {
+    animation-delay: 0s !important;
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
@@ -1107,128 +1266,4 @@ input[type="range"]:focus-visible::-webkit-slider-thumb {
   to { transform: rotate(360deg); }
 }
 
-/* ─── Button Component Layer ─── */
-@layer components {
-  .btn {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.5rem;
-    font-family: var(--btn-font-family);
-    font-weight: var(--btn-font-weight);
-    letter-spacing: var(--btn-letter-spacing);
-    border-radius: var(--btn-radius);
-    transition: var(--btn-transition);
-    cursor: pointer;
-    user-select: none;
-    white-space: nowrap;
-    text-decoration: none;
-    border: 1px solid transparent;
-    outline: none;
-  }
-  .btn:focus-visible {
-    outline: var(--btn-focus-ring-width) solid currentColor;
-    outline-offset: var(--btn-focus-ring-offset);
-  }
 
-  /* Sizes */
-  .btn-sm {
-    height: var(--btn-h-sm);
-    padding-left: var(--btn-px-sm);
-    padding-right: var(--btn-px-sm);
-    font-size: var(--btn-fs-sm);
-  }
-  .btn-md {
-    height: var(--btn-h-md);
-    padding-left: var(--btn-px-md);
-    padding-right: var(--btn-px-md);
-    font-size: var(--btn-fs-md);
-  }
-  .btn-lg {
-    height: var(--btn-h-lg);
-    padding-left: var(--btn-px-lg);
-    padding-right: var(--btn-px-lg);
-    font-size: var(--btn-fs-lg);
-  }
-
-  /* Icon-only square variants */
-  .btn-icon-sm { height: var(--btn-h-sm); width: var(--btn-h-sm); padding: 0; font-size: var(--btn-fs-sm); }
-  .btn-icon-md { height: var(--btn-h-md); width: var(--btn-h-md); padding: 0; font-size: var(--btn-fs-md); }
-  .btn-icon-lg { height: var(--btn-h-lg); width: var(--btn-h-lg); padding: 0; font-size: var(--btn-fs-lg); }
-
-  /* Touch targets: 44px minimum on coarse-pointer (touch) devices only */
-  @media (pointer: coarse) {
-    .btn-sm, .btn-md, .btn-lg,
-    .btn-icon-sm, .btn-icon-md, .btn-icon-lg {
-      min-height: 44px;
-    }
-  }
-
-  /* Primary */
-  .btn-primary {
-    background: var(--btn-primary-bg);
-    color: var(--btn-primary-text);
-    border-color: var(--btn-primary-border);
-    box-shadow: var(--btn-primary-shadow);
-  }
-  .btn-primary:hover:not(:disabled):not([aria-disabled="true"]) {
-    background: var(--btn-primary-bg-hover);
-    box-shadow: var(--btn-primary-shadow-hover);
-  }
-  .btn-primary:active:not(:disabled):not([aria-disabled="true"]) {
-    background: var(--btn-primary-bg-active);
-  }
-  .btn-primary:focus-visible {
-    outline-color: var(--btn-primary-focus-ring);
-  }
-
-  /* Secondary */
-  .btn-secondary {
-    background: var(--btn-secondary-bg);
-    color: var(--btn-secondary-text);
-    border-color: var(--btn-secondary-border);
-    box-shadow: var(--btn-secondary-shadow);
-  }
-  .btn-secondary:hover:not(:disabled):not([aria-disabled="true"]) {
-    background: var(--btn-secondary-bg-hover);
-    border-color: var(--btn-secondary-border-hover);
-    box-shadow: var(--btn-secondary-shadow-hover);
-  }
-  .btn-secondary:active:not(:disabled):not([aria-disabled="true"]) {
-    background: var(--btn-secondary-bg-active);
-  }
-  .btn-secondary:focus-visible {
-    outline-color: var(--btn-secondary-focus-ring);
-  }
-
-  /* Destructive */
-  .btn-destructive {
-    background: var(--btn-destructive-bg);
-    color: var(--btn-destructive-text);
-    border-color: var(--btn-destructive-border);
-    box-shadow: var(--btn-destructive-shadow);
-  }
-  .btn-destructive:hover:not(:disabled):not([aria-disabled="true"]) {
-    background: var(--btn-destructive-bg-hover);
-    color: var(--btn-destructive-text-hover);
-    border-color: var(--btn-destructive-border-hover);
-    box-shadow: var(--btn-destructive-shadow-hover);
-  }
-  .btn-destructive:active:not(:disabled):not([aria-disabled="true"]) {
-    background: var(--btn-destructive-bg-active);
-  }
-  .btn-destructive:focus-visible {
-    outline-color: var(--btn-destructive-focus-ring);
-  }
-
-  /* Disabled — ALL variants */
-  .btn:disabled,
-  .btn[aria-disabled="true"] {
-    background: var(--btn-disabled-bg) !important;
-    color: var(--btn-disabled-text) !important;
-    border-color: var(--btn-disabled-border) !important;
-    box-shadow: var(--btn-disabled-shadow) !important;
-    cursor: var(--btn-disabled-cursor);
-    pointer-events: none;
-  }
-}

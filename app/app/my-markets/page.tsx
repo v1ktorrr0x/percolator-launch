@@ -375,8 +375,8 @@ const MarketCard: FC<{
 const LoadingSkeleton: FC = () => (
   <div className="min-h-[calc(100dvh-48px)] relative">
     <div className="absolute inset-x-0 top-0 h-48 bg-grid pointer-events-none" />
-    <main className="relative mx-auto max-w-4xl px-4 py-10">
-      <div className="mb-2 h-3 w-16 animate-pulse bg-[var(--border)]/20" />
+    <main className="relative mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 pt-8 pb-16">
+      <div className="mb-3 h-3 w-16 animate-pulse bg-[var(--border)]/20" />
       <div className="mb-2 h-7 w-48 animate-pulse bg-[var(--border)]/20" />
       <div className="mb-8 h-4 w-64 animate-pulse bg-[var(--border)]/20" />
       <div className="mb-8 h-12 w-full animate-pulse bg-[var(--border)]/20" />
@@ -461,21 +461,19 @@ const MyMarketsPage: FC = () => {
   }, [myMarkets, connection]);
 
   const pageHeader = (
-    <div className="mb-2 text-[10px] font-medium uppercase tracking-[0.25em] text-[var(--accent)]/60">
-      // admin
-    </div>
+    <div className="eyebrow mb-4">admin</div>
   );
 
   if (!connected) {
     return (
       <div className="min-h-[calc(100dvh-48px)] relative">
         <div className="absolute inset-x-0 top-0 h-48 bg-grid pointer-events-none" />
-        <main className="relative mx-auto max-w-4xl px-4 py-10">
+        <main className="relative mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 pt-8 pb-16">
           {pageHeader}
-          <h1 className="text-xl font-medium tracking-[-0.01em] text-[var(--text)] sm:text-2xl" style={{ fontFamily: "var(--font-heading)" }}>
-            <span className="font-normal text-[var(--text-muted)]">Your </span>Markets
+          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-white font-jakarta uppercase">
+            <span className="text-white/40 font-light">YOUR </span>MARKETS
           </h1>
-          <p className="mt-2 mb-8 text-[13px] text-[var(--text-secondary)]">manage your markets and positions.</p>
+          <p className="mt-3 mb-8 text-sm sm:text-base text-white/70 max-w-xl leading-relaxed font-inter">manage your markets and positions.</p>
           <div className="border border-[var(--border)]/50 bg-[var(--panel-bg)] p-10 text-center">
             <p className="text-[11px] text-[var(--text-secondary)]">connect your wallet to see your markets</p>
           </div>
@@ -490,12 +488,12 @@ const MyMarketsPage: FC = () => {
     return (
       <div className="min-h-[calc(100dvh-48px)] relative">
         <div className="absolute inset-x-0 top-0 h-48 bg-grid pointer-events-none" />
-        <main className="relative mx-auto max-w-4xl px-4 py-10">
+        <main className="relative mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 pt-8 pb-16">
           {pageHeader}
-          <h1 className="text-xl font-medium tracking-[-0.01em] text-[var(--text)] sm:text-2xl" style={{ fontFamily: "var(--font-heading)" }}>
-            <span className="font-normal text-[var(--text-muted)]">Your </span>Markets
+          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-white font-jakarta uppercase">
+            <span className="text-white/40 font-light">YOUR </span>MARKETS
           </h1>
-          <p className="mt-2 mb-8 text-[13px] text-[var(--text-secondary)]">manage your markets and positions.</p>
+          <p className="mt-3 mb-8 text-sm sm:text-base text-white/70 max-w-xl leading-relaxed font-inter">manage your markets and positions.</p>
           <div className="border border-[var(--border)]/50 bg-[var(--panel-bg)] p-10 text-center">
             <p className="text-[11px] text-[var(--short)]">{error}</p>
           </div>
@@ -508,12 +506,12 @@ const MyMarketsPage: FC = () => {
     return (
       <div className="min-h-[calc(100dvh-48px)] relative">
         <div className="absolute inset-x-0 top-0 h-48 bg-grid pointer-events-none" />
-        <main className="relative mx-auto max-w-4xl px-4 py-10">
+        <main className="relative mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 pt-8 pb-16">
           {pageHeader}
-          <h1 className="text-xl font-medium tracking-[-0.01em] text-[var(--text)] sm:text-2xl" style={{ fontFamily: "var(--font-heading)" }}>
-            <span className="font-normal text-[var(--text-muted)]">Your </span>Markets
+          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-white font-jakarta uppercase">
+            <span className="text-white/40 font-light">YOUR </span>MARKETS
           </h1>
-          <p className="mt-2 mb-8 text-[13px] text-[var(--text-secondary)]">manage your markets and positions.</p>
+          <p className="mt-3 mb-8 text-sm sm:text-base text-white/70 max-w-xl leading-relaxed font-inter">manage your markets and positions.</p>
           <div className="border border-[var(--border)]/50 bg-[var(--panel-bg)] p-10 text-center">
             <p className="mb-4 text-[11px] text-[var(--text-secondary)]">
               no markets created or traded on with this wallet.
@@ -541,16 +539,16 @@ const MyMarketsPage: FC = () => {
   return (
     <div className="min-h-[calc(100dvh-48px)] relative">
       <div className="absolute inset-x-0 top-0 h-48 bg-grid pointer-events-none" />
-      <main ref={pageRef} className="relative mx-auto max-w-4xl px-4 py-10 gsap-fade">
+      <main ref={pageRef} className="relative mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 pt-8 pb-16 gsap-fade">
         {/* Page Title */}
-        <div className="mb-2 text-[10px] font-medium uppercase tracking-[0.25em] text-[var(--accent)]/60">// admin</div>
-        <h1 className="text-xl font-medium tracking-[-0.01em] text-[var(--text)] sm:text-2xl" style={{ fontFamily: "var(--font-heading)" }}>
-          <span className="font-normal text-[var(--text-muted)]">Your </span>Markets
+        <div className="eyebrow mb-4">admin</div>
+        <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-white font-jakarta uppercase">
+          <span className="text-white/40 font-light">YOUR </span>MARKETS
         </h1>
-        <p className="mt-2 mb-6 text-[13px] text-[var(--text-secondary)]">manage your markets and positions.</p>
+        <p className="mt-3 mb-6 text-sm sm:text-base text-white/70 max-w-xl leading-relaxed font-inter">manage your markets and positions.</p>
 
         {/* Summary Stats Bar */}
-        <div className="hud-corners mb-8 flex flex-col gap-4 border border-[var(--border)]/50 bg-[var(--panel-bg)] px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
+        <div className="glass-card mb-8 flex flex-col gap-4 px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex flex-wrap items-center gap-x-6 gap-y-1">
             {[
               { label: "Total Markets", value: totalMarkets.toString() },

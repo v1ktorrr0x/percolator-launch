@@ -549,7 +549,7 @@ export default function AdminDashboard() {
           : "Something went wrong";
     return (
       <div className="min-h-screen flex items-center justify-center p-4">
-        <div className="w-full max-w-md rounded-none border border-[var(--border)] bg-[var(--panel-bg)] p-8">
+        <div className="w-full max-w-md glass-card p-8">
           <div className="mb-2 font-mono text-[10px] uppercase tracking-[0.15em] text-[var(--text-muted)]">
             {authError.kind === "not-configured"
               ? "Admin auth not configured"

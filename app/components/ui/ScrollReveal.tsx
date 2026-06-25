@@ -14,6 +14,7 @@ interface ScrollRevealProps {
   once?: boolean;
   scale?: number;
   className?: string;
+  noSafetyNet?: boolean;
 }
 
 function getOffset(direction: string, distance: number) {
@@ -36,6 +37,7 @@ export function ScrollReveal({
   once = true,
   scale,
   className = "",
+  noSafetyNet = false,
 }: ScrollRevealProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const hasAnimated = useRef(false);
@@ -65,7 +67,7 @@ export function ScrollReveal({
     // PERC-234: Reduced from 2000ms to 600ms — at 1440px desktop the
     // below-hero sections were invisible for too long, creating a
     // visible "void" on fresh load.
-    const safetyTimer = setTimeout(() => {
+    const safetyTimer = noSafetyNet ? undefined : setTimeout(() => {
       if (!hasAnimated.current) {
         hasAnimated.current = true;
         gsap.to(el, {
@@ -85,7 +87,7 @@ export function ScrollReveal({
         for (const entry of entries) {
           if (entry.isIntersecting && !(once && hasAnimated.current)) {
             hasAnimated.current = true;
-            clearTimeout(safetyTimer);
+            if (safetyTimer) clearTimeout(safetyTimer);
 
             if (stagger > 0) {
               const childEls = el.children;
@@ -130,10 +132,10 @@ export function ScrollReveal({
 
     observer.observe(el);
     return () => {
-      clearTimeout(safetyTimer);
+      if (safetyTimer) clearTimeout(safetyTimer);
       observer.disconnect();
     };
-  }, [direction, delay, duration, distance, stagger, once, scale, prefersReduced]);
+  }, [direction, delay, duration, distance, stagger, once, scale, prefersReduced, noSafetyNet]);
 
   return (
     <div

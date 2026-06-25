@@ -18,6 +18,7 @@ import { PublicKey } from "@solana/web3.js";
 import { ShimmerSkeleton } from "@/components/ui/ShimmerSkeleton";
 import { ScrollReveal } from "@/components/ui/ScrollReveal";
 import { GlowButton } from "@/components/ui/GlowButton";
+import { PageHeader } from "@/components/ui/PageHeader";
 import { useMultiTokenMeta } from "@/hooks/useMultiTokenMeta";
 import { useAllMarketStats } from "@/hooks/useAllMarketStats";
 import { MarketLogo } from "@/components/market/MarketLogo";
@@ -571,23 +572,23 @@ function MarketsPageInner() {
       {/* Grid background — subtle decorative element */}
       <div className="absolute inset-x-0 top-0 h-16 bg-grid pointer-events-none opacity-50" />
 
-      <div className="relative mx-auto max-w-[1100px] px-4 sm:px-6 pt-4 pb-10">
+      <div className="relative mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 pt-8 pb-16">
         {/* Header */}
         <ScrollReveal>
-          <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
-            <div>
-              <div className="mb-2 text-[10px] font-medium uppercase tracking-[0.25em] text-[var(--accent)]/60">
-                // browse
-              </div>
-              <h1 className="text-xl font-medium tracking-[-0.01em] text-[var(--text)] sm:text-2xl" style={{ fontFamily: "var(--font-heading)" }}>
-                <span className="font-normal text-[var(--text)]">All </span>Markets
-              </h1>
-              <p className="mt-2 text-[13px] text-[var(--text-secondary)]">perpetual futures, pick your poison.</p>
-            </div>
-            <Link href="/create" aria-label="Launch a new market">
-              <GlowButton size="sm">+ LAUNCH MARKET</GlowButton>
-            </Link>
-          </div>
+          <PageHeader
+            eyebrow="browse"
+            eyebrowAccent="cyan"
+            mutedPrefix="ALL"
+            title="MARKETS"
+            subtitle="Perpetual futures — pick your poison."
+            width="full"
+            className="mb-8"
+            actions={
+              <Link href="/create" aria-label="Launch a new market">
+                <GlowButton size="sm">+ LAUNCH MARKET</GlowButton>
+              </Link>
+            }
+          />
         </ScrollReveal>
 
         {/* Search & Sort */}
@@ -795,7 +796,7 @@ function MarketsPageInner() {
                 ))}
               </div>
             ) : filtered.length === 0 ? (
-            <div className="rounded-sm border border-[var(--border)] bg-[var(--panel-bg)] p-16 text-center">
+            <div className="glass-card p-16 text-center">
               {hasSearch || hasActiveFilters ? (
                 <>
                   <h3 className="text-base font-semibold text-[var(--text)]">nothing here.</h3>
@@ -829,7 +830,7 @@ function MarketsPageInner() {
             </div>
           ) : (
             <>
-              <div className="relative rounded-sm border border-[var(--border)] hud-corners after:pointer-events-none after:absolute after:right-0 after:top-0 after:bottom-0 after:w-6 after:z-20 after:bg-gradient-to-l after:from-[var(--bg-surface)] after:to-transparent sm:after:hidden">
+              <div className="relative glass-card overflow-hidden after:pointer-events-none after:absolute after:right-0 after:top-0 after:bottom-0 after:w-6 after:z-20 after:bg-gradient-to-l after:from-[var(--bg-surface)] after:to-transparent sm:after:hidden">
               <div className="overflow-x-auto" style={{ WebkitOverflowScrolling: "touch" }}>
                 {/* Header row: xs=4 cols (name|price|lev|health), sm+=7 cols */}
                 {/* GH#1775: sticky inside overflow-x-auto is broken by CSS spec (overflow clips stacking context).
@@ -1059,7 +1060,7 @@ export default function MarketsPage() {
     <Suspense fallback={
       <div className="min-h-[calc(100dvh-48px)] relative">
         <div className="absolute inset-x-0 top-0 h-32 bg-grid pointer-events-none" />
-        <div className="relative mx-auto max-w-[1100px] px-4 sm:px-6 pt-4 pb-10">
+        <div className="relative mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 pt-8 pb-16">
           <div className="mb-8">
             <ShimmerSkeleton className="h-3 w-20 mb-2" />
             <ShimmerSkeleton className="h-8 w-48 mb-2" />
