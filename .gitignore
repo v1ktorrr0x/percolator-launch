@@ -112,3 +112,4 @@ docs/MAINNET-ENV.md
 app/.env.vercel-prod
 .env.prod
 .env.vercel
+.gemini/
