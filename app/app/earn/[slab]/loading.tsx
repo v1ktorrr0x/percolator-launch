@@ -25,12 +25,12 @@ export default function VaultDetailLoading() {
         </div>
 
         {/* OI meter */}
-        <div className="h-20 bg-[var(--panel-bg)] border border-[var(--border)] rounded-sm animate-pulse mb-8" />
+        <div className="h-20 bg-[var(--panel-bg)] border border-[var(--border)] rounded-lg animate-pulse mb-8" />
 
         {/* Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <div className="h-[350px] bg-[var(--panel-bg)] border border-[var(--border)] rounded-sm animate-pulse" />
-          <div className="h-[400px] bg-[var(--panel-bg)] border border-[var(--border)] rounded-sm animate-pulse" />
+          <div className="h-[350px] bg-[var(--panel-bg)] border border-[var(--border)] rounded-lg animate-pulse" />
+          <div className="h-[400px] bg-[var(--panel-bg)] border border-[var(--border)] rounded-lg animate-pulse" />
         </div>
       </div>
     </div>

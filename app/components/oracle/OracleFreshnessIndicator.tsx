@@ -80,7 +80,7 @@ export const OracleFreshnessIndicator: FC = () => {
       <button
         type="button"
         onClick={handleClick}
-        className="group flex w-full items-center gap-1.5 px-1.5 py-0.5 text-left transition-colors hover:bg-[var(--bg-elevated)]/50 rounded-sm"
+        className="group flex w-full items-center gap-1.5 px-1.5 py-0.5 text-left transition-colors hover:bg-[var(--bg-elevated)]/50 rounded-lg"
         title="View oracle details"
       >
         {/* Pulsing dot */}

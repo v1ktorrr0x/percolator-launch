@@ -132,7 +132,7 @@ export function TradeHistory() {
         <button
           onClick={handleExportCsv}
           disabled={filtered.length === 0}
-          className="rounded-sm border border-[var(--border)] px-3 py-1 text-[10px] text-[var(--text-muted)] transition-all hover:border-[var(--accent)]/30 hover:text-[var(--text-secondary)] disabled:opacity-30"
+          className="rounded-lg border border-[var(--border)] px-3 py-1 text-[10px] text-[var(--text-muted)] transition-all hover:border-[var(--accent)]/30 hover:text-[var(--text-secondary)] disabled:opacity-30"
         >
           Export CSV
         </button>
@@ -145,7 +145,7 @@ export function TradeHistory() {
           onChange={(e) => {
             setSideFilter(e.target.value as TradeType);
           }}
-          className="rounded-sm border border-[var(--border)] bg-[var(--bg)] px-3 py-1.5 text-[11px] text-[var(--text-secondary)] outline-none focus:border-[var(--accent)]/30"
+          className="rounded-lg border border-[var(--border)] bg-[var(--bg)] px-3 py-1.5 text-[11px] text-[var(--text-secondary)] outline-none focus:border-[var(--accent)]/30"
         >
           <option value="all">All Sides</option>
           <option value="long">Long</option>
@@ -270,7 +270,7 @@ export function TradeHistory() {
           <button
             onClick={() => setPage((p) => Math.max(1, p - 1))}
             disabled={page === 1}
-            className="rounded-sm border border-[var(--border)] px-3 py-1 text-[10px] text-[var(--text-muted)] transition-all hover:border-[var(--accent)]/30 hover:text-[var(--text-secondary)] disabled:opacity-30"
+            className="rounded-lg border border-[var(--border)] px-3 py-1 text-[10px] text-[var(--text-muted)] transition-all hover:border-[var(--accent)]/30 hover:text-[var(--text-secondary)] disabled:opacity-30"
           >
             ← Prev
           </button>
@@ -283,7 +283,7 @@ export function TradeHistory() {
           <button
             onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
             disabled={page === totalPages}
-            className="rounded-sm border border-[var(--border)] px-3 py-1 text-[10px] text-[var(--text-muted)] transition-all hover:border-[var(--accent)]/30 hover:text-[var(--text-secondary)] disabled:opacity-30"
+            className="rounded-lg border border-[var(--border)] px-3 py-1 text-[10px] text-[var(--text-muted)] transition-all hover:border-[var(--accent)]/30 hover:text-[var(--text-secondary)] disabled:opacity-30"
           >
             Next →
           </button>

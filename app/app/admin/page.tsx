@@ -117,11 +117,11 @@ const SEVERITY_COLORS: Record<string, string> = {
 // ─── Style tokens ─────────────────────────────────────────────────────────────
 
 const card =
-  "rounded-none bg-[var(--panel-bg)] border border-[var(--border)]";
+  "rounded-lg bg-[var(--panel-bg)] border border-[var(--border)]";
 const labelStyle =
   "text-[10px] font-bold uppercase tracking-[0.15em] text-[var(--text-muted)]";
 const inputStyle =
-  "w-full rounded-none border border-[var(--border)] bg-[var(--bg-elevated)] px-3 py-2 text-[12px] text-[var(--text)] placeholder:text-[var(--text-dim)] focus:border-[var(--accent)] focus:outline-none transition-colors";
+  "w-full rounded-lg border border-[var(--border)] bg-[var(--bg-elevated)] px-3 py-2 text-[12px] text-[var(--text)] placeholder:text-[var(--text-dim)] focus:border-[var(--accent)] focus:outline-none transition-colors";
 
 // ─── Small helpers ─────────────────────────────────────────────────────────────
 
@@ -277,7 +277,7 @@ function BarRow({
           </span>
         </span>
       </div>
-      <div className="h-[3px] bg-[var(--border)] rounded-none overflow-hidden">
+      <div className="h-[3px] bg-[var(--border)] rounded-lg overflow-hidden">
         <div
           className="h-full transition-all duration-500"
           style={{ width: `${pct}%`, backgroundColor: color }}
@@ -562,12 +562,12 @@ export default function AdminDashboard() {
             {authError.message}
           </p>
           {missingEnv === "PRIVY_APP_SECRET" && (
-            <pre className="mb-6 overflow-x-auto rounded-none border border-[var(--border)] bg-[var(--bg)] p-3 font-mono text-[11px] text-[var(--text)]">
+            <pre className="mb-6 overflow-x-auto rounded-lg border border-[var(--border)] bg-[var(--bg)] p-3 font-mono text-[11px] text-[var(--text)]">
 {`PRIVY_APP_SECRET=<paste from Privy dashboard → App Settings → API Keys>`}
             </pre>
           )}
           {missingEnv === "PRIVY_ADMIN_EMAILS" && (
-            <pre className="mb-6 overflow-x-auto rounded-none border border-[var(--border)] bg-[var(--bg)] p-3 font-mono text-[11px] text-[var(--text)]">
+            <pre className="mb-6 overflow-x-auto rounded-lg border border-[var(--border)] bg-[var(--bg)] p-3 font-mono text-[11px] text-[var(--text)]">
 {`PRIVY_ADMIN_EMAILS=dark@percolator.trade,squid@percolator.trade`}
             </pre>
           )}
@@ -577,13 +577,13 @@ export default function AdminDashboard() {
                 await logout();
                 router.replace("/admin/login");
               }}
-              className="flex-1 rounded-none border border-[var(--border)] px-3 py-2 text-[11px] font-bold uppercase tracking-[0.14em] text-[var(--text-secondary)] hover:text-[var(--text)] hover:border-[var(--border-hover)] transition-colors"
+              className="flex-1 rounded-lg border border-[var(--border)] px-3 py-2 text-[11px] font-bold uppercase tracking-[0.14em] text-[var(--text-secondary)] hover:text-[var(--text)] hover:border-[var(--border-hover)] transition-colors"
             >
               Sign out
             </button>
             <button
               onClick={() => window.location.reload()}
-              className="flex-1 rounded-none border border-[var(--accent)]/60 bg-[var(--accent)]/[0.12] px-3 py-2 text-[11px] font-bold uppercase tracking-[0.14em] text-[var(--text)] transition-colors hover:bg-[var(--accent)]/20"
+              className="flex-1 rounded-lg border border-[var(--accent)]/60 bg-[var(--accent)]/[0.12] px-3 py-2 text-[11px] font-bold uppercase tracking-[0.14em] text-[var(--text)] transition-colors hover:bg-[var(--accent)]/20"
             >
               Retry
             </button>
@@ -622,7 +622,7 @@ export default function AdminDashboard() {
           </span>
           <button
             onClick={signOut}
-            className="rounded-none border border-[var(--border)] px-3 py-1.5 text-[10px] font-bold uppercase tracking-[0.15em] text-[var(--text-secondary)] hover:text-[var(--text)] hover:border-[var(--border-hover)] transition-colors"
+            className="rounded-lg border border-[var(--border)] px-3 py-1.5 text-[10px] font-bold uppercase tracking-[0.15em] text-[var(--text-secondary)] hover:text-[var(--text)] hover:border-[var(--border-hover)] transition-colors"
           >
             Sign Out
           </button>
@@ -805,7 +805,7 @@ export default function AdminDashboard() {
                       setAdminNotes(bug.admin_notes || "");
                       // scroll list into view on mobile
                     }}
-                    className="w-full text-left flex items-start gap-4 py-2 pl-1 hover:bg-[var(--bg-elevated)] transition-colors rounded-none group"
+                    className="w-full text-left flex items-start gap-4 py-2 pl-1 hover:bg-[var(--bg-elevated)] transition-colors rounded-lg group"
                   >
                     {/* timeline dot */}
                     <span
@@ -999,7 +999,7 @@ export default function AdminDashboard() {
               setStatusFilter("all");
               setSeverityFilter("all");
             }}
-            className="rounded-none border border-[var(--border)] px-3 py-2 text-[10px] font-bold uppercase tracking-[0.15em] text-[var(--text-dim)] hover:text-[var(--text)] hover:border-[var(--border-hover)] transition-colors"
+            className="rounded-lg border border-[var(--border)] px-3 py-2 text-[10px] font-bold uppercase tracking-[0.15em] text-[var(--text-dim)] hover:text-[var(--text)] hover:border-[var(--border-hover)] transition-colors"
           >
             Clear
           </button>
@@ -1008,7 +1008,7 @@ export default function AdminDashboard() {
               fetchBugs();
               fetchPlatformStats();
             }}
-            className="rounded-none border border-[var(--border)] px-3 py-2 text-[10px] font-bold uppercase tracking-[0.15em] text-[var(--text-secondary)] hover:text-[var(--text)] hover:border-[var(--accent)] transition-colors"
+            className="rounded-lg border border-[var(--border)] px-3 py-2 text-[10px] font-bold uppercase tracking-[0.15em] text-[var(--text-secondary)] hover:text-[var(--text)] hover:border-[var(--accent)] transition-colors"
           >
             Refresh
           </button>
@@ -1073,7 +1073,7 @@ export default function AdminDashboard() {
                     </div>
                     <div className="shrink-0">
                       <span
-                        className="text-[10px] font-bold uppercase tracking-[0.1em] px-2 py-0.5 border rounded-none"
+                        className="text-[10px] font-bold uppercase tracking-[0.1em] px-2 py-0.5 border rounded-lg"
                         style={{
                           color:
                             STATUS_COLORS[bug.status] || "var(--text-muted)",
@@ -1240,7 +1240,7 @@ export default function AdminDashboard() {
                       key={s}
                       onClick={() => updateStatus(selectedBug.id, s)}
                       disabled={saving || selectedBug.status === s}
-                      className={`rounded-none border px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.1em] transition-colors ${
+                      className={`rounded-lg border px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.1em] transition-colors ${
                         selectedBug.status === s
                           ? "bg-[var(--accent-subtle)] border-[var(--accent)] text-[var(--text)]"
                           : "border-[var(--border)] text-[var(--text-muted)] hover:text-[var(--text)] hover:border-[var(--border-hover)]"
@@ -1264,7 +1264,7 @@ export default function AdminDashboard() {
                 <button
                   onClick={saveNotes}
                   disabled={saving}
-                  className="mt-2 rounded-none bg-[var(--accent)] px-3 py-1.5 text-[10px] font-bold uppercase tracking-[0.15em] text-white hover:opacity-90 transition-opacity disabled:opacity-50"
+                  className="mt-2 rounded-lg bg-[var(--accent)] px-3 py-1.5 text-[10px] font-bold uppercase tracking-[0.15em] text-white hover:opacity-90 transition-opacity disabled:opacity-50"
                 >
                   {saving ? "Saving..." : "Save Notes"}
                 </button>

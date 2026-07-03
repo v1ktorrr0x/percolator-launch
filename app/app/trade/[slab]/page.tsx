@@ -51,11 +51,11 @@ import { getNetwork } from "@/lib/config";
 function UsdToggleButton() {
   const { showUsd, setShowUsd } = useUsdToggle();
   return (
-    <div className="flex gap-0.5 rounded-sm border border-[var(--border)] bg-[var(--bg-elevated)] p-0.5">
+    <div className="flex gap-0.5 rounded-lg border border-[var(--border)] bg-[var(--bg-elevated)] p-0.5">
       <button
         onClick={() => setShowUsd(false)}
         className={[
-          "rounded-sm px-2 py-0.5 text-[9px] font-medium transition-all duration-200",
+          "rounded-lg px-2 py-0.5 text-[9px] font-medium transition-all duration-200",
           !showUsd
             ? "bg-[var(--accent)]/10 text-[var(--accent)]"
             : "text-[var(--text-dim)] hover:text-[var(--text-secondary)]",
@@ -66,7 +66,7 @@ function UsdToggleButton() {
       <button
         onClick={() => setShowUsd(true)}
         className={[
-          "rounded-sm px-2 py-0.5 text-[9px] font-medium transition-all duration-200",
+          "rounded-lg px-2 py-0.5 text-[9px] font-medium transition-all duration-200",
           showUsd
             ? "bg-[var(--accent)]/10 text-[var(--accent)]"
             : "text-[var(--text-dim)] hover:text-[var(--text-secondary)]",
@@ -81,7 +81,7 @@ function UsdToggleButton() {
 function Collapsible({ title, defaultOpen = true, badge, children }: { title: string; defaultOpen?: boolean; badge?: React.ReactNode; children: React.ReactNode }) {
   const [open, setOpen] = useState(defaultOpen);
   return (
-    <div className="relative rounded-none border border-[var(--border)]/50 bg-[var(--bg)]/80">
+    <div className="relative rounded-lg border border-[var(--border)]/50 bg-[var(--bg)]/80">
       <button
         onClick={() => setOpen(!open)}
         className="flex w-full items-center justify-between px-3 py-1.5 text-left text-[10px] font-medium uppercase tracking-[0.15em] text-[var(--text-dim)] transition-colors hover:text-[var(--text-secondary)]"
@@ -382,7 +382,7 @@ function TradePageInner({ slab }: { slab: string }) {
       )}
 
       {/* ── MOBILE: Sticky header ── */}
-      <div className="sticky top-0 z-30 border-b border-[var(--border)]/50 bg-[var(--bg)]/95 px-3 py-2 backdrop-blur-sm lg:hidden">
+      <div className="sticky top-0 z-30 border-b border-[var(--border)]/50 bg-[var(--bg)]/95 px-3 py-2 lg:hidden">
         <div className="flex items-center justify-between">
           <div className="min-w-0">
             <div className="flex items-center gap-2">
@@ -404,7 +404,7 @@ function TradePageInner({ slab }: { slab: string }) {
             <CopyButton text={slab} />
           </span>
           {header?.admin && (
-            <span className={`text-[9px] font-medium uppercase tracking-[0.12em] px-1.5 py-0.5 rounded-sm border ${
+            <span className={`text-[9px] font-medium uppercase tracking-[0.12em] px-1.5 py-0.5 rounded-lg border ${
               header.admin.toBase58() === "11111111111111111111111111111111"
                 ? "border-[var(--long)]/30 bg-[var(--long)]/5 text-[var(--long)]"
                 : "border-[var(--warning)]/30 bg-[var(--warning)]/5 text-[var(--warning)]"
@@ -427,7 +427,7 @@ function TradePageInner({ slab }: { slab: string }) {
 
       {/* ── Quick start guide — desktop only, hidden after first trade ── */}
       {accounts.filter(a => a.account.capital > 0n || a.account.positionSize !== 0n).length === 0 && (
-      <div className="hidden md:flex mx-4 mb-2 mt-2 rounded-none border border-[var(--border)]/30 bg-[var(--bg)]/80 px-3 py-1.5 items-center gap-4 text-[10px] text-[var(--text-secondary)] uppercase tracking-[0.1em]">
+      <div className="hidden md:flex mx-4 mb-2 mt-2 rounded-lg border border-[var(--border)]/30 bg-[var(--bg)]/80 px-3 py-1.5 items-center gap-4 text-[10px] text-[var(--text-secondary)] uppercase tracking-[0.1em]">
         <span className="text-[var(--text-dim)]">quick start:</span>
         <span><span className="text-[var(--long)]">1</span> connect wallet</span>
         <span className="text-[var(--text-dim)]">&rarr;</span>
@@ -517,7 +517,7 @@ function TradePageInner({ slab }: { slab: string }) {
           <button
             type="button"
             onClick={toggleOrderBook}
-            className="mt-2 w-full rounded-none border border-[var(--border)]/40 bg-[var(--bg)]/40 px-3 py-1.5 text-[10px] uppercase tracking-[0.15em] text-[var(--text-dim)] hover:border-[var(--accent)]/30 hover:text-[var(--text-secondary)]"
+            className="mt-2 w-full rounded-lg border border-[var(--border)]/40 bg-[var(--bg)]/40 px-3 py-1.5 text-[10px] uppercase tracking-[0.15em] text-[var(--text-dim)] hover:border-[var(--accent)]/30 hover:text-[var(--text-secondary)]"
           >
             ⟨ Show order book
           </button>
@@ -605,7 +605,7 @@ function TradePageInner({ slab }: { slab: string }) {
             <button
               type="button"
               onClick={toggleOrderBook}
-              className="w-full rounded-none border border-[var(--border)]/40 bg-[var(--bg)]/40 px-3 py-1.5 text-[10px] uppercase tracking-[0.15em] text-[var(--text-dim)] hover:border-[var(--accent)]/30 hover:text-[var(--text-secondary)]"
+              className="w-full rounded-lg border border-[var(--border)]/40 bg-[var(--bg)]/40 px-3 py-1.5 text-[10px] uppercase tracking-[0.15em] text-[var(--text-dim)] hover:border-[var(--accent)]/30 hover:text-[var(--text-secondary)]"
             >
               ⟨ Show order book
             </button>

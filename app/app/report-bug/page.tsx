@@ -9,9 +9,9 @@ const h2Style = "text-lg font-bold text-[var(--text)] mb-4";
 const textMuted = "text-[13px] leading-relaxed text-[var(--text-secondary)]";
 const labelStyle = "block text-[11px] font-medium uppercase tracking-[0.15em] text-[var(--text-muted)] mb-1.5";
 const inputStyle =
-  "w-full rounded-sm border border-[var(--border)] bg-[var(--bg-elevated)] px-3 py-2.5 text-[13px] text-[var(--text)] placeholder:text-[var(--text-dim)] focus:border-[var(--accent)] focus:outline-none transition-colors";
+  "w-full rounded-lg border border-[var(--border)] bg-[var(--bg-elevated)] px-3 py-2.5 text-[13px] text-[var(--text)] placeholder:text-[var(--text-dim)] focus:border-[var(--accent)] focus:outline-none transition-colors";
 const textareaStyle =
-  "w-full rounded-sm border border-[var(--border)] bg-[var(--bg-elevated)] px-3 py-2.5 text-[13px] text-[var(--text)] placeholder:text-[var(--text-dim)] focus:border-[var(--accent)] focus:outline-none transition-colors resize-none";
+  "w-full rounded-lg border border-[var(--border)] bg-[var(--bg-elevated)] px-3 py-2.5 text-[13px] text-[var(--text)] placeholder:text-[var(--text-dim)] focus:border-[var(--accent)] focus:outline-none transition-colors resize-none";
 
 const SEVERITY_OPTIONS = [
   { value: "low", label: "Low", color: "var(--text-muted)", desc: "Minor visual glitch or cosmetic issue" },
@@ -158,7 +158,7 @@ export default function ReportBugPage() {
         </ScrollReveal>
 
         {/* Bounty Banner */}
-        <div className="rounded-sm border border-[var(--accent)]/20 bg-[var(--accent)]/5 px-5 py-4">
+        <div className="rounded-lg border border-[var(--accent)]/20 bg-[var(--accent)]/5 px-5 py-4">
           <div className="flex items-start gap-3">
             <div className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-[var(--accent)]/15">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -256,7 +256,7 @@ export default function ReportBugPage() {
                   <button
                     key={opt.value}
                     onClick={() => update("severity", opt.value)}
-                    className={`rounded-sm border px-3 py-2 text-left transition-all ${
+                    className={`rounded-lg border px-3 py-2 text-left transition-all ${
                       form.severity === opt.value
                         ? "border-[var(--accent)] bg-[var(--accent)]/5"
                         : "border-[var(--border)] hover:border-[var(--border-hover)]"
@@ -283,7 +283,7 @@ export default function ReportBugPage() {
                   <button
                     key={p}
                     onClick={() => update("page", form.page === p ? "" : p)}
-                    className={`rounded-sm border px-3 py-1.5 text-[11px] font-medium transition-all ${
+                    className={`rounded-lg border px-3 py-1.5 text-[11px] font-medium transition-all ${
                       form.page === p
                         ? "border-[var(--accent)] bg-[var(--accent)]/10 text-[var(--text)]"
                         : "border-[var(--border)] text-[var(--text-muted)] hover:border-[var(--border-hover)] hover:text-[var(--text)]"
@@ -370,7 +370,7 @@ export default function ReportBugPage() {
 
         {/* Error + Submit */}
         {error && (
-          <div className="rounded-sm border border-[var(--short)]/30 bg-[var(--short)]/5 px-4 py-3 text-[12px] text-[var(--short)]">
+          <div className="rounded-lg border border-[var(--short)]/30 bg-[var(--short)]/5 px-4 py-3 text-[12px] text-[var(--short)]">
             {error}
           </div>
         )}

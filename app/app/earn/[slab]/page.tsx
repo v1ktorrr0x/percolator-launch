@@ -25,7 +25,7 @@ const DepositWithdrawPanel = dynamic(
   {
     ssr: false,
     loading: () => (
-      <div className="h-[400px] animate-pulse bg-[var(--panel-bg)] border border-[var(--border)] rounded-sm" />
+      <div className="h-[400px] animate-pulse bg-[var(--panel-bg)] border border-[var(--border)] rounded-lg" />
     ),
   },
 );
@@ -38,7 +38,7 @@ const LpPositionDashboard = dynamic(
   {
     ssr: false,
     loading: () => (
-      <div className="h-[300px] animate-pulse bg-[var(--panel-bg)] border border-[var(--border)] rounded-sm" />
+      <div className="h-[300px] animate-pulse bg-[var(--panel-bg)] border border-[var(--border)] rounded-lg" />
     ),
   },
 );
@@ -161,7 +161,7 @@ function VaultDetailInner({ slabAddress }: { slabAddress: string }) {
 
         {/* Not Initialized Warning */}
         {!loading && !poolState.poolExists && (
-          <div className="mb-6 border border-[var(--warning)]/30 bg-[var(--warning)]/5 rounded-sm px-4 py-3">
+          <div className="mb-6 border border-[var(--warning)]/30 bg-[var(--warning)]/5 rounded-lg px-4 py-3">
             <p className="text-[12px] font-medium text-[var(--warning)]">
               ⚠ Vault Not Initialized
             </p>
@@ -250,7 +250,7 @@ function VaultDetailInner({ slabAddress }: { slabAddress: string }) {
 
         {/* OI meter */}
         <ScrollReveal>
-          <div className="mb-8 border border-[var(--border)] bg-[var(--panel-bg)] rounded-sm p-5 hud-corners">
+          <div className="mb-8 border border-[var(--border)] bg-[var(--panel-bg)] rounded-lg p-5">
             <OiCapMeter currentOI={currentOI} maxOI={maxOI} />
           </div>
         </ScrollReveal>
@@ -291,7 +291,7 @@ function VaultDetailInner({ slabAddress }: { slabAddress: string }) {
 
         {/* Vault info footer */}
         <ScrollReveal>
-          <div className="mt-8 border border-[var(--border)] bg-[var(--panel-bg)] rounded-sm p-5 hud-corners">
+          <div className="mt-8 border border-[var(--border)] bg-[var(--panel-bg)] rounded-lg p-5">
             <div className="h-px bg-gradient-to-r from-transparent via-[var(--accent)]/20 to-transparent -mx-5 -mt-5 mb-5" />
             <h3
               className="text-sm font-medium text-[var(--text)] mb-4"

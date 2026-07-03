@@ -22,13 +22,13 @@ export default function MyMarketsError({
         <div className="mt-6 flex justify-center gap-3">
           <button
             onClick={reset}
-            className="rounded-none border border-[var(--accent)]/50 bg-[var(--accent)]/[0.08] px-4 py-2 text-sm font-medium text-[var(--accent)] transition-colors hover:bg-[var(--accent)]/[0.15]"
+            className="rounded-lg border border-[var(--accent)]/50 bg-[var(--accent)]/[0.08] px-4 py-2 text-sm font-medium text-[var(--accent)] transition-colors hover:bg-[var(--accent)] hover:text-white"
           >
             retry
           </button>
           <Link
             href="/markets"
-            className="rounded-none border border-[var(--border)] bg-[var(--bg-elevated)] px-4 py-2 text-sm font-medium text-[var(--text)] transition-colors hover:bg-[var(--bg-surface)]"
+            className="rounded-lg border border-[var(--border)] bg-[var(--bg-elevated)] px-4 py-2 text-sm font-medium text-[var(--text)] transition-colors hover:bg-[var(--bg-surface)]"
           >
             browse all markets
           </Link>

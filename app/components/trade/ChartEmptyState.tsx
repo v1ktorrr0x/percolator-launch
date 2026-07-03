@@ -20,7 +20,7 @@ export const ChartEmptyState: FC<ChartEmptyStateProps> = ({
 }) => {
   return (
     <div
-      className={`relative flex ${heightClass} flex-col items-center justify-center rounded-none border border-[var(--border)]/50 bg-[var(--bg)]/80 overflow-hidden`}
+      className={`relative flex ${heightClass} flex-col items-center justify-center rounded-lg border border-[var(--border)]/50 bg-[var(--bg)]/80 overflow-hidden`}
     >
       {/* Subtle grid lines background — no phantom candles */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden opacity-10" aria-hidden="true">

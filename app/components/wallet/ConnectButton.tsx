@@ -22,7 +22,7 @@ export const ConnectButton: FC = () => {
     return (
       <button
         disabled
-        className="min-h-10 rounded-sm border border-[var(--border)] px-4 text-[13px] font-medium text-[var(--text-muted)] opacity-50"
+        className="min-h-10 rounded-lg border border-[var(--border)] px-4 text-[13px] font-medium text-[var(--text-muted)] opacity-50"
         aria-label="Wallet unavailable"
       >
         Connect
@@ -95,7 +95,7 @@ const ConnectButtonInner: FC = () => {
     return (
       <button
         disabled
-        className="min-h-10 rounded-sm border border-[var(--border)] px-4 text-[13px] font-medium text-[var(--text-muted)] opacity-50"
+        className="min-h-10 rounded-lg border border-[var(--border)] px-4 text-[13px] font-medium text-[var(--text-muted)] opacity-50"
       >
         Loading…
       </button>
@@ -107,7 +107,7 @@ const ConnectButtonInner: FC = () => {
       <button
         onClick={handleClick}
         className={[
-          "min-h-10 max-w-[10rem] truncate rounded-sm border px-4 text-[13px] font-medium transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--bg)]",
+          "min-h-10 max-w-[10rem] truncate rounded-lg border px-4 text-[13px] font-medium transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--bg)]",
           authenticated
             ? "text-[var(--accent)] border-[var(--accent)]/30 bg-[var(--accent)]/[0.06] hover:bg-[var(--accent)]/[0.12]"
             : "text-[var(--text)] border-[var(--accent)] bg-[var(--accent)]/20 hover:bg-[var(--accent)]/30",
@@ -137,7 +137,7 @@ const ConnectButtonInner: FC = () => {
           <Link
             href="/wallet"
             onClick={() => setMenuOpen(false)}
-            className="block w-full px-3 py-1.5 text-left text-[13px] text-[var(--text-secondary)] hover:bg-[var(--accent)]/[0.06] rounded-sm transition-colors"
+            className="block w-full px-3 py-1.5 text-left text-[13px] text-[var(--text-secondary)] hover:bg-[var(--accent)]/[0.06] rounded-lg transition-colors"
           >
             Manage Wallet
           </Link>
@@ -146,7 +146,7 @@ const ConnectButtonInner: FC = () => {
               navigator.clipboard.writeText(activeWallet?.address ?? "");
               setMenuOpen(false);
             }}
-            className="w-full px-3 py-1.5 text-left text-[13px] text-[var(--text-secondary)] hover:bg-[var(--accent)]/[0.06] rounded-sm transition-colors"
+            className="w-full px-3 py-1.5 text-left text-[13px] text-[var(--text-secondary)] hover:bg-[var(--accent)]/[0.06] rounded-lg transition-colors"
           >
             Copy address
           </button>
@@ -157,7 +157,7 @@ const ConnectButtonInner: FC = () => {
               setMenuOpen(false);
             }}
             disabled={!canFund}
-            className="w-full px-3 py-1.5 text-left text-[13px] text-[var(--text-secondary)] hover:bg-[var(--accent)]/[0.06] rounded-sm transition-colors disabled:opacity-40"
+            className="w-full px-3 py-1.5 text-left text-[13px] text-[var(--text-secondary)] hover:bg-[var(--accent)]/[0.06] rounded-lg transition-colors disabled:opacity-40"
           >
             Add funds
           </button>
@@ -168,7 +168,7 @@ const ConnectButtonInner: FC = () => {
               setMenuOpen(false);
             }}
             disabled={!canExport}
-            className="w-full px-3 py-1.5 text-left text-[13px] text-[var(--text-secondary)] hover:bg-[var(--accent)]/[0.06] rounded-sm transition-colors disabled:opacity-40"
+            className="w-full px-3 py-1.5 text-left text-[13px] text-[var(--text-secondary)] hover:bg-[var(--accent)]/[0.06] rounded-lg transition-colors disabled:opacity-40"
           >
             Export key
           </button>
@@ -177,7 +177,7 @@ const ConnectButtonInner: FC = () => {
               logout();
               setMenuOpen(false);
             }}
-            className="w-full px-3 py-1.5 text-left text-[13px] text-[var(--error)] hover:bg-[var(--error)]/[0.06] rounded-sm transition-colors"
+            className="w-full px-3 py-1.5 text-left text-[13px] text-[var(--error)] hover:bg-[var(--error)]/[0.06] rounded-lg transition-colors"
           >
             Disconnect
           </button>

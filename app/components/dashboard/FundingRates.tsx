@@ -98,7 +98,7 @@ export function FundingRates() {
                     {label}
                   </span>
                   <span
-                    className={`text-[8px] font-semibold uppercase tracking-[0.1em] px-1.5 py-0.5 rounded-sm ${
+                    className={`text-[8px] font-semibold uppercase tracking-[0.1em] px-1.5 py-0.5 rounded-lg ${
                       isPositive
                         ? "text-[var(--long)] bg-[var(--long)]/10"
                         : "text-[var(--short)] bg-[var(--short)]/10"

@@ -99,7 +99,7 @@ export const MarketInfoBar: FC<MarketInfoBarProps> = ({ slabAddress, symbol, log
   return (
     <div
       data-testid="market-info-bar"
-      className="sticky top-0 z-30 w-full border-b border-[var(--border)]/50 bg-[var(--bg)]/95 backdrop-blur-sm px-4 py-2.5 flex items-center gap-5 overflow-x-auto whitespace-nowrap scrollbar-none"
+      className="sticky top-0 z-30 w-full border-b border-[var(--border)]/50 bg-[var(--bg)]/95 px-4 py-2.5 flex items-center gap-5 overflow-x-auto whitespace-nowrap scrollbar-none"
     >
       {/* Symbol + Logo */}
       <div className="flex items-center gap-2 shrink-0">

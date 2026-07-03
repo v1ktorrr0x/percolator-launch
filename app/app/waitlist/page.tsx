@@ -254,7 +254,7 @@ function Hero() {
       <div className="mt-12 flex flex-wrap items-center gap-5">
         <a
           href="#reserve"
-          className="inline-flex items-center gap-2.5 rounded-md bg-[var(--accent)] px-6 py-3 text-[14px] font-semibold text-white shadow-[0_4px_14px_-4px_rgba(153,69,255,0.4)] transition-all duration-200 hover:bg-[var(--accent-muted)] hover:shadow-[0_8px_24px_-6px_rgba(153,69,255,0.55)]"
+          className="inline-flex items-center gap-2.5 rounded-md bg-[var(--accent)] px-6 py-3 text-[14px] font-semibold text-white transition-all duration-200 hover:bg-[var(--accent-muted)] "
         >
           Reserve your spot
           <span aria-hidden className="text-[15px] leading-none">↓</span>
@@ -344,7 +344,7 @@ function SignupCard() {
         }}
       />
       <div
-        className="relative w-full rounded-md border border-[var(--border)] bg-[var(--panel-bg)]/95 p-5 backdrop-blur-sm"
+        className="relative w-full rounded-md border border-[var(--border)] bg-[var(--panel-bg)]/95 p-5 "
         style={{
           boxShadow:
             "0 24px 48px -24px rgba(0,0,0,0.6), 0 1px 0 rgba(255,255,255,0.04) inset",
@@ -361,11 +361,11 @@ function SignupCard() {
             </span>
           </div>
           {whoami.status === "found" ? (
-            <span className="inline-flex items-center gap-1.5 rounded-sm border border-[var(--cyan)]/50 bg-[var(--cyan)]/[0.12] px-2 py-0.5 font-mono text-[9.5px] uppercase tracking-[0.18em] text-[var(--cyan)]">
+            <span className="inline-flex items-center gap-1.5 rounded-lg border border-[var(--cyan)]/50 bg-[var(--cyan)]/[0.12] px-2 py-0.5 font-mono text-[9.5px] uppercase tracking-[0.18em] text-[var(--cyan)]">
               ✓ on the list
             </span>
           ) : (
-            <span className="inline-flex items-center gap-1.5 rounded-sm border border-[var(--accent)]/50 bg-[var(--accent)]/[0.12] px-2 py-0.5 font-mono text-[9.5px] uppercase tracking-[0.18em] text-[var(--accent)]">
+            <span className="inline-flex items-center gap-1.5 rounded-lg border border-[var(--accent)]/50 bg-[var(--accent)]/[0.12] px-2 py-0.5 font-mono text-[9.5px] uppercase tracking-[0.18em] text-[var(--accent)]">
               <svg
                 aria-hidden
                 viewBox="0 0 12 12"
@@ -508,8 +508,8 @@ function TabButton({
       onClick={onClick}
       className={
         active
-          ? "rounded-sm bg-[var(--bg-elevated)] px-3 py-2 text-[12px] font-semibold uppercase tracking-[0.12em] text-[var(--text)] shadow-[0_1px_0_rgba(255,255,255,0.04)_inset] transition-all"
-          : "rounded-sm bg-transparent px-3 py-2 text-[12px] font-semibold uppercase tracking-[0.12em] text-[var(--text-secondary)] transition-colors hover:text-[var(--text)]"
+          ? "rounded-lg bg-[var(--bg-elevated)] px-3 py-2 text-[12px] font-semibold uppercase tracking-[0.12em] text-[var(--text)] transition-all"
+          : "rounded-lg bg-transparent px-3 py-2 text-[12px] font-semibold uppercase tracking-[0.12em] text-[var(--text-secondary)] transition-colors hover:text-[var(--text)]"
       }
     >
       {children}
@@ -1237,7 +1237,7 @@ function PromptLine({
 }
 
 const ctaPrimary =
-  "block w-full rounded-md border border-[var(--accent)]/60 bg-gradient-to-b from-[var(--accent)]/[0.28] to-[var(--accent)]/[0.10] px-4 py-3.5 text-center text-[13px] font-bold uppercase tracking-[0.14em] text-[var(--text)] transition-all duration-200 hover:border-[var(--accent)] hover:from-[var(--accent)]/40 hover:to-[var(--accent)]/[0.16] hover:shadow-[0_14px_36px_-12px_rgba(153,69,255,0.7)] disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:shadow-none";
+  "block w-full rounded-md border border-[var(--accent)]/60 bg-gradient-to-b from-[var(--accent)]/[0.28] to-[var(--accent)]/[0.10] px-4 py-3.5 text-center text-[13px] font-bold uppercase tracking-[0.14em] text-[var(--text)] transition-all duration-200 hover:border-[var(--accent)] hover:from-[var(--accent)]/40 hover:to-[var(--accent)]/[0.16] disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:shadow-none";
 
 const ctaSecondary =
   "block w-full rounded-md border border-[var(--border)] bg-transparent px-4 py-3 text-center text-[12.5px] font-bold uppercase tracking-[0.12em] text-[var(--text-secondary)] transition-colors hover:border-[var(--border-hover)] hover:text-[var(--text)]";
@@ -1539,7 +1539,7 @@ function SignupBullet({
     <div className="flex items-start gap-2.5">
       <span
         aria-hidden
-        className="mt-[7px] inline-block h-1 w-3 shrink-0 rounded-sm"
+        className="mt-[7px] inline-block h-1 w-3 shrink-0 rounded-lg"
         style={{ background: c, opacity: 0.85 }}
       />
       <span>{children}</span>

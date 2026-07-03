@@ -20,7 +20,7 @@ export function VaultCard({ vault }: VaultCardProps) {
       href={`/earn/${vault.slabAddress}`}
       className="group block"
     >
-      <div className="border border-[var(--border)] bg-[var(--panel-bg)] rounded-sm overflow-hidden transition-all duration-200 hover:border-[var(--accent)]/20 hud-corners">
+      <div className="border border-[var(--border)] bg-[var(--panel-bg)] rounded-lg overflow-hidden transition-all duration-200 hover:border-[var(--accent)]/20">
         {/* Accent top line */}
         <div className="h-px bg-gradient-to-r from-transparent via-[var(--accent)]/40 to-transparent" />
 

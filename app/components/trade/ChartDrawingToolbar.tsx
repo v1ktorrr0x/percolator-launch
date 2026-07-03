@@ -176,7 +176,7 @@ export const ChartDrawingToolbar: FC<ChartDrawingToolbarProps> = ({
   return (
     <div
       aria-label="Drawing tools"
-      className="absolute left-2 top-2 z-10 hidden flex-col gap-1 rounded-none border border-[var(--border)] bg-[var(--bg-elevated)]/95 p-1 backdrop-blur-sm md:flex"
+      className="absolute left-2 top-2 z-10 hidden flex-col gap-1 rounded-lg border border-[var(--border)] bg-[var(--bg-elevated)]/95 p-1 md:flex"
     >
       {TOOLS.map(({ kind, label, icon: Icon }) => {
         const isActive = tool === kind;
@@ -202,7 +202,7 @@ export const ChartDrawingToolbar: FC<ChartDrawingToolbarProps> = ({
               // focus-visible:outline restores a visible focus ring
               // for sighted keyboard users (Tailwind's preflight
               // strips the UA outline).
-              "flex h-7 w-7 items-center justify-center rounded-none transition-colors",
+              "flex h-7 w-7 items-center justify-center rounded-lg transition-colors",
               "focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--accent)] focus-visible:outline-offset-1",
               isActive
                 ? "bg-[var(--accent)]/10 text-[var(--accent)]"
@@ -228,7 +228,7 @@ export const ChartDrawingToolbar: FC<ChartDrawingToolbarProps> = ({
         disabled={drawingCount === 0}
         onClick={onClearAll}
         className={[
-          "flex h-7 w-7 items-center justify-center rounded-none transition-colors",
+          "flex h-7 w-7 items-center justify-center rounded-lg transition-colors",
           "focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--accent)] focus-visible:outline-offset-1",
           // Hover hint in red for the destructive action — same
           // accent-foreground discipline as the active tools, but

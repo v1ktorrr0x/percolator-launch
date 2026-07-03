@@ -59,7 +59,7 @@ const AutoDepositToast: FC<{ state: AutoDepositState }> = ({ state }) => {
   if (state.depositing) {
     return (
       <div className="fixed bottom-4 right-4 z-50 max-w-sm animate-slide-up">
-        <div className="rounded border border-[var(--accent)]/30 bg-[var(--panel-bg)] px-4 py-3 shadow-lg backdrop-blur-sm">
+        <div className="rounded border border-[var(--accent)]/30 bg-[var(--panel-bg)] px-4 py-3 shadow-lg ">
           <div className="flex items-center gap-3">
             <span className="animate-spin text-[var(--accent)]">⟳</span>
             <div>
@@ -80,7 +80,7 @@ const AutoDepositToast: FC<{ state: AutoDepositState }> = ({ state }) => {
   if (state.deposited && state.amountUsdc) {
     return (
       <div className="fixed bottom-4 right-4 z-50 max-w-sm animate-slide-up">
-        <div className="rounded border border-[var(--long)]/30 bg-[var(--panel-bg)] px-4 py-3 shadow-lg backdrop-blur-sm">
+        <div className="rounded border border-[var(--long)]/30 bg-[var(--panel-bg)] px-4 py-3 shadow-lg ">
           <div className="flex items-center gap-3">
             <span className="text-[var(--long)]">✓</span>
             <div>
@@ -109,7 +109,7 @@ const AutoDepositToast: FC<{ state: AutoDepositState }> = ({ state }) => {
   if (state.error) {
     return (
       <div className="fixed bottom-4 right-4 z-50 max-w-sm animate-slide-up">
-        <div className="rounded border border-[var(--short)]/30 bg-[var(--panel-bg)] px-4 py-3 shadow-lg backdrop-blur-sm">
+        <div className="rounded border border-[var(--short)]/30 bg-[var(--panel-bg)] px-4 py-3 shadow-lg ">
           <div className="flex items-center gap-3">
             <span className="text-[var(--short)]">!</span>
             <div>

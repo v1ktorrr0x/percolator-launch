@@ -72,7 +72,7 @@ export const Tooltip: FC<TooltipProps> = ({ text, children, className = "" }) =>
   const tooltipEl = (
     <span
       ref={tooltipRef}
-      className="fixed z-[9999] w-64 rounded-sm border border-[var(--border)] bg-[var(--panel-bg)] px-3 py-2 text-xs leading-relaxed text-[var(--text-secondary)] shadow-xl pointer-events-none"
+      className="fixed z-[9999] w-64 rounded-lg border border-[var(--border)] bg-[var(--panel-bg)] px-3 py-2 text-xs leading-relaxed text-[var(--text-secondary)] shadow-xl pointer-events-none"
       style={{ visibility: "hidden", opacity: 0 }}
     >
       {text}

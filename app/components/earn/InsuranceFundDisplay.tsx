@@ -18,7 +18,7 @@ export function InsuranceFundDisplay({
 }: InsuranceFundDisplayProps) {
   if (loading) {
     return (
-      <div className="border border-[var(--border)] bg-[var(--panel-bg)] rounded-sm p-6 animate-pulse">
+      <div className="border border-[var(--border)] bg-[var(--panel-bg)] rounded-lg p-6 animate-pulse">
         <div className="h-6 w-40 bg-[var(--border)] rounded mb-4" />
         <div className="h-24 bg-[var(--border)] rounded" />
       </div>
@@ -26,13 +26,13 @@ export function InsuranceFundDisplay({
   }
 
   return (
-    <div className="border border-[var(--border)] bg-[var(--panel-bg)] rounded-sm overflow-hidden hud-corners">
+    <div className="border border-[var(--border)] bg-[var(--panel-bg)] rounded-lg overflow-hidden">
       <div className="h-px bg-gradient-to-r from-transparent via-[var(--warning)]/30 to-transparent" />
 
       <div className="p-5">
         {/* Header */}
         <div className="flex items-center gap-2 mb-4">
-          <div className="w-6 h-6 rounded-sm bg-[var(--warning)]/10 flex items-center justify-center text-xs">
+          <div className="w-6 h-6 rounded-lg bg-[var(--warning)]/10 flex items-center justify-center text-xs">
             🛡️
           </div>
           <h3

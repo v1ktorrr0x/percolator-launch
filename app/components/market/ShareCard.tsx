@@ -47,7 +47,7 @@ export const ShareCard: FC<ShareCardProps> = ({ slabAddress, marketName, price, 
   };
 
   return (
-    <div className="rounded-sm border border-[var(--border)] bg-[var(--panel-bg)] p-4">
+    <div className="rounded-lg border border-[var(--border)] bg-[var(--panel-bg)] p-4">
       <div className="mb-3 flex items-center gap-2">
         <span className="text-sm font-bold text-[var(--text)]" style={{ fontFamily: "var(--font-jetbrains-mono)" }}>{marketName}</span>
         <span className="text-[10px] font-medium uppercase tracking-wider text-[var(--text-muted)]">PERP</span>
@@ -63,13 +63,13 @@ export const ShareCard: FC<ShareCardProps> = ({ slabAddress, marketName, price, 
       <div className="flex gap-2">
         <button
           onClick={copyLink}
-          className="flex-1 rounded-sm border border-[var(--border)] bg-[var(--bg-surface)] px-3 py-1.5 text-xs font-medium text-[var(--text-secondary)] transition-all duration-150 hover:border-[var(--accent)]/30 hover:text-[var(--text)] active:scale-[0.98]"
+          className="flex-1 rounded-lg border border-[var(--border)] bg-[var(--bg-surface)] px-3 py-1.5 text-xs font-medium text-[var(--text-secondary)] transition-all duration-150 hover:border-[var(--accent)]/30 hover:text-[var(--text)] active:scale-[0.98]"
         >
           {copied ? "Copied" : "Copy Link"}
         </button>
         <button
           onClick={shareOnX}
-          className="flex-1 rounded-sm border border-[var(--accent)]/40 bg-transparent px-3 py-1.5 text-xs font-semibold text-[var(--accent)] transition-all duration-150 hover:border-[var(--accent)]/70 hover:bg-[var(--accent)]/[0.08] active:scale-[0.98]"
+          className="flex-1 rounded-lg border border-[var(--accent)]/40 bg-transparent px-3 py-1.5 text-xs font-semibold text-[var(--accent)] transition-all duration-150 hover:border-[var(--accent)]/70 hover:bg-[var(--accent)]/[0.08] active:scale-[0.98]"
         >
           Share on X
         </button>
@@ -111,7 +111,7 @@ export const ShareButton: FC<Omit<ShareCardProps, "change24h"> & { change24h?: n
     <div ref={wrapperRef} className="relative">
       <button
         onClick={() => setOpen(!open)}
-        className="rounded-sm border border-[var(--border)] bg-[var(--bg-surface)] px-2.5 py-1 text-xs font-medium text-[var(--text-secondary)] transition-all duration-150 hover:border-[var(--accent)]/30 hover:text-[var(--text)]"
+        className="rounded-lg border border-[var(--border)] bg-[var(--bg-surface)] px-2.5 py-1 text-xs font-medium text-[var(--text-secondary)] transition-all duration-150 hover:border-[var(--accent)]/30 hover:text-[var(--text)]"
         title="Share"
       >
         Share

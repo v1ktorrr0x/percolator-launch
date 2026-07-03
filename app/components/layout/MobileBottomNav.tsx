@@ -84,7 +84,7 @@ export const MobileBottomNav: FC = () => {
 
   return (
     <nav
-      className="fixed bottom-0 inset-x-0 z-50 border-t border-[var(--border)] bg-[var(--bg)]/95 backdrop-blur-md md:hidden safe-area-bottom"
+      className="fixed bottom-0 inset-x-0 z-50 border-t border-[var(--border)] bg-[var(--bg)]/95 md:hidden safe-area-bottom"
       aria-label="Mobile navigation"
     >
       <div className="flex items-stretch justify-around">

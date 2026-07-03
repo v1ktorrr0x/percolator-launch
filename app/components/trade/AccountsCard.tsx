@@ -110,7 +110,7 @@ export const AccountsCard: FC = () => {
     return sorted;
   }, [tab, openPositions, idleAccounts, leaderboard, sortKey, sortDir]);
 
-  if (loading) return <div className="relative rounded-none border border-[var(--border)]/50 bg-[var(--bg)]/80 p-3"><p className="text-[10px] text-[var(--text-muted)]">Loading...</p></div>;
+  if (loading) return <div className="relative rounded-lg border border-[var(--border)]/50 bg-[var(--bg)]/80 p-3"><p className="text-[10px] text-[var(--text-muted)]">Loading...</p></div>;
 
   const tabs: { key: Tab; label: string; count: number }[] = [
     { key: "open", label: "Open", count: openPositions.length },
@@ -134,11 +134,11 @@ export const AccountsCard: FC = () => {
   }
 
   return (
-    <div className="relative rounded-none border border-[var(--border)]/50 bg-[var(--bg)]/80 p-3">
+    <div className="relative rounded-lg border border-[var(--border)]/50 bg-[var(--bg)]/80 p-3">
       <div className="mb-2 flex items-center gap-1">
         {tabs.map((t) => (
           <button key={t.key} onClick={() => setTab(t.key)}
-            className={`rounded-none px-2 py-1 text-[9px] font-medium uppercase tracking-[0.15em] transition-all ${
+            className={`rounded-lg px-2 py-1 text-[9px] font-medium uppercase tracking-[0.15em] transition-all ${
               tab === t.key ? "border-b border-[var(--accent)] text-[var(--accent)]" : "text-[var(--text-secondary)] hover:text-[var(--text)]"
             }`}>
             {t.label} ({t.count})

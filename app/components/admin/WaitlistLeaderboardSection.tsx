@@ -4,7 +4,7 @@ import { useMemo, useRef, useState } from "react";
 import useSWR from "swr";
 import { useAdminFetch } from "@/hooks/useAdminFetch";
 
-const card = "rounded-none bg-[var(--panel-bg)] border border-[var(--border)]";
+const card = "rounded-lg bg-[var(--panel-bg)] border border-[var(--border)]";
 const labelStyle =
   "text-[10px] font-bold uppercase tracking-[0.15em] text-[var(--text-muted)]";
 
@@ -381,7 +381,7 @@ function SpamSignals({
               return (
                 <div
                   key={domain}
-                  className="inline-flex items-center gap-1.5 rounded-none border px-2 py-1 font-mono text-[11px]"
+                  className="inline-flex items-center gap-1.5 rounded-lg border px-2 py-1 font-mono text-[11px]"
                   style={{
                     color: isDisposable ? "var(--short)" : "var(--text)",
                     borderColor: isDisposable
@@ -593,7 +593,7 @@ function GrowthChart({
       {/* Header row: label + range selector */}
       <div className="flex items-center justify-between mb-4 gap-3 flex-wrap">
         <div className={labelStyle}>Waitlist Growth</div>
-        <div className="inline-flex rounded-none border border-[var(--border)] overflow-hidden">
+        <div className="inline-flex rounded-lg border border-[var(--border)] overflow-hidden">
           {RANGES.map((r) => (
             <button
               key={r.key}
@@ -903,7 +903,7 @@ function GrowthChart({
             }}
           >
             <div
-              className="rounded-none border px-3 py-2 backdrop-blur-md"
+              className="rounded-lg border px-3 py-2 "
               style={{
                 borderColor: "var(--accent)",
                 background:
@@ -1227,11 +1227,11 @@ export function WaitlistLeaderboardSection() {
                 {stats.tierBreakdown.map(({ tier, count, label }) => (
                   <div
                     key={tier}
-                    className="rounded-none border border-[var(--border)]/60 bg-[var(--bg)]/40 p-3"
+                    className="rounded-lg border border-[var(--border)]/60 bg-[var(--bg)]/40 p-3"
                   >
                     <div className="flex items-center gap-2">
                       <span
-                        className="inline-flex h-5 min-w-5 items-center justify-center rounded-sm border px-1.5 font-mono text-[10px] font-bold uppercase tracking-[0.14em]"
+                        className="inline-flex h-5 min-w-5 items-center justify-center rounded-lg border px-1.5 font-mono text-[10px] font-bold uppercase tracking-[0.14em]"
                         style={{
                           color: tierColor(tier),
                           borderColor: `${tierColor(tier)}66`,
@@ -1375,7 +1375,7 @@ export function WaitlistLeaderboardSection() {
               <button
                 key={n}
                 onClick={() => setLimit(n as 10 | 25 | 100)}
-                className={`flex-1 rounded-none border px-2 py-1.5 text-[11px] font-bold uppercase tracking-[0.1em] transition-colors ${
+                className={`flex-1 rounded-lg border px-2 py-1.5 text-[11px] font-bold uppercase tracking-[0.1em] transition-colors ${
                   limit === n
                     ? "border-[var(--accent)] bg-[var(--accent)]/10 text-[var(--text)]"
                     : "border-[var(--border)] text-[var(--text-secondary)] hover:border-[var(--border-hover)]"
@@ -1387,7 +1387,7 @@ export function WaitlistLeaderboardSection() {
           </div>
           <button
             onClick={() => mutate()}
-            className="mt-2 rounded-none border border-[var(--border)] px-2 py-1.5 text-[10px] font-bold uppercase tracking-[0.15em] text-[var(--text-secondary)] hover:text-[var(--text)] hover:border-[var(--border-hover)] transition-colors"
+            className="mt-2 rounded-lg border border-[var(--border)] px-2 py-1.5 text-[10px] font-bold uppercase tracking-[0.15em] text-[var(--text-secondary)] hover:text-[var(--text)] hover:border-[var(--border-hover)] transition-colors"
           >
             Refresh
           </button>
@@ -1416,7 +1416,7 @@ export function WaitlistLeaderboardSection() {
           <button
             onClick={runBackfill}
             disabled={backfillBusy || (backfill?.pending ?? 0) === 0}
-            className="shrink-0 rounded-none border border-[var(--accent)]/60 bg-[var(--accent)]/[0.12] px-4 py-2 text-[11px] font-bold uppercase tracking-[0.14em] text-[var(--text)] transition-colors hover:bg-[var(--accent)]/20 disabled:cursor-not-allowed disabled:opacity-50"
+            className="shrink-0 rounded-lg border border-[var(--accent)]/60 bg-[var(--accent)]/[0.12] px-4 py-2 text-[11px] font-bold uppercase tracking-[0.14em] text-[var(--text)] transition-colors hover:bg-[var(--accent)]/20 disabled:cursor-not-allowed disabled:opacity-50"
           >
             {backfillBusy ? "Sending…" : "Send referral emails"}
           </button>
@@ -1478,7 +1478,7 @@ export function WaitlistLeaderboardSection() {
                     </td>
                     <td className="px-3 py-2">
                       <span
-                        className="inline-flex h-5 min-w-5 items-center justify-center rounded-sm border px-1.5 font-mono text-[10px] font-bold uppercase tracking-[0.14em]"
+                        className="inline-flex h-5 min-w-5 items-center justify-center rounded-lg border px-1.5 font-mono text-[10px] font-bold uppercase tracking-[0.14em]"
                         style={{
                           color: tierColor(row.tier ?? 0),
                           borderColor: `${tierColor(row.tier ?? 0)}66`,

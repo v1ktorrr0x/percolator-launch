@@ -177,12 +177,12 @@ export const OpenInterestCard: FC<{ slabAddress: string }> = ({
 
   if (loading && !oiData) {
     return (
-      <div className="rounded-none border border-[var(--border)]/50 bg-[var(--bg)]/80 p-3">
+      <div className="rounded-lg border border-[var(--border)]/50 bg-[var(--bg)]/80 p-3">
         <div className="flex items-center justify-between">
           <span className="text-[10px] uppercase tracking-[0.15em] text-[var(--text-dim)]">
             Open Interest
           </span>
-          <div className="h-4 w-16 animate-pulse rounded-none bg-[var(--border)]" />
+          <div className="h-4 w-16 animate-pulse rounded-lg bg-[var(--border)]" />
         </div>
       </div>
     );
@@ -190,7 +190,7 @@ export const OpenInterestCard: FC<{ slabAddress: string }> = ({
 
   if (!oiData) {
     return (
-      <div className="rounded-none border border-[var(--border)]/50 bg-[var(--bg)]/80 p-3">
+      <div className="rounded-lg border border-[var(--border)]/50 bg-[var(--bg)]/80 p-3">
         <div className="flex items-center justify-between">
           <span className="text-[10px] uppercase tracking-[0.15em] text-[var(--text-dim)]">
             Open Interest
@@ -208,7 +208,7 @@ export const OpenInterestCard: FC<{ slabAddress: string }> = ({
   const lpDirection = BigInt(oiData.netLpPosition ?? "0") >= 0n ? "long" : "short";
 
   return (
-    <div className="rounded-none border border-[var(--border)]/50 bg-[var(--bg)]/80 p-2">
+    <div className="rounded-lg border border-[var(--border)]/50 bg-[var(--bg)]/80 p-2">
       {/* Header row: label + total OI value */}
       <div className="mb-1.5 flex items-baseline justify-between">
         <div className="flex items-center gap-1">
@@ -238,9 +238,9 @@ export const OpenInterestCard: FC<{ slabAddress: string }> = ({
             {Math.round(oiUtilPct)}%
           </span>
         </div>
-        <div className="h-1.5 w-full overflow-hidden rounded-sm bg-[var(--border)]/30">
+        <div className="h-1.5 w-full overflow-hidden rounded-lg bg-[var(--border)]/30">
           <div
-            className="h-full transition-all duration-500 ease-out rounded-sm"
+            className="h-full transition-all duration-500 ease-out rounded-lg"
             style={{ width: `${oiUtilPct}%`, backgroundColor: oiUtilColor }}
           />
         </div>
@@ -274,14 +274,14 @@ export const OpenInterestCard: FC<{ slabAddress: string }> = ({
 
       {/* Imbalance + LP Net — compact two-column row */}
       <div className="mb-1.5 grid grid-cols-2 gap-1">
-        <div className="rounded-none border-l-2 border-l-[var(--border)] bg-[var(--bg-elevated)] px-1.5 py-1">
+        <div className="rounded-lg border-l-2 border-l-[var(--border)] bg-[var(--bg-elevated)] px-1.5 py-1">
           <div className="text-[8px] uppercase tracking-[0.1em] text-[var(--text-dim)]">Imbalance</div>
           <div className={`text-[11px] font-bold ${imbalanceColor}`} style={{ fontFamily: "var(--font-mono)" }}>
             {imbalancePct >= 0 ? "+" : ""}{imbalancePct.toFixed(1)}%
           </div>
           <div className="text-[8px] text-[var(--text-dim)]">{imbalanceLabel}</div>
         </div>
-        <div className="rounded-none border border-[var(--border)]/30 bg-[var(--bg)] px-1.5 py-1">
+        <div className="rounded-lg border border-[var(--border)]/30 bg-[var(--bg)] px-1.5 py-1">
           <div className="flex items-center gap-0.5">
             <span className="text-[8px] uppercase tracking-[0.1em] text-[var(--text-dim)]">LP Net</span>
             <InfoIcon tooltip="The aggregate position LPs must hold to balance trader positions. Drives funding rates." />
@@ -294,7 +294,7 @@ export const OpenInterestCard: FC<{ slabAddress: string }> = ({
       </div>
 
       {/* 24h OI mini chart */}
-      <div className="rounded-none border border-[var(--border)]/30 bg-[var(--bg-elevated)] px-1.5 py-1">
+      <div className="rounded-lg border border-[var(--border)]/30 bg-[var(--bg-elevated)] px-1.5 py-1">
         <div className="mb-0.5 flex items-center justify-between">
           <span className="text-[8px] uppercase tracking-[0.1em] text-[var(--text-dim)]">24h OI</span>
           {oiData.historicalOi && oiData.historicalOi.length > 1 && oiData.historicalOi[0].totalOi > 0 && (

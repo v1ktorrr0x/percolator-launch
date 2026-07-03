@@ -48,7 +48,7 @@ export class ErrorBoundary extends Component<Props, State> {
     if (this.state.hasError) {
       if (this.props.fallback) return this.props.fallback;
       return (
-        <div className="rounded-none border border-[var(--short)]/20 bg-[var(--short)]/5 p-6 text-center">
+        <div className="rounded-lg border border-[var(--short)]/20 bg-[var(--short)]/5 p-6 text-center">
           <p className="text-sm font-medium text-[var(--short)]">
             something broke{this.props.label ? ` in ${this.props.label}` : ""}.
           </p>
@@ -57,7 +57,7 @@ export class ErrorBoundary extends Component<Props, State> {
           </p>
           <button
             onClick={() => this.setState({ hasError: false, error: null })}
-            className="mt-3 rounded-none border border-[var(--border)] px-3 py-1.5 text-xs text-[var(--text)] hover:bg-[var(--bg-elevated)] transition-colors"
+            className="mt-3 rounded-lg border border-[var(--border)] px-3 py-1.5 text-xs text-[var(--text)] hover:bg-[var(--bg-elevated)] transition-colors"
           >
             try again
           </button>

@@ -83,7 +83,7 @@ export const MarketBookCard: FC = () => {
           onClick={toggleBook}
           aria-label="Hide order book"
           title="Hide order book"
-          className="rounded-none border border-[var(--border)]/40 px-1.5 py-0.5 text-[10px] leading-none text-[var(--text-dim)] hover:border-[var(--accent)]/40 hover:text-[var(--text-secondary)] focus-visible:ring-1 focus-visible:ring-[var(--accent)]/30"
+          className="rounded-lg border border-[var(--border)]/40 px-1.5 py-0.5 text-[10px] leading-none text-[var(--text-dim)] hover:border-[var(--accent)]/40 hover:text-[var(--text-secondary)] focus-visible:ring-1 focus-visible:ring-[var(--accent)]/30"
         >
           ×
         </button>
@@ -126,7 +126,7 @@ export const MarketBookCard: FC = () => {
 
       {/* 2.3: Depth bars — differentiated bid/ask with fill bar */}
       <div className="mb-3 grid grid-cols-2 gap-1">
-        <div className="rounded-none border border-[var(--long)]/10 bg-[var(--long)]/5 p-2">
+        <div className="rounded-lg border border-[var(--long)]/10 bg-[var(--long)]/5 p-2">
           <p className="text-[8px] uppercase tracking-[0.15em] text-[var(--long)]/60">Bid Depth</p>
           <p
             className="text-[11px] font-semibold text-[var(--long)]"
@@ -142,7 +142,7 @@ export const MarketBookCard: FC = () => {
             />
           </div>
         </div>
-        <div className="rounded-none border border-[var(--short)]/10 bg-[var(--short)]/5 p-2">
+        <div className="rounded-lg border border-[var(--short)]/10 bg-[var(--short)]/5 p-2">
           <p className="text-[8px] uppercase tracking-[0.15em] text-[var(--short)]/60">Ask Depth</p>
           <p
             className="text-[11px] font-semibold text-[var(--short)]"

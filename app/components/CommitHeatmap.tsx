@@ -204,7 +204,7 @@ export const CommitHeatmap: FC<Props> = ({ commitActivity }) => {
             className={[
               "shrink-0 rounded-full border px-3 py-1 text-[12px] whitespace-nowrap transition-all duration-150",
               selectedRepo === "all"
-                ? "border-[rgb(124,58,237)] bg-[rgba(124,58,237,0.35)] text-[var(--text)] font-semibold shadow-[0_0_12px_rgba(124,58,237,0.25)]"
+                ? "border-[rgb(124,58,237)] bg-[rgba(124,58,237,0.35)] text-[var(--text)] font-semibold "
                 : "border-[var(--border)] bg-[var(--bg-surface)] text-[var(--text-secondary)] hover:border-[var(--border)]",
             ].join(" ")}
             style={{ fontFamily: "var(--font-mono, 'JetBrains Mono')" }}
@@ -218,7 +218,7 @@ export const CommitHeatmap: FC<Props> = ({ commitActivity }) => {
               className={[
                 "shrink-0 rounded-full border px-3 py-1 text-[12px] whitespace-nowrap transition-all duration-150",
                 selectedRepo === repo
-                  ? "border-[rgb(124,58,237)] bg-[rgba(124,58,237,0.35)] text-[var(--text)] font-semibold shadow-[0_0_12px_rgba(124,58,237,0.25)]"
+                  ? "border-[rgb(124,58,237)] bg-[rgba(124,58,237,0.35)] text-[var(--text)] font-semibold "
                   : "border-[var(--border)] bg-[var(--bg-surface)] text-[var(--text-secondary)] hover:border-[var(--border)]",
               ].join(" ")}
               style={{ fontFamily: "var(--font-mono, 'JetBrains Mono')" }}

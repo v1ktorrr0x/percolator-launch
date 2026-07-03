@@ -48,7 +48,7 @@ const ConfirmDialog: FC<{
   if (!open) return null;
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60">
-      <div className="mx-4 max-w-md rounded-none border border-[var(--border)]/50 bg-[var(--bg)] p-8">
+      <div className="mx-4 max-w-md rounded-lg border border-[var(--border)]/50 bg-[var(--bg)] p-8">
         <h3 className="text-sm font-semibold uppercase tracking-[0.1em] text-[var(--text)]">{title}</h3>
         <p className="mt-2 text-[11px] text-[var(--text-secondary)]">{description}</p>
         <div className="mt-6 flex gap-3">
@@ -88,14 +88,14 @@ const InputDialog: FC<{
   if (!open) return null;
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60">
-      <div className="mx-4 max-w-md w-full rounded-none border border-[var(--border)]/50 bg-[var(--bg)] p-8">
+      <div className="mx-4 max-w-md w-full rounded-lg border border-[var(--border)]/50 bg-[var(--bg)] p-8">
         <h3 className="text-sm font-semibold uppercase tracking-[0.1em] text-[var(--text)]">{title}</h3>
         <p className="mt-2 text-[11px] text-[var(--text-secondary)]">{description}</p>
         <input
           value={value}
           onChange={(e) => setValue(e.target.value)}
           placeholder={placeholder}
-          className="mt-4 w-full rounded-none border border-[var(--border)]/50 bg-transparent px-3 py-2 text-[11px] text-[var(--text)] placeholder-[var(--text-dim)] outline-none focus:border-[var(--accent)]/40"
+          className="mt-4 w-full rounded-lg border border-[var(--border)]/50 bg-transparent px-3 py-2 text-[11px] text-[var(--text)] placeholder-[var(--text-dim)] outline-none focus:border-[var(--accent)]/40"
           style={{ fontFamily: "var(--font-mono)" }}
         />
         <div className="mt-4 flex gap-3">
@@ -330,7 +330,7 @@ const MarketCard: FC<{
       {/* Burn admin key - requires typing BURN to confirm */}
       {showBurnConfirm && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60">
-          <div className="mx-4 max-w-md w-full rounded-none border border-[var(--border)]/50 bg-[var(--bg)] p-8">
+          <div className="mx-4 max-w-md w-full rounded-lg border border-[var(--border)]/50 bg-[var(--bg)] p-8">
             <h3 className="text-sm font-semibold uppercase tracking-[0.1em] text-[var(--text)]">burn admin key</h3>
             <p className="mt-2 text-[11px] text-[var(--text-secondary)]">
               This is permanent and irreversible. You will never be able to update config, set oracle, or perform any admin actions on this market again.
@@ -342,7 +342,7 @@ const MarketCard: FC<{
               value={burnConfirmText}
               onChange={(e) => setBurnConfirmText(e.target.value)}
               placeholder="BURN"
-              className="mt-2 w-full rounded-none border border-[var(--border)]/50 bg-transparent px-3 py-2 text-[11px] text-[var(--text)] placeholder-[var(--text-dim)] outline-none focus:border-[var(--short)]/40"
+              className="mt-2 w-full rounded-lg border border-[var(--border)]/50 bg-transparent px-3 py-2 text-[11px] text-[var(--text)] placeholder-[var(--text-dim)] outline-none focus:border-[var(--short)]/40"
               style={{ fontFamily: "var(--font-mono)" }}
             />
             <div className="mt-4 flex gap-3">

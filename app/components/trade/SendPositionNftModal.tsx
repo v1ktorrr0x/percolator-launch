@@ -70,14 +70,14 @@ export const SendPositionNftModal: FC<SendPositionNftModalProps> = ({
       onClick={(e) => {
         if (e.target === e.currentTarget && !loading) onCancel();
       }}
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-[2px] p-4"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4"
       aria-modal="true"
       role="dialog"
       aria-label="Send Position NFT"
     >
       <div
         ref={modalRef}
-        className="relative w-full max-w-sm rounded-none border border-[var(--border)] bg-[var(--bg)] shadow-xl"
+        className="relative w-full max-w-sm rounded-lg border border-[var(--border)] bg-[var(--bg)] shadow-xl"
       >
         <div className="flex items-center gap-2 px-4 py-3 border-l-2 border-l-[var(--accent)] bg-[var(--accent)]/[0.06]">
           <span className="text-[13px] leading-none text-[var(--accent)]">◆</span>
@@ -115,7 +115,7 @@ export const SendPositionNftModal: FC<SendPositionNftModalProps> = ({
               onChange={(e) => setDestInput(e.target.value)}
               placeholder="Paste Solana pubkey…"
               disabled={loading}
-              className={`w-full rounded-none border bg-[var(--bg)] px-2 py-2 text-[11px] font-mono text-[var(--text)] placeholder:text-[var(--text-dim)] focus:outline-none focus:border-[var(--accent)] ${
+              className={`w-full rounded-lg border bg-[var(--bg)] px-2 py-2 text-[11px] font-mono text-[var(--text)] placeholder:text-[var(--text-dim)] focus:outline-none focus:border-[var(--accent)] ${
                 pubkeyInvalid ? "border-[var(--short)]/60" : "border-[var(--border)]/60"
               }`}
             />
@@ -153,7 +153,7 @@ export const SendPositionNftModal: FC<SendPositionNftModalProps> = ({
 
           {/* On-chain error surfaced from the simulation / tx */}
           {error && (
-            <div className="rounded-none border border-[var(--short)]/30 bg-[var(--short)]/5 px-3 py-2">
+            <div className="rounded-lg border border-[var(--short)]/30 bg-[var(--short)]/5 px-3 py-2">
               <p className="text-[10px] text-[var(--short)]">{error}</p>
             </div>
           )}
@@ -164,7 +164,7 @@ export const SendPositionNftModal: FC<SendPositionNftModalProps> = ({
               type="button"
               onClick={onCancel}
               disabled={loading}
-              className="flex-1 rounded-none border border-[var(--border)]/60 py-2 text-[10px] font-medium uppercase tracking-[0.1em] text-[var(--text-secondary)] transition-colors hover:border-[var(--border)] hover:text-[var(--text)] disabled:cursor-not-allowed disabled:opacity-40"
+              className="flex-1 rounded-lg border border-[var(--border)]/60 py-2 text-[10px] font-medium uppercase tracking-[0.1em] text-[var(--text-secondary)] transition-colors hover:border-[var(--border)] hover:text-[var(--text)] disabled:cursor-not-allowed disabled:opacity-40"
             >
               Cancel
             </button>
@@ -172,7 +172,7 @@ export const SendPositionNftModal: FC<SendPositionNftModalProps> = ({
               type="button"
               onClick={() => parsedDest && onConfirm(parsedDest)}
               disabled={!canConfirm}
-              className="flex-[1.2] rounded-none bg-[var(--accent)] py-2 text-[10px] font-bold uppercase tracking-[0.1em] text-white transition-all duration-150 hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-40"
+              className="flex-[1.2] rounded-lg bg-[var(--accent)] py-2 text-[10px] font-bold uppercase tracking-[0.1em] text-white transition-all duration-150 hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-40"
             >
               {loading ? "Sending…" : "Confirm & Sign"}
             </button>

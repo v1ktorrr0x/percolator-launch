@@ -11,7 +11,7 @@ import { usePrivy } from "@privy-io/react-auth";
  * page just gets them through Privy and bounces them to /admin where
  * the page-level guard does the actual gate.
  */
-const card = "rounded-none bg-[var(--panel-bg)] border border-[var(--border)] p-8";
+const card = "rounded-lg bg-[var(--panel-bg)] border border-[var(--border)] p-8";
 
 export default function AdminLoginPage() {
   const router = useRouter();
@@ -53,7 +53,7 @@ export default function AdminLoginPage() {
             </p>
             <button
               onClick={() => router.replace("/admin")}
-              className="block w-full rounded-none border border-[var(--accent)]/60 bg-[var(--accent)]/[0.12] px-4 py-3 text-[12px] font-bold uppercase tracking-[0.14em] text-[var(--text)] transition-colors hover:bg-[var(--accent)]/20"
+              className="block w-full rounded-lg border border-[var(--accent)]/60 bg-[var(--accent)]/[0.12] px-4 py-3 text-[12px] font-bold uppercase tracking-[0.14em] text-[var(--text)] transition-colors hover:bg-[var(--accent)]/20"
             >
               Continue to admin &rarr;
             </button>
@@ -69,7 +69,7 @@ export default function AdminLoginPage() {
             </p>
             <button
               onClick={login}
-              className="block w-full rounded-none border border-[var(--accent)]/60 bg-[var(--accent)]/[0.12] px-4 py-3 text-[12px] font-bold uppercase tracking-[0.14em] text-[var(--text)] transition-colors hover:bg-[var(--accent)]/20"
+              className="block w-full rounded-lg border border-[var(--accent)]/60 bg-[var(--accent)]/[0.12] px-4 py-3 text-[12px] font-bold uppercase tracking-[0.14em] text-[var(--text)] transition-colors hover:bg-[var(--accent)]/20"
             >
               Sign in with Privy &rarr;
             </button>

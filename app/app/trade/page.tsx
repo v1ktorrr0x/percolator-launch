@@ -170,7 +170,7 @@ export default function TradeRedirectPage() {
   return (
     <div className="min-h-[calc(100dvh-48px)]">
       {/* Mobile header skeleton */}
-      <div className="sticky top-0 z-30 border-b border-[var(--border)]/50 bg-[var(--bg)]/95 px-3 py-2 backdrop-blur-sm lg:hidden">
+      <div className="sticky top-0 z-30 border-b border-[var(--border)]/50 bg-[var(--bg)]/95 px-3 py-2 lg:hidden">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <ShimmerSkeleton className="h-8 w-8 rounded-full" />
@@ -212,7 +212,7 @@ export default function TradeRedirectPage() {
 
       {/* Subtle loading indicator */}
       <div className="fixed bottom-20 md:bottom-4 left-1/2 -translate-x-1/2 z-50">
-        <div className="flex items-center gap-2 rounded-sm border border-[var(--border)] bg-[var(--bg)]/95 px-3 py-1.5 backdrop-blur-sm">
+        <div className="flex items-center gap-2 rounded-lg border border-[var(--border)] bg-[var(--bg)]/95 px-3 py-1.5 ">
           <div className="h-3 w-3 animate-spin rounded-full border border-[var(--accent)] border-t-transparent" />
           <span className="text-[10px] text-[var(--text-muted)] uppercase tracking-[0.15em]">
             Loading SOL-PERP…

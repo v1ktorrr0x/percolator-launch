@@ -203,7 +203,7 @@ export function PositionSummary() {
         {loading ? (
           <div className="space-y-2">
             {[1, 2, 3].map((i) => (
-              <div key={i} className="h-24 animate-pulse rounded-sm bg-[var(--border)]" />
+              <div key={i} className="h-24 animate-pulse rounded-lg bg-[var(--border)]" />
             ))}
           </div>
         ) : positions.length === 0 ? (

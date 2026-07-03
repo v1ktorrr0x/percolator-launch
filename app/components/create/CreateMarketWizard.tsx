@@ -940,14 +940,14 @@ export const CreateMarketWizard: FC<{ initialMint?: string }> = ({ initialMint }
               <button
                 type="button"
                 onClick={goBack}
-                className="border border-[var(--border)] bg-transparent px-5 py-3 text-[12px] font-medium uppercase tracking-[0.1em] text-[var(--text-secondary)] transition-all hud-btn-corners hover:border-[var(--accent)]/30 hover:text-[var(--text)]"
+                className="border border-[var(--border)] bg-transparent px-5 py-3 text-[12px] font-medium uppercase tracking-[0.1em] text-[var(--text-secondary)] transition-all hover:border-[var(--accent)]/30 hover:text-[var(--text)]"
               >
                 ← BACK
               </button>
               <button
                 type="button"
                 onClick={handleQuickSlabContinue}
-                className="flex-1 border border-[var(--accent)]/50 bg-[var(--accent)]/[0.08] py-3 text-[13px] font-bold uppercase tracking-[0.1em] text-[var(--accent)] transition-all duration-200 hud-btn-corners hover:border-[var(--accent)] hover:bg-[var(--accent)]/[0.15]"
+                className="flex-1 border border-[var(--accent)]/50 bg-[var(--accent)]/[0.08] py-3 text-[13px] font-bold uppercase tracking-[0.1em] text-[var(--accent)] transition-all duration-200 hover:border-[var(--accent)] hover:bg-[var(--accent)] hover:text-white"
               >
                 CONTINUE →
               </button>

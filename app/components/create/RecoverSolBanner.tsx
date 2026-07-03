@@ -138,7 +138,7 @@ export const RecoverSolBanner: FC<RecoverSolBannerProps> = ({ onResume, onReset,
             <button
               type="button"
               onClick={() => onResume(stuckSlab.publicKey.toBase58(), 1)}
-              className="border border-[var(--accent)]/50 bg-[var(--accent)]/[0.08] px-4 py-2 text-[11px] font-bold uppercase tracking-[0.1em] text-[var(--accent)] hover:bg-[var(--accent)]/[0.15] transition-colors"
+              className="border border-[var(--accent)]/50 bg-[var(--accent)]/[0.08] px-4 py-2 text-[11px] font-bold uppercase tracking-[0.1em] text-[var(--accent)] hover:bg-[var(--accent)] hover:text-white transition-colors"
             >
               RESUME CREATION →
             </button>
@@ -156,7 +156,7 @@ export const RecoverSolBanner: FC<RecoverSolBannerProps> = ({ onResume, onReset,
                 clearStuck();
               }
             }}
-            className="border border-[var(--accent)]/50 bg-[var(--accent)]/[0.08] px-4 py-2 text-[11px] font-bold uppercase tracking-[0.1em] text-[var(--accent)] hover:bg-[var(--accent)]/[0.15] transition-colors disabled:opacity-50"
+            className="border border-[var(--accent)]/50 bg-[var(--accent)]/[0.08] px-4 py-2 text-[11px] font-bold uppercase tracking-[0.1em] text-[var(--accent)] hover:bg-[var(--accent)] hover:text-white transition-colors disabled:opacity-50"
           >
             {closeLoading ? "RECLAIMING..." : `RECLAIM ~${rentSol} SOL`}
           </button>
@@ -302,7 +302,7 @@ const UninitialisedSlabBanner: FC<{
             type="button"
             disabled={isSending}
             onClick={() => stuckSlab.keypair && reclaim(stuckSlab.keypair)}
-            className="border border-[var(--accent)]/50 bg-[var(--accent)]/[0.08] px-4 py-2 text-[11px] font-bold uppercase tracking-[0.1em] text-[var(--accent)] hover:bg-[var(--accent)]/[0.15] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            className="border border-[var(--accent)]/50 bg-[var(--accent)]/[0.08] px-4 py-2 text-[11px] font-bold uppercase tracking-[0.1em] text-[var(--accent)] hover:bg-[var(--accent)] hover:text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {isSending ? "RECLAIMING…" : `RECLAIM ${rentSol} SOL →`}
           </button>

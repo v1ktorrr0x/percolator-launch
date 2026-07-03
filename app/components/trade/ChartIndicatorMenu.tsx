@@ -96,7 +96,7 @@ export const ChartIndicatorMenu: FC<ChartIndicatorMenuProps> = ({
         aria-label="Indicators"
         title="Indicators"
         className={[
-          "flex items-center gap-1 rounded-none border border-[var(--border)] bg-[var(--bg-elevated)] px-1.5 sm:px-2 py-1 text-xs transition-colors",
+          "flex items-center gap-1 rounded-lg border border-[var(--border)] bg-[var(--bg-elevated)] px-1.5 sm:px-2 py-1 text-xs transition-colors",
           open
             ? "text-[var(--accent)]"
             : "text-[var(--text-secondary)] hover:text-[var(--text)]",
@@ -136,7 +136,7 @@ export const ChartIndicatorMenu: FC<ChartIndicatorMenuProps> = ({
           // z-[60] so the mobile bottom-sheet variant sits ABOVE the global
           // MobileBottomNav (z-50) — at z-20 the nav was painting over the
           // sheet's "Clear all" footer, leaving it unreachable on phones.
-          "absolute left-0 top-full z-[60] mt-1 min-w-[280px] rounded-none border border-[var(--border)] bg-[var(--bg-elevated)] py-1 shadow-[0_8px_32px_rgba(0,0,0,0.48)] transition-opacity duration-[120ms] ease-out",
+          "absolute left-0 top-full z-[60] mt-1 min-w-[280px] rounded-lg border border-[var(--border)] bg-[var(--bg-elevated)] py-1 transition-opacity duration-[120ms] ease-out",
           open
             ? "opacity-100 pointer-events-auto"
             : "opacity-0 pointer-events-none",
@@ -221,7 +221,7 @@ const ChartIndicatorRow: FC<ChartIndicatorRowProps> = ({
           // The toggle's aria-pressed already conveys enabled state.
           <span
             data-testid={`indicator-swatch-${kind}`}
-            className="inline-block h-3 w-3 rounded-sm border border-[var(--border)]"
+            className="inline-block h-3 w-3 rounded-lg border border-[var(--border)]"
             style={{ backgroundColor: config.color }}
             aria-hidden="true"
           />
@@ -382,7 +382,7 @@ const NumberInput: FC<NumberInputProps> = ({
         min={min}
         max={max}
         step={step}
-        className="w-14 rounded-none border border-[var(--border)] bg-[var(--bg)] px-1 py-0.5 text-xs text-[var(--text)]"
+        className="w-14 rounded-lg border border-[var(--border)] bg-[var(--bg)] px-1 py-0.5 text-xs text-[var(--text)]"
       />
     </label>
   );

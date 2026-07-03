@@ -19,7 +19,7 @@ export const RepoCard: FC<Props> = ({ repo, ciStatus }) => {
       href={repo.html_url}
       target="_blank"
       rel="noopener noreferrer"
-      className="group flex flex-col rounded-xl border border-[var(--border)] bg-[var(--panel-bg)] p-5 sm:p-6 backdrop-blur-sm transition-all duration-200 hover:-translate-y-0.5 hover:border-[rgba(124,58,237,0.40)] hover:shadow-[0_0_24px_rgba(124,58,237,0.12)]"
+      className="group flex flex-col rounded-xl border border-[var(--border)] bg-[var(--panel-bg)] p-5 sm:p-6 transition-all duration-200 hover:-translate-y-0.5 hover:border-[rgba(124,58,237,0.40)] "
     >
       {/* Row 1: Language + Stars */}
       <div className="mb-4 flex items-center justify-between">

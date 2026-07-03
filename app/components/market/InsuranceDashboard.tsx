@@ -174,12 +174,12 @@ export const InsuranceDashboard: FC<{ slabAddress: string }> = ({
 
   if (loading && !insuranceData) {
     return (
-      <div className="rounded-none border border-[var(--border)]/50 bg-[var(--bg)]/80 p-3">
+      <div className="rounded-lg border border-[var(--border)]/50 bg-[var(--bg)]/80 p-3">
         <div className="flex items-center justify-between">
           <span className="text-[10px] uppercase tracking-[0.15em] text-[var(--text-dim)]">
             Insurance Fund
           </span>
-          <div className="h-4 w-16 animate-pulse rounded-none bg-[var(--border)]" />
+          <div className="h-4 w-16 animate-pulse rounded-lg bg-[var(--border)]" />
         </div>
       </div>
     );
@@ -187,7 +187,7 @@ export const InsuranceDashboard: FC<{ slabAddress: string }> = ({
 
   if (!insuranceData || !insuranceData.balance) {
     return (
-      <div className="rounded-none border border-[var(--border)]/50 bg-[var(--bg)]/80 p-3">
+      <div className="rounded-lg border border-[var(--border)]/50 bg-[var(--bg)]/80 p-3">
         <div className="flex items-center justify-between">
           <span className="text-[10px] uppercase tracking-[0.15em] text-[var(--text-dim)]">
             Insurance Fund
@@ -203,7 +203,7 @@ export const InsuranceDashboard: FC<{ slabAddress: string }> = ({
 
   return (
     <>
-      <div className="rounded-none border border-[var(--border)]/50 bg-[var(--bg)]/80 p-2">
+      <div className="rounded-lg border border-[var(--border)]/50 bg-[var(--bg)]/80 p-2">
         {/* Header row: label + balance */}
         <div className="mb-1.5 flex items-baseline justify-between">
           <div className="flex items-center gap-1">
@@ -240,7 +240,7 @@ export const InsuranceDashboard: FC<{ slabAddress: string }> = ({
         </div>
 
         {/* Health + Coverage — compact inline */}
-        <div className={`mb-1.5 rounded-none border-l-2 ${healthStatus.borderColor} ${healthStatus.bgColor} px-1.5 py-1`}>
+        <div className={`mb-1.5 rounded-lg border-l-2 ${healthStatus.borderColor} ${healthStatus.bgColor} px-1.5 py-1`}>
           <div className="flex items-center gap-1.5">
             <span className={`inline-block w-1.5 h-1.5 rounded-full ${healthStatus.dotColor}`} />
             <span className="text-[10px] font-medium text-[var(--text)]">
@@ -255,7 +255,7 @@ export const InsuranceDashboard: FC<{ slabAddress: string }> = ({
         </div>
 
         {/* 7-day mini chart */}
-        <div className="rounded-none border border-[var(--border)]/30 bg-[var(--bg-elevated)] px-1.5 py-1">
+        <div className="rounded-lg border border-[var(--border)]/30 bg-[var(--bg-elevated)] px-1.5 py-1">
           <div className="mb-0.5 flex items-center justify-between">
             <span className="text-[8px] uppercase tracking-[0.1em] text-[var(--text-dim)]">7d Trend</span>
             {insuranceData.historicalBalance && insuranceData.historicalBalance.length > 1 && insuranceData.historicalBalance[0].balance > 0 && (

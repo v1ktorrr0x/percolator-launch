@@ -4,7 +4,7 @@ export default function TradingPageLoading() {
   return (
     <div className="min-h-[calc(100dvh-48px)]">
       {/* Mobile: Sticky header skeleton */}
-      <div className="sticky top-0 z-30 border-b border-[var(--border)]/50 bg-[var(--bg)]/95 px-3 py-2 backdrop-blur-sm lg:hidden">
+      <div className="sticky top-0 z-30 border-b border-[var(--border)]/50 bg-[var(--bg)]/95 px-3 py-2 lg:hidden">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <ShimmerSkeleton className="h-8 w-8 rounded-full" />
@@ -53,10 +53,10 @@ export default function TradingPageLoading() {
         <div className="border border-[var(--border)]">
           <div className="flex border-b border-[var(--border)]/50">
             {[1, 2, 3, 4].map((i) => (
-              <ShimmerSkeleton key={i} className="h-8 flex-1 rounded-none" />
+              <ShimmerSkeleton key={i} className="h-8 flex-1 rounded-lg" />
             ))}
           </div>
-          <ShimmerSkeleton className="h-[250px] w-full rounded-none" />
+          <ShimmerSkeleton className="h-[250px] w-full rounded-lg" />
         </div>
       </div>
 
@@ -70,10 +70,10 @@ export default function TradingPageLoading() {
           <div className="border border-[var(--border)]">
             <div className="flex border-b border-[var(--border)]/50">
               {[1, 2, 3].map((i) => (
-                <ShimmerSkeleton key={i} className="h-10 flex-1 rounded-none" />
+                <ShimmerSkeleton key={i} className="h-10 flex-1 rounded-lg" />
               ))}
             </div>
-            <ShimmerSkeleton className="h-[200px] w-full rounded-none" />
+            <ShimmerSkeleton className="h-[200px] w-full rounded-lg" />
           </div>
         </div>
 
@@ -85,10 +85,10 @@ export default function TradingPageLoading() {
           <div className="border border-[var(--border)]">
             <div className="flex border-b border-[var(--border)]/50">
               {[1, 2, 3, 4, 5].map((i) => (
-                <ShimmerSkeleton key={i} className="h-10 flex-1 rounded-none" />
+                <ShimmerSkeleton key={i} className="h-10 flex-1 rounded-lg" />
               ))}
             </div>
-            <ShimmerSkeleton className="h-[300px] w-full rounded-none" />
+            <ShimmerSkeleton className="h-[300px] w-full rounded-lg" />
           </div>
         </div>
       </div>

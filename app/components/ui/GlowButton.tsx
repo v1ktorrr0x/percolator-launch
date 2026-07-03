@@ -22,29 +22,28 @@ export function GlowButton({
     lg: "px-10 py-4 text-base",
   };
 
+  // Hover = clean color invert (outline → solid fill). No glow/press.
   const variantClasses = {
     primary: [
-      "border border-[var(--accent)]/40 text-[var(--accent)] bg-transparent font-semibold",
-      "hud-btn-corners",
-      "hover:border-[var(--accent)]/70 hover:bg-[var(--accent)]/[0.08]",
-      "active:scale-[0.98]",
+      "border border-[var(--accent)]/50 text-[var(--accent)] bg-transparent font-semibold",
+      "",
+      "hover:bg-[var(--accent)] hover:text-white hover:border-[var(--accent)]",
     ].join(" "),
     secondary: [
-      "border border-[var(--border)] text-[var(--text-secondary)] bg-transparent font-medium",
-      "hud-btn-corners",
-      "hover:border-[var(--accent)]/40 hover:text-[var(--text)]",
-      "active:scale-[0.98]",
+      "border border-[var(--border)] text-[var(--text)] bg-transparent font-medium",
+      "",
+      "hover:bg-[var(--text)] hover:text-[var(--bg)] hover:border-[var(--text)]",
     ].join(" "),
     ghost: [
       "bg-transparent text-[var(--text-secondary)] font-medium",
-      "hover:text-[var(--text)] hover:bg-[var(--accent)]/[0.04]",
+      "hover:text-[var(--text)] hover:bg-[var(--accent)]/[0.06]",
     ].join(" "),
   };
 
   return (
     <button
       className={[
-        "inline-flex items-center justify-center rounded-sm",
+        "inline-flex items-center justify-center rounded-lg",
         "transition-all duration-200",
         "focus:outline-none focus:ring-2 focus:ring-[var(--accent)]/20 focus:ring-offset-2 focus:ring-offset-[var(--bg)]",
         "disabled:opacity-40 disabled:pointer-events-none",

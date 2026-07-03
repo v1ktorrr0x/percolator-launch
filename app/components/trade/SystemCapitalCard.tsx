@@ -27,7 +27,7 @@ export const SystemCapitalCard: FC = () => {
 
   if (loading || !engine) {
     return (
-      <div className="rounded-none border border-[var(--border)]/50 bg-[var(--bg)]/80 p-3">
+      <div className="rounded-lg border border-[var(--border)]/50 bg-[var(--bg)]/80 p-3">
         <span className="text-[10px] text-[var(--text-dim)]">Loading...</span>
       </div>
     );
@@ -91,7 +91,7 @@ export const SystemCapitalCard: FC = () => {
   ];
 
   return (
-    <div className="rounded-none border border-[var(--border)]/50 bg-[var(--bg)]/80 p-3">
+    <div className="rounded-lg border border-[var(--border)]/50 bg-[var(--bg)]/80 p-3">
       <div className="mb-3 flex items-center gap-1">
         <span className="text-[10px] font-bold uppercase tracking-[0.15em] text-[var(--text-dim)]">
           System Capital
@@ -112,7 +112,7 @@ export const SystemCapitalCard: FC = () => {
       </div>
 
       {/* LP Exposure Section */}
-      <div className="rounded-none border border-[var(--border)]/30 bg-[var(--bg-elevated)] p-2">
+      <div className="rounded-lg border border-[var(--border)]/30 bg-[var(--bg-elevated)] p-2">
         <div className="mb-2 flex items-center gap-1">
           <span className="text-[10px] font-bold uppercase tracking-[0.15em] text-[var(--text-dim)]">LP Exposure</span>
           <InfoIcon tooltip="LP position aggregates — net exposure drives funding rates, concentration shows whale risk" />

@@ -9,7 +9,6 @@ import gsap from "gsap";
 import { type Network, getConfig, setNetwork } from "@/lib/config";
 import { usePrefersReducedMotion } from "@/hooks/usePrefersReducedMotion";
 import { NavDropdown, type NavItem } from "./NavDropdown";
-import { ThemeToggle } from "@/components/ui/ThemeToggle";
 
 const ConnectButton = dynamic(
   () => import("@/components/wallet/ConnectButton").then((m) => m.ConnectButton),
@@ -213,14 +212,12 @@ export const Header: FC = () => {
             </span>
           )}
 
-          <ThemeToggle />
-          <div className="h-4 w-px bg-[var(--border)]" />
           <ConnectButton />
 
           {/* Mobile menu toggle */}
           <button
             onClick={() => setMobileOpen(!mobileOpen)}
-            className="flex h-10 w-10 items-center justify-center rounded-sm text-[var(--text-muted)] transition-colors hover:bg-[var(--accent)]/[0.04] hover:text-[var(--text-secondary)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--bg)] md:hidden"
+            className="flex h-10 w-10 items-center justify-center rounded-lg text-[var(--text-muted)] transition-colors hover:bg-[var(--accent)]/[0.04] hover:text-[var(--text-secondary)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--bg)] md:hidden"
             aria-label={mobileOpen ? "Close menu" : "Open menu"}
             aria-expanded={mobileOpen}
           >
@@ -284,9 +281,9 @@ export const Header: FC = () => {
                       href={item.href}
                       onClick={() => setMobileOpen(false)}
                       className={[
-                        "px-3 py-2 text-[13px] font-medium rounded-sm transition-all",
+                        "px-3 py-2 text-[13px] font-medium rounded-lg transition-all",
                         pathname === item.href
-                          ? "text-[#22d3ee] bg-[rgba(34,211,238,0.08)]"
+                          ? "text-[#14F195] bg-[#14F195]/[0.08]"
                           : "text-[var(--text-secondary)] hover:text-[var(--text)] hover:bg-[var(--bg-elevated)]",
                       ].join(" ")}
                     >
@@ -304,7 +301,7 @@ export const Header: FC = () => {
               href="https://github.com/dcccrypto/percolator-launch"
               target="_blank"
               rel="noopener noreferrer"
-              className="flex h-8 w-8 items-center justify-center rounded-sm border border-[var(--border)] text-[var(--text-muted)] transition-all hover:border-[var(--border-hover)] hover:text-[var(--text)] hover:bg-[var(--bg-elevated)]"
+              className="flex h-8 w-8 items-center justify-center rounded-lg border border-[var(--border)] text-[var(--text-muted)] transition-all hover:border-[var(--border-hover)] hover:text-[var(--text)] hover:bg-[var(--bg-elevated)]"
               title="GitHub"
             >
               <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor">
@@ -315,7 +312,7 @@ export const Header: FC = () => {
               href="https://x.com/PercolatorTrade"
               target="_blank"
               rel="noopener noreferrer"
-              className="flex h-8 w-8 items-center justify-center rounded-sm border border-[var(--border)] text-[var(--text-muted)] transition-all hover:border-[var(--border-hover)] hover:text-[var(--text)] hover:bg-[var(--bg-elevated)]"
+              className="flex h-8 w-8 items-center justify-center rounded-lg border border-[var(--border)] text-[var(--text-muted)] transition-all hover:border-[var(--border-hover)] hover:text-[var(--text)] hover:bg-[var(--bg-elevated)]"
               title="X / Twitter"
             >
               <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
@@ -326,7 +323,7 @@ export const Header: FC = () => {
               href="https://discord.gg/fJa4BDBxPN"
               target="_blank"
               rel="noopener noreferrer"
-              className="flex h-8 w-8 items-center justify-center rounded-sm border border-[var(--border)] text-[var(--text-muted)] transition-all hover:border-[#5865F2]/40 hover:text-[#5865F2] hover:bg-[#5865F2]/[0.06]"
+              className="flex h-8 w-8 items-center justify-center rounded-lg border border-[var(--border)] text-[var(--text-muted)] transition-all hover:border-[#5865F2]/40 hover:text-[#5865F2] hover:bg-[#5865F2]/[0.06]"
               title="Discord"
             >
               <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor">
@@ -337,7 +334,7 @@ export const Header: FC = () => {
               href="https://t.me/+fFHf5lGRAbk4OGEx"
               target="_blank"
               rel="noopener noreferrer"
-              className="flex h-8 w-8 items-center justify-center rounded-sm border border-[var(--border)] text-[var(--text-muted)] transition-all hover:border-[#229ED9]/40 hover:text-[#229ED9] hover:bg-[#229ED9]/[0.06]"
+              className="flex h-8 w-8 items-center justify-center rounded-lg border border-[var(--border)] text-[var(--text-muted)] transition-all hover:border-[#229ED9]/40 hover:text-[#229ED9] hover:bg-[#229ED9]/[0.06]"
               title="Telegram"
             >
               <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor">

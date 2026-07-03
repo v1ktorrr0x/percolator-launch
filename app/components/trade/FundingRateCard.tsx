@@ -27,7 +27,7 @@ function FundingMiniChart({ rates }: { rates: number[] }) {
           <div
             key={i}
             title={`${r >= 0 ? "+" : ""}${r.toFixed(4)}%`}
-            className={`w-6 rounded-sm ${isPos ? "bg-green-500/60" : "bg-red-500/60"}`}
+            className={`w-6 rounded-lg ${isPos ? "bg-green-500/60" : "bg-red-500/60"}`}
             style={{ height: `${heightPct}%` }}
           />
         );
@@ -237,10 +237,10 @@ export const FundingRateCard: FC<{ slabAddress: string }> = ({ slabAddress }) =>
 
   if (loading && !fundingData) {
     return (
-      <div className="rounded-none border border-[var(--border)]/50 bg-[var(--bg)]/80 p-3">
+      <div className="rounded-lg border border-[var(--border)]/50 bg-[var(--bg)]/80 p-3">
         <div className="flex items-center justify-between">
           <span className="text-[10px] uppercase tracking-[0.15em] text-[var(--text)]">Funding Rate</span>
-          <div className="h-4 w-16 animate-pulse rounded-none bg-[var(--border)]" />
+          <div className="h-4 w-16 animate-pulse rounded-lg bg-[var(--border)]" />
         </div>
       </div>
     );
@@ -262,7 +262,7 @@ export const FundingRateCard: FC<{ slabAddress: string }> = ({ slabAddress }) =>
 
   return (
     <>
-      <div className="rounded-none border border-[var(--border)]/50 bg-[var(--bg)]/80 p-2">
+      <div className="rounded-lg border border-[var(--border)]/50 bg-[var(--bg)]/80 p-2">
         {/* Header row: label + rate + APR */}
         <div className="mb-1 flex items-center justify-between">
           <div className="flex items-center gap-1">
@@ -290,7 +290,7 @@ export const FundingRateCard: FC<{ slabAddress: string }> = ({ slabAddress }) =>
 
         {/* APR + Direction — compact row */}
         <div className="mb-1 flex items-center justify-between">
-          <div className="rounded-none border-l-2 border-l-[var(--border)] bg-[var(--bg-elevated)] px-1.5 py-0.5">
+          <div className="rounded-lg border-l-2 border-l-[var(--border)] bg-[var(--bg-elevated)] px-1.5 py-0.5">
             <span className="text-[10px] text-[var(--text-secondary)]">{directionText}</span>
             {countdown > 0 && (
               <span className="ml-1.5 text-[9px] text-[var(--text-secondary)]">· next {formatCountdown(countdown)}</span>
@@ -311,7 +311,7 @@ export const FundingRateCard: FC<{ slabAddress: string }> = ({ slabAddress }) =>
 
         {/* Position-Specific Estimate */}
         {positionDirection && estimatedFunding24h !== null && (
-          <div className="rounded-none border border-[var(--border)]/30 bg-[var(--bg)] px-1.5 py-1">
+          <div className="rounded-lg border border-[var(--border)]/30 bg-[var(--bg)] px-1.5 py-1">
             <div className="flex items-center justify-between">
               <span className="text-[9px] uppercase tracking-[0.1em] text-[var(--text)]">
                 Est. 24h ({positionDirection})

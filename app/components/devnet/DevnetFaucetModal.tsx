@@ -125,12 +125,12 @@ export const DevnetFaucetModal: FC = () => {
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 "
       onClick={handleBackdropClick}
     >
       <div
         ref={modalRef}
-        className="mx-4 w-full max-w-md rounded-none border border-[var(--border)] bg-[var(--bg)] shadow-2xl"
+        className="mx-4 w-full max-w-md rounded-lg border border-[var(--border)] bg-[var(--bg)] shadow-2xl"
         role="dialog"
         aria-modal="true"
         aria-label="Fund your devnet account"
@@ -166,7 +166,7 @@ export const DevnetFaucetModal: FC = () => {
           </p>
 
           {/* Balances */}
-          <div className="space-y-1.5 rounded-none border border-[var(--border)]/30 bg-[var(--bg-elevated,var(--bg))]/50 p-3">
+          <div className="space-y-1.5 rounded-lg border border-[var(--border)]/30 bg-[var(--bg-elevated,var(--bg))]/50 p-3">
             <BalanceRow
               label="SOL"
               value={
@@ -196,7 +196,7 @@ export const DevnetFaucetModal: FC = () => {
                 <button
                   onClick={faucet.airdropSol}
                   disabled={faucet.loading}
-                  className="rounded-none border border-[var(--accent)]/40 px-3 py-1 text-[10px] font-medium text-[var(--accent)] transition-all hover:border-[var(--accent)]/70 hover:bg-[var(--accent)]/[0.08] disabled:opacity-40"
+                  className="rounded-lg border border-[var(--accent)]/40 px-3 py-1 text-[10px] font-medium text-[var(--accent)] transition-all hover:border-[var(--accent)]/70 hover:bg-[var(--accent)]/[0.08] disabled:opacity-40"
                 >
                   {faucet.step === "sol" && faucet.loading ? (
                     <span className="flex items-center gap-1.5">
@@ -226,7 +226,7 @@ export const DevnetFaucetModal: FC = () => {
                 <button
                   onClick={faucet.airdropUsdc}
                   disabled={faucet.loading || faucet.rateLimited}
-                  className="rounded-none border border-[var(--accent)]/40 px-3 py-1 text-[10px] font-medium text-[var(--accent)] transition-all hover:border-[var(--accent)]/70 hover:bg-[var(--accent)]/[0.08] disabled:opacity-40"
+                  className="rounded-lg border border-[var(--accent)]/40 px-3 py-1 text-[10px] font-medium text-[var(--accent)] transition-all hover:border-[var(--accent)]/70 hover:bg-[var(--accent)]/[0.08] disabled:opacity-40"
                 >
                   {faucet.step === "usdc" && faucet.loading ? (
                     <span className="flex items-center gap-1.5">
@@ -264,7 +264,7 @@ export const DevnetFaucetModal: FC = () => {
 
           {/* Error */}
           {faucet.error && (
-            <div className="rounded-none border border-[var(--short)]/20 bg-[var(--short)]/[0.04] px-3 py-2">
+            <div className="rounded-lg border border-[var(--short)]/20 bg-[var(--short)]/[0.04] px-3 py-2">
               <p className="text-[10px] text-[var(--short)]">{faucet.error}</p>
               {faucet.step === "sol" && (
                 <a
@@ -281,7 +281,7 @@ export const DevnetFaucetModal: FC = () => {
 
           {/* Rate limit info */}
           {faucet.rateLimited && faucet.nextClaimAt && (
-            <div className="rounded-none border border-[var(--warning)]/20 bg-[var(--warning)]/[0.04] px-3 py-2">
+            <div className="rounded-lg border border-[var(--warning)]/20 bg-[var(--warning)]/[0.04] px-3 py-2">
               <p className="text-[10px] text-[var(--warning)]">
                 Next claim available:{" "}
                 {new Date(faucet.nextClaimAt).toLocaleString()}
@@ -298,7 +298,7 @@ export const DevnetFaucetModal: FC = () => {
               <button
                 onClick={faucet.fundAll}
                 disabled={faucet.loading}
-                className="flex-1 rounded-none bg-[var(--accent)] py-2.5 text-[11px] font-medium uppercase tracking-[0.1em] text-white transition-all hover:brightness-110 active:scale-[0.99] disabled:opacity-50"
+                className="flex-1 rounded-lg bg-[var(--accent)] py-2.5 text-[11px] font-medium uppercase tracking-[0.1em] text-white transition-all hover:brightness-110 active:scale-[0.99] disabled:opacity-50"
               >
                 {faucet.loading ? (
                   <span className="flex items-center justify-center gap-2">
@@ -319,14 +319,14 @@ export const DevnetFaucetModal: FC = () => {
             {allDone ? (
               <button
                 onClick={faucet.dismiss}
-                className="flex-1 rounded-none bg-[var(--long)] py-2.5 text-[11px] font-medium uppercase tracking-[0.1em] text-white transition-all hover:brightness-110 active:scale-[0.99]"
+                className="flex-1 rounded-lg bg-[var(--long)] py-2.5 text-[11px] font-medium uppercase tracking-[0.1em] text-white transition-all hover:brightness-110 active:scale-[0.99]"
               >
                 Start Trading →
               </button>
             ) : (
               <button
                 onClick={faucet.dismiss}
-                className="rounded-none border border-[var(--border)] px-4 py-2.5 text-[10px] text-[var(--text-muted)] transition-colors hover:text-[var(--text)]"
+                className="rounded-lg border border-[var(--border)] px-4 py-2.5 text-[10px] text-[var(--text-muted)] transition-colors hover:text-[var(--text)]"
               >
                 Skip
               </button>

@@ -57,13 +57,13 @@ export const FundingExplainerModal: FC<FundingExplainerModalProps> = ({ onClose 
   const content = (
     <div
       ref={overlayRef}
-      className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/80 p-4 backdrop-blur-sm"
+      className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/80 p-4 "
       onClick={handleOverlayClick}
     style={{ opacity: 0 }}
     >
       <div
         ref={modalRef}
-        className="max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-sm border border-[var(--border)] bg-[var(--bg)] shadow-2xl"
+        className="max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-lg border border-[var(--border)] bg-[var(--bg)] shadow-2xl"
       style={{ opacity: 0 }}
       >
         {/* Header */}
@@ -73,7 +73,7 @@ export const FundingExplainerModal: FC<FundingExplainerModalProps> = ({ onClose 
           </h2>
           <button
             onClick={onClose}
-            className="flex h-8 w-8 items-center justify-center rounded-sm text-[var(--text-muted)] transition-colors hover:bg-[var(--bg-elevated)] hover:text-[var(--text)]"
+            className="flex h-8 w-8 items-center justify-center rounded-lg text-[var(--text-muted)] transition-colors hover:bg-[var(--bg-elevated)] hover:text-[var(--text)]"
           >
             <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
@@ -115,7 +115,7 @@ export const FundingExplainerModal: FC<FundingExplainerModalProps> = ({ onClose 
           </section>
 
           {/* How Percolator's funding works */}
-          <section className="rounded-none border-l-2 border-l-[var(--accent)] bg-[var(--accent)]/5 p-4">
+          <section className="rounded-lg border-l-2 border-l-[var(--accent)] bg-[var(--accent)]/5 p-4">
             <h3 className="mb-2 text-sm font-bold text-[var(--text)]">
               Percolator's Inventory-Based Funding
             </h3>
@@ -152,7 +152,7 @@ export const FundingExplainerModal: FC<FundingExplainerModalProps> = ({ onClose 
           <section>
             <h3 className="mb-2 text-sm font-bold text-[var(--text)]">When do you pay vs receive?</h3>
             <div className="space-y-3">
-              <div className="rounded-none border border-[var(--long)]/30 bg-[var(--long)]/5 p-3">
+              <div className="rounded-lg border border-[var(--long)]/30 bg-[var(--long)]/5 p-3">
                 <div className="mb-1 text-xs font-bold uppercase tracking-wider text-[var(--long)]">
                   ✓ You Receive Funding
                 </div>
@@ -161,7 +161,7 @@ export const FundingExplainerModal: FC<FundingExplainerModalProps> = ({ onClose 
                   <li>• You're SHORT and funding rate is <strong>positive</strong></li>
                 </ul>
               </div>
-              <div className="rounded-none border border-[var(--short)]/30 bg-[var(--short)]/5 p-3">
+              <div className="rounded-lg border border-[var(--short)]/30 bg-[var(--short)]/5 p-3">
                 <div className="mb-1 text-xs font-bold uppercase tracking-wider text-[var(--short)]">
                   ⚠ You Pay Funding
                 </div>
@@ -232,7 +232,7 @@ export const FundingExplainerModal: FC<FundingExplainerModalProps> = ({ onClose 
         <div className="border-t border-[var(--border)]/50 bg-[var(--bg-elevated)] px-6 py-4">
           <button
             onClick={onClose}
-            className="w-full rounded-none border border-[var(--accent)]/30 bg-[var(--accent)]/10 px-4 py-2 text-sm font-medium text-[var(--accent)] transition-colors hover:bg-[var(--accent)]/20"
+            className="w-full rounded-lg border border-[var(--accent)]/30 bg-[var(--accent)]/10 px-4 py-2 text-sm font-medium text-[var(--accent)] transition-colors hover:bg-[var(--accent)]/20"
           >
             Got it
           </button>

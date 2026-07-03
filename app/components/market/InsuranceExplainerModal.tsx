@@ -64,13 +64,13 @@ export const InsuranceExplainerModal: FC<InsuranceExplainerModalProps> = ({
   const content = (
     <div
       ref={overlayRef}
-      className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/80 p-4 backdrop-blur-sm"
+      className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/80 p-4 "
       style={{ opacity: 0 }}
       onClick={handleOverlayClick}
     >
       <div
         ref={modalRef}
-        className="max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-none border border-[var(--border)] bg-[var(--bg)] shadow-2xl"
+        className="max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-lg border border-[var(--border)] bg-[var(--bg)] shadow-2xl"
         style={{ opacity: 0 }}
       >
         {/* Header */}
@@ -83,7 +83,7 @@ export const InsuranceExplainerModal: FC<InsuranceExplainerModalProps> = ({
           </h2>
           <button
             onClick={onClose}
-            className="flex h-8 w-8 items-center justify-center rounded-none text-[var(--text-muted)] transition-colors hover:bg-[var(--bg-elevated)] hover:text-[var(--text)]"
+            className="flex h-8 w-8 items-center justify-center rounded-lg text-[var(--text-muted)] transition-colors hover:bg-[var(--bg-elevated)] hover:text-[var(--text)]"
           >
             <svg
               className="h-5 w-5"
@@ -120,7 +120,7 @@ export const InsuranceExplainerModal: FC<InsuranceExplainerModalProps> = ({
           </section>
 
           {/* How it works */}
-          <section className="rounded-none border-l-2 border-l-[var(--accent)] bg-[var(--accent)]/5 p-4">
+          <section className="rounded-lg border-l-2 border-l-[var(--accent)] bg-[var(--accent)]/5 p-4">
             <h3 className="mb-2 text-sm font-bold text-[var(--text)]">
               How it works
             </h3>
@@ -167,7 +167,7 @@ export const InsuranceExplainerModal: FC<InsuranceExplainerModalProps> = ({
               Why it matters
             </h3>
             <div className="space-y-3">
-              <div className="rounded-none border border-[var(--long)]/30 bg-[var(--long)]/5 p-3">
+              <div className="rounded-lg border border-[var(--long)]/30 bg-[var(--long)]/5 p-3">
                 <div className="mb-1 flex items-center gap-1.5">
                   <span className="inline-block w-1.5 h-1.5 rounded-full bg-[var(--long)]" />
                   <span className="text-xs font-bold uppercase tracking-wider text-[var(--long)]">
@@ -180,7 +180,7 @@ export const InsuranceExplainerModal: FC<InsuranceExplainerModalProps> = ({
                   the system won't collapse.
                 </p>
               </div>
-              <div className="rounded-none border border-[var(--short)]/30 bg-[var(--short)]/5 p-3">
+              <div className="rounded-lg border border-[var(--short)]/30 bg-[var(--short)]/5 p-3">
                 <div className="mb-1 flex items-center gap-1.5">
                   <span className="inline-block w-1.5 h-1.5 rounded-full bg-[var(--short)]" />
                   <span className="text-xs font-bold uppercase tracking-wider text-[var(--short)]">
@@ -240,7 +240,7 @@ export const InsuranceExplainerModal: FC<InsuranceExplainerModalProps> = ({
           </section>
 
           {/* Transparency */}
-          <section className="rounded-none border-l-2 border-l-[var(--warning)] bg-[var(--warning)]/5 p-4">
+          <section className="rounded-lg border-l-2 border-l-[var(--warning)] bg-[var(--warning)]/5 p-4">
             <h3 className="mb-2 text-sm font-bold text-[var(--text)]">
               Transparency
             </h3>
@@ -293,7 +293,7 @@ export const InsuranceExplainerModal: FC<InsuranceExplainerModalProps> = ({
           </section>
 
           {/* Coverage Ratio */}
-          <section className="rounded-none bg-[var(--bg-elevated)] p-4">
+          <section className="rounded-lg bg-[var(--bg-elevated)] p-4">
             <h3 className="mb-2 text-sm font-bold text-[var(--text)]">
               Understanding Coverage Ratio
             </h3>
@@ -327,7 +327,7 @@ export const InsuranceExplainerModal: FC<InsuranceExplainerModalProps> = ({
         <div className="border-t border-[var(--border)]/50 bg-[var(--bg-elevated)] px-6 py-4 flex gap-2">
           <button
             onClick={onClose}
-            className="flex-1 rounded-none border border-[var(--border)]/50 px-4 py-2 text-sm font-medium text-[var(--text-muted)] transition-colors hover:bg-[var(--bg)]"
+            className="flex-1 rounded-lg border border-[var(--border)]/50 px-4 py-2 text-sm font-medium text-[var(--text-muted)] transition-colors hover:bg-[var(--bg)]"
           >
             Close
           </button>
@@ -336,7 +336,7 @@ export const InsuranceExplainerModal: FC<InsuranceExplainerModalProps> = ({
               onClose();
               onTopUp?.();
             }}
-            className="flex-1 rounded-none border border-[var(--accent)]/30 bg-[var(--accent)]/10 px-4 py-2 text-sm font-medium text-[var(--accent)] transition-colors hover:bg-[var(--accent)]/20"
+            className="flex-1 rounded-lg border border-[var(--accent)]/30 bg-[var(--accent)]/10 px-4 py-2 text-sm font-medium text-[var(--accent)] transition-colors hover:bg-[var(--accent)]/20"
           >
             Top Up Insurance
           </button>

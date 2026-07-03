@@ -230,7 +230,7 @@ export const FundingRateChart: FC<{ slabAddress: string }> = ({ slabAddress }) =
 
   if (loading) {
     return (
-      <div className="flex h-[300px] items-center justify-center rounded-none border border-[var(--border)]/50 bg-[var(--bg)]/80">
+      <div className="flex h-[300px] items-center justify-center rounded-lg border border-[var(--border)]/50 bg-[var(--bg)]/80">
         <div className="h-8 w-8 animate-spin border-2 border-[var(--accent)] border-t-transparent" />
       </div>
     );
@@ -238,7 +238,7 @@ export const FundingRateChart: FC<{ slabAddress: string }> = ({ slabAddress }) =
 
   if (history.length === 0) {
     return (
-      <div className="flex h-[300px] items-center justify-center rounded-none border border-[var(--border)]/50 bg-[var(--bg)]/80">
+      <div className="flex h-[300px] items-center justify-center rounded-lg border border-[var(--border)]/50 bg-[var(--bg)]/80">
         <div className="text-center">
           <div className="text-sm text-[var(--text-secondary)]">No funding history yet</div>
           <div className="mt-1 text-xs text-[var(--text-dim)]">Data will appear after cranks</div>
@@ -248,7 +248,7 @@ export const FundingRateChart: FC<{ slabAddress: string }> = ({ slabAddress }) =
   }
 
   return (
-    <div className="rounded-none border border-[var(--border)]/50 bg-[var(--bg)]/80 p-3">
+    <div className="rounded-lg border border-[var(--border)]/50 bg-[var(--bg)]/80 p-3">
       <div className="mb-2 flex items-center justify-between">
         <h3 className="text-[10px] font-bold uppercase tracking-[0.15em] text-[var(--text)]">
           Funding Rate (24h)

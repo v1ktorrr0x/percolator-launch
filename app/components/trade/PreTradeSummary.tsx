@@ -128,7 +128,7 @@ export const PreTradeSummary: FC<PreTradeSummaryProps> = ({
     : liqPriceNum < estEntryNum * 1.15;
 
   return (
-    <div className="mb-4 rounded-none border border-[rgba(255,255,255,0.06)] bg-[rgba(255,255,255,0.04)] px-3.5 py-3 text-xs">
+    <div className="mb-4 rounded-lg border border-[rgba(255,255,255,0.06)] bg-[rgba(255,255,255,0.04)] px-3.5 py-3 text-xs">
       <div className="mb-2 flex items-center gap-2">
         <div className={`h-1.5 w-1.5 rounded-full ${isLong ? "bg-[var(--long)]" : "bg-[var(--short)]"}`} />
         <span className="text-[10px] font-semibold uppercase tracking-widest text-[var(--text-muted)]">

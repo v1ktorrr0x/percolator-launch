@@ -7,7 +7,7 @@ import { useAdminActions } from "@/hooks/useAdminActions";
 import type { DiscoveredMarket } from "@percolatorct/sdk";
 
 // ─── Style tokens ──────────────────────────────────────────────────────────────
-const card = "rounded-none bg-[var(--panel-bg)] border border-[var(--border)]";
+const card = "rounded-lg bg-[var(--panel-bg)] border border-[var(--border)]";
 const labelStyle =
   "text-[10px] font-bold uppercase tracking-[0.15em] text-[var(--text-muted)]";
 

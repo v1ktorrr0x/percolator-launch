@@ -143,7 +143,7 @@ export const LaunchProgress: FC<LaunchProgressProps> = ({ state, onReset, onRetr
               <button
                 type="button"
                 onClick={onRetry}
-                className="border border-[var(--short)]/30 bg-[var(--short)]/[0.08] px-4 py-2.5 text-[11px] font-medium uppercase tracking-[0.1em] text-[var(--short)] hover:bg-[var(--short)]/[0.15] transition-colors min-h-[44px]"
+                className="border border-[var(--short)]/30 bg-[var(--short)]/[0.08] px-4 py-2.5 text-[11px] font-medium uppercase tracking-[0.1em] text-[var(--short)] hover:bg-[var(--short)] hover:text-white transition-colors min-h-[44px]"
               >
                 Retry Step {state.step + 1}
               </button>

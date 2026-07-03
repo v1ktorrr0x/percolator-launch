@@ -137,7 +137,7 @@ export const StepReview: FC<StepReviewProps> = ({
         <p className="mb-2 text-[9px] font-medium uppercase tracking-[0.15em] text-[var(--text)]">
           Market Preview
         </p>
-        <div className="border border-[var(--accent)]/20 bg-[var(--accent)]/[0.02] backdrop-blur">
+        <div className="border border-[var(--accent)]/20 bg-[var(--accent)]/[0.02] ">
           <div className="flex items-center justify-between px-5 py-4 border-b border-[var(--accent)]/10">
             <div className="flex items-center gap-3">
               <div className="flex h-9 w-9 items-center justify-center border border-[var(--accent)]/30 bg-[var(--accent)]/[0.08] text-[12px] font-bold text-[var(--accent)]">
@@ -259,7 +259,7 @@ export const StepReview: FC<StepReviewProps> = ({
         <button
           type="button"
           onClick={onBack}
-          className="border border-[var(--border)] bg-transparent px-5 py-3 text-[12px] font-medium uppercase tracking-[0.1em] text-[var(--text-secondary)] transition-all hud-btn-corners hover:border-[var(--accent)]/30 hover:text-[var(--text)]"
+          className="border border-[var(--border)] bg-transparent px-5 py-3 text-[12px] font-medium uppercase tracking-[0.1em] text-[var(--text-secondary)] transition-all hover:border-[var(--accent)]/30 hover:text-[var(--text)]"
         >
           ← BACK
         </button>
@@ -267,7 +267,7 @@ export const StepReview: FC<StepReviewProps> = ({
           type="button"
           onClick={onLaunch}
           disabled={!canLaunch || !mintValid || !mintExistsOnNetwork}
-          className="flex-1 border border-[var(--accent)]/50 bg-[var(--accent)]/[0.08] py-3.5 text-[14px] font-bold uppercase tracking-[0.1em] text-[var(--accent)] transition-all duration-200 hud-btn-corners hover:border-[var(--accent)] hover:bg-[var(--accent)]/[0.15] disabled:cursor-not-allowed disabled:border-[var(--border)] disabled:bg-transparent disabled:text-[var(--text-dim)] disabled:opacity-50"
+          className="flex-1 border border-[var(--accent)]/50 bg-[var(--accent)]/[0.08] py-3.5 text-[14px] font-bold uppercase tracking-[0.1em] text-[var(--accent)] transition-all duration-200 hover:border-[var(--accent)] hover:bg-[var(--accent)] hover:text-white disabled:cursor-not-allowed disabled:border-[var(--border)] disabled:bg-transparent disabled:text-[var(--text-dim)] disabled:opacity-50"
         >
           {launchButtonLabel}
         </button>

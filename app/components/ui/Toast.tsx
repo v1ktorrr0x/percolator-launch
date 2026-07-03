@@ -80,7 +80,7 @@ const SingleToast: FC<{ item: ToastItem; onDismiss: (id: string) => void }> = ({
   return (
     <div
       ref={elRef}
-      className={`pointer-events-auto flex items-center gap-3 rounded-sm border px-4 py-3 shadow-lg bg-[var(--panel-bg)] ${c.border}`}
+      className={`pointer-events-auto flex items-center gap-3 rounded-lg border px-4 py-3 shadow-lg bg-[var(--panel-bg)] ${c.border}`}
       style={{ opacity: 0 }}
     >
       <span className={`text-base font-bold ${TEXT_COLORS[item.type]}`}>{c.icon}</span>

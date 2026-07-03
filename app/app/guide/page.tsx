@@ -307,7 +307,7 @@ export default function GuidePage() {
         <div className="flex justify-center gap-3">
           <Link
             href="/create"
-            className="border border-[var(--accent)]/50 bg-[var(--accent)]/[0.08] px-6 py-3 text-[12px] font-bold uppercase tracking-[0.1em] text-[var(--accent)] transition-all hud-btn-corners hover:border-[var(--accent)] hover:bg-[var(--accent)]/[0.15]"
+            className="border border-[var(--accent)]/50 bg-[var(--accent)]/[0.08] px-6 py-3 text-[12px] font-bold uppercase tracking-[0.1em] text-[var(--accent)] transition-all hover:border-[var(--accent)] hover:bg-[var(--accent)] hover:text-white"
           >
             Launch a Market
           </Link>

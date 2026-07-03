@@ -70,7 +70,7 @@ export const HowToContribute: FC<Props> = ({
         {STEPS.map((step) => (
           <article
             key={step.number}
-            className="group rounded-xl border border-[var(--border)] bg-[var(--panel-bg)] p-7 transition-all duration-200 hover:border-[rgba(124,58,237,0.25)] hover:shadow-[0_0_20px_rgba(124,58,237,0.06)]"
+            className="group rounded-xl border border-[var(--border)] bg-[var(--panel-bg)] p-7 transition-all duration-200 hover:border-[rgba(124,58,237,0.25)] "
           >
             <div
               className="mb-4 text-5xl font-bold text-[rgba(124,58,237,0.20)]"

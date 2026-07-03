@@ -604,7 +604,7 @@ function MarketsPageInner() {
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 placeholder="search token, address, or mint..."
-                className="w-full rounded-sm border border-[var(--border)] bg-[var(--bg-elevated)] py-2.5 pl-10 pr-4 text-sm text-[var(--text)] placeholder-[var(--text-dim)] focus:border-[var(--accent)]/40 focus:outline-none focus:ring-2 focus:ring-[var(--accent)]/20"
+                className="w-full rounded-lg border border-[var(--border)] bg-[var(--bg-elevated)] py-2.5 pl-10 pr-4 text-sm text-[var(--text)] placeholder-[var(--text-dim)] focus:border-[var(--accent)]/40 focus:outline-none focus:ring-2 focus:ring-[var(--accent)]/20"
                 aria-label="Search markets"
               />
               {hasSearch && (
@@ -622,7 +622,7 @@ function MarketsPageInner() {
             </div>
             {/* Sort tabs + market count (mobile) on same row */}
             <div className="flex items-center gap-3 overflow-x-auto [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
-              <div className="relative flex gap-1 rounded-sm border border-[var(--border)] bg-[var(--bg-elevated)] p-1" role="group" aria-label="Sort markets">
+              <div className="relative flex gap-1 rounded-lg border border-[var(--border)] bg-[var(--bg-elevated)] p-1" role="group" aria-label="Sort markets">
                 {([
                   { key: "volume" as SortKey, label: "VOLUME" },
                   { key: "oi" as SortKey, label: "OI" },
@@ -633,7 +633,7 @@ function MarketsPageInner() {
                     key={opt.key}
                     onClick={() => setSortBy(opt.key)}
                     className={[
-                      "rounded-sm px-3 py-2 sm:py-1.5 text-[10px] font-bold uppercase tracking-[0.08em] transition-all duration-200 min-h-[40px]",
+                      "rounded-lg px-3 py-2 sm:py-1.5 text-[10px] font-bold uppercase tracking-[0.08em] transition-all duration-200 min-h-[40px]",
                       sortBy === opt.key
                         ? "bg-[var(--accent)]/10 text-[var(--accent)]"
                         : "text-[var(--text-secondary)] hover:text-[var(--text)]",
@@ -665,11 +665,11 @@ function MarketsPageInner() {
             <span className="hidden sm:inline-block text-[10px] font-semibold uppercase tracking-[0.15em] text-[var(--text)] shrink-0">FILTER:</span>
 
             {/* USD/Token toggle */}
-            <div className="flex gap-1 rounded-sm border border-[var(--border)] bg-[var(--bg-elevated)] p-0.5 shrink-0" role="group" aria-label="Display currency">
+            <div className="flex gap-1 rounded-lg border border-[var(--border)] bg-[var(--bg-elevated)] p-0.5 shrink-0" role="group" aria-label="Display currency">
               <button
                 onClick={() => setShowUsd(false)}
                 className={[
-                  "rounded-sm px-2.5 py-1.5 sm:py-1 text-[10px] font-bold uppercase tracking-[0.08em] transition-all duration-200 min-h-[36px] sm:min-h-[32px]",
+                  "rounded-lg px-2.5 py-1.5 sm:py-1 text-[10px] font-bold uppercase tracking-[0.08em] transition-all duration-200 min-h-[36px] sm:min-h-[32px]",
                   !showUsd
                     ? "bg-[var(--accent)]/10 text-[var(--accent)]"
                     : "text-[var(--text-secondary)] hover:text-[var(--text)]",
@@ -682,7 +682,7 @@ function MarketsPageInner() {
               <button
                 onClick={() => setShowUsd(true)}
                 className={[
-                  "rounded-sm px-2.5 py-1.5 sm:py-1 text-[10px] font-bold uppercase tracking-[0.08em] transition-all duration-200 min-h-[36px] sm:min-h-[32px]",
+                  "rounded-lg px-2.5 py-1.5 sm:py-1 text-[10px] font-bold uppercase tracking-[0.08em] transition-all duration-200 min-h-[36px] sm:min-h-[32px]",
                   showUsd
                     ? "bg-[var(--accent)]/10 text-[var(--accent)]"
                     : "text-[var(--text-secondary)] hover:text-[var(--text)]",
@@ -699,7 +699,7 @@ function MarketsPageInner() {
             <span className="sm:hidden text-[var(--text-dim)] text-sm font-bold shrink-0">&middot;</span>
 
             {/* Leverage filter */}
-            <div className="flex gap-1 rounded-sm border border-[var(--border)] bg-[var(--bg-elevated)] p-0.5 shrink-0" role="group" aria-label="Filter by leverage">
+            <div className="flex gap-1 rounded-lg border border-[var(--border)] bg-[var(--bg-elevated)] p-0.5 shrink-0" role="group" aria-label="Filter by leverage">
               {([
                 { key: "all" as LeverageFilter, label: "ALL" },
                 { key: "5x" as LeverageFilter, label: "5X+" },
@@ -710,7 +710,7 @@ function MarketsPageInner() {
                   key={opt.key}
                   onClick={() => setLeverageFilter(opt.key)}
                   className={[
-                    "rounded-sm px-2.5 py-1.5 sm:py-1 text-[10px] font-bold uppercase tracking-[0.08em] transition-all duration-200 min-h-[36px] sm:min-h-[32px]",
+                    "rounded-lg px-2.5 py-1.5 sm:py-1 text-[10px] font-bold uppercase tracking-[0.08em] transition-all duration-200 min-h-[36px] sm:min-h-[32px]",
                     leverageFilter === opt.key
                       ? "bg-[var(--accent)]/10 text-[var(--accent)]"
                       : "text-[var(--text-secondary)] hover:text-[var(--text)]",
@@ -728,7 +728,7 @@ function MarketsPageInner() {
             <span className="sm:hidden text-[var(--text-dim)] text-sm font-bold shrink-0">&middot;</span>
 
             {/* Oracle filter */}
-            <div className="flex gap-1 rounded-sm border border-[var(--border)] bg-[var(--bg-elevated)] p-0.5 shrink-0" role="group" aria-label="Filter by oracle type">
+            <div className="flex gap-1 rounded-lg border border-[var(--border)] bg-[var(--bg-elevated)] p-0.5 shrink-0" role="group" aria-label="Filter by oracle type">
               {([
                 { key: "all" as OracleFilter, label: "ALL ORACLES" },
                 { key: "live" as OracleFilter, label: "LIVE FEED" },
@@ -738,7 +738,7 @@ function MarketsPageInner() {
                   key={opt.key}
                   onClick={() => setOracleFilter(opt.key)}
                   className={[
-                    "rounded-sm px-2.5 py-1.5 sm:py-1 text-[10px] font-bold uppercase tracking-[0.08em] transition-all duration-200 min-h-[36px] sm:min-h-[32px]",
+                    "rounded-lg px-2.5 py-1.5 sm:py-1 text-[10px] font-bold uppercase tracking-[0.08em] transition-all duration-200 min-h-[36px] sm:min-h-[32px]",
                     oracleFilter === opt.key
                       ? "bg-[var(--accent)]/10 text-[var(--accent)]"
                       : "text-[var(--text-secondary)] hover:text-[var(--text)]",
@@ -774,7 +774,7 @@ function MarketsPageInner() {
           <ScrollReveal delay={0.15}>
             <div
               role="alert"
-              className="mb-4 rounded-sm border px-4 py-3 text-center text-sm font-mono"
+              className="mb-4 rounded-lg border px-4 py-3 text-center text-sm font-mono"
               style={{
                 background: "rgba(239,68,68,0.06)",
                 borderColor: "rgba(239,68,68,0.3)",

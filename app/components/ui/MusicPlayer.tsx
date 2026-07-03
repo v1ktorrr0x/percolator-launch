@@ -199,7 +199,7 @@ export function MusicPlayer() {
       {collapsed ? (
         <button
           onClick={() => setCollapsed(false)}
-          className="flex h-8 w-8 items-center justify-center rounded-sm border border-[var(--border)] bg-[var(--panel-bg)] text-[var(--accent)] transition-colors hover:border-[var(--accent)]"
+          className="flex h-8 w-8 items-center justify-center rounded-lg border border-[var(--border)] bg-[var(--panel-bg)] text-[var(--accent)] transition-colors hover:border-[var(--accent)]"
           aria-label="Expand music player"
         >
           <svg width="8" height="8" viewBox="0 0 12 12" fill="currentColor">
@@ -207,7 +207,7 @@ export function MusicPlayer() {
           </svg>
         </button>
       ) : (
-        <div className="flex items-center rounded-sm border border-[var(--border)] bg-[var(--panel-bg)]">
+        <div className="flex items-center rounded-lg border border-[var(--border)] bg-[var(--panel-bg)]">
           {/* Play / Pause */}
           <button onClick={togglePlay} className={btn} aria-label={playing ? "Pause" : "Play"}>
             {playing ? <PauseIcon /> : <PlayIcon />}

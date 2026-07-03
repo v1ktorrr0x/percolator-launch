@@ -159,7 +159,7 @@ export const InsuranceTopUpModal: FC<InsuranceTopUpModalProps> = ({
   const content = (
     <div
       ref={overlayRef}
-      className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/80 p-4 backdrop-blur-sm"
+      className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/80 p-4 "
       onClick={handleOverlayClick}
       role="dialog"
       aria-modal="true"
@@ -168,7 +168,7 @@ export const InsuranceTopUpModal: FC<InsuranceTopUpModalProps> = ({
     >
       <div
         ref={modalRef}
-        className="w-full max-w-md overflow-hidden rounded-none border border-[var(--border)] bg-[var(--bg)] shadow-2xl"
+        className="w-full max-w-md overflow-hidden rounded-lg border border-[var(--border)] bg-[var(--bg)] shadow-2xl"
       style={{ opacity: 0 }}
       >
         {/* Header */}
@@ -184,7 +184,7 @@ export const InsuranceTopUpModal: FC<InsuranceTopUpModalProps> = ({
             onClick={onClose}
             disabled={isLoading}
             aria-label="Close"
-            className="flex h-8 w-8 items-center justify-center rounded-none text-[var(--text-muted)] transition-colors hover:bg-[var(--bg-elevated)] hover:text-[var(--text)] disabled:opacity-50"
+            className="flex h-8 w-8 items-center justify-center rounded-lg text-[var(--text-muted)] transition-colors hover:bg-[var(--bg-elevated)] hover:text-[var(--text)] disabled:opacity-50"
           >
             <svg
               className="h-5 w-5"
@@ -209,7 +209,7 @@ export const InsuranceTopUpModal: FC<InsuranceTopUpModalProps> = ({
             <>
               {/* Wallet not connected warning */}
               {!wallet.publicKey && (
-                <div className="mb-4 rounded-none border-l-2 border-l-[var(--warning)] bg-[var(--warning)]/5 p-3">
+                <div className="mb-4 rounded-lg border-l-2 border-l-[var(--warning)] bg-[var(--warning)]/5 p-3">
                   <p className="text-[11px] leading-relaxed text-[var(--warning)]">
                     Please connect your wallet to make a deposit.
                   </p>
@@ -218,7 +218,7 @@ export const InsuranceTopUpModal: FC<InsuranceTopUpModalProps> = ({
 
               {/* LP mint not created warning */}
               {wallet.publicKey && !lpState.mintExists && !lpLoading && (
-                <div className="mb-4 rounded-none border-l-2 border-l-[var(--warning)] bg-[var(--warning)]/5 p-3">
+                <div className="mb-4 rounded-lg border-l-2 border-l-[var(--warning)] bg-[var(--warning)]/5 p-3">
                   <p className="text-[11px] leading-relaxed text-[var(--warning)]">
                     Insurance LP mint has not been created for this market.
                     Deposits are not available yet.
@@ -227,7 +227,7 @@ export const InsuranceTopUpModal: FC<InsuranceTopUpModalProps> = ({
               )}
 
               {/* Info Banner */}
-              <div className="mb-4 rounded-none border-l-2 border-l-[var(--accent)] bg-[var(--accent)]/5 p-3">
+              <div className="mb-4 rounded-lg border-l-2 border-l-[var(--accent)] bg-[var(--accent)]/5 p-3">
                 <p className="text-[11px] leading-relaxed text-[var(--text-secondary)]">
                   Deposit USDC into the insurance fund and receive LP tokens
                   proportional to your share. Your contribution helps protect
@@ -254,7 +254,7 @@ export const InsuranceTopUpModal: FC<InsuranceTopUpModalProps> = ({
                     onChange={(e) => setAmount(e.target.value)}
                     placeholder="0.00"
                     disabled={isLoading}
-                    className="w-full rounded-none border border-[var(--border)] bg-[var(--bg-elevated)] py-2 pl-7 pr-3 text-[var(--text)] placeholder-[var(--text-dim)] transition-colors focus:border-[var(--accent)] focus:outline-none disabled:opacity-50"
+                    className="w-full rounded-lg border border-[var(--border)] bg-[var(--bg-elevated)] py-2 pl-7 pr-3 text-[var(--text)] placeholder-[var(--text-dim)] transition-colors focus:border-[var(--accent)] focus:outline-none disabled:opacity-50"
                     style={{ fontFamily: "var(--font-mono)" }}
                     min="0"
                     step="0.01"
@@ -266,7 +266,7 @@ export const InsuranceTopUpModal: FC<InsuranceTopUpModalProps> = ({
                       key={preset}
                       onClick={() => setAmount(preset.toString())}
                       disabled={isLoading}
-                      className="flex-1 rounded-none border border-[var(--border)]/50 py-1 text-[9px] text-[var(--text-muted)] transition-colors hover:bg-[var(--bg-elevated)] disabled:opacity-50"
+                      className="flex-1 rounded-lg border border-[var(--border)]/50 py-1 text-[9px] text-[var(--text-muted)] transition-colors hover:bg-[var(--bg-elevated)] disabled:opacity-50"
                     >
                       ${preset}
                     </button>
@@ -275,7 +275,7 @@ export const InsuranceTopUpModal: FC<InsuranceTopUpModalProps> = ({
               </div>
 
               {/* Balance Preview */}
-              <div className="mb-4 rounded-none border border-[var(--border)]/30 bg-[var(--bg-elevated)] p-3">
+              <div className="mb-4 rounded-lg border border-[var(--border)]/30 bg-[var(--bg-elevated)] p-3">
                 <div className="space-y-2 text-sm">
                   <div className="flex items-center justify-between">
                     <span className="text-[10px] uppercase tracking-[0.15em] text-[var(--text-dim)]">
@@ -336,7 +336,7 @@ export const InsuranceTopUpModal: FC<InsuranceTopUpModalProps> = ({
 
               {/* Error */}
               {(error || lpError) && (
-                <div className="mb-4 rounded-none border border-[var(--short)]/30 bg-[var(--short)]/5 p-3">
+                <div className="mb-4 rounded-lg border border-[var(--short)]/30 bg-[var(--short)]/5 p-3">
                   <p className="text-[11px] text-[var(--short)]">{error || lpError}</p>
                 </div>
               )}
@@ -346,7 +346,7 @@ export const InsuranceTopUpModal: FC<InsuranceTopUpModalProps> = ({
                 <button
                   onClick={onClose}
                   disabled={isLoading}
-                  className="flex-1 rounded-none border border-[var(--border)]/50 py-2 text-sm font-medium text-[var(--text-muted)] transition-colors hover:bg-[var(--bg-elevated)] disabled:opacity-50"
+                  className="flex-1 rounded-lg border border-[var(--border)]/50 py-2 text-sm font-medium text-[var(--text-muted)] transition-colors hover:bg-[var(--bg-elevated)] disabled:opacity-50"
                 >
                   Cancel
                 </button>
@@ -359,7 +359,7 @@ export const InsuranceTopUpModal: FC<InsuranceTopUpModalProps> = ({
                     !wallet.publicKey ||
                     (!lpState.mintExists && !mockMode)
                   }
-                  className="flex-1 rounded-none bg-[var(--accent)] py-2 text-sm font-medium text-white transition-colors hover:opacity-90 disabled:opacity-50"
+                  className="flex-1 rounded-lg bg-[var(--accent)] py-2 text-sm font-medium text-white transition-colors hover:opacity-90 disabled:opacity-50"
                 >
                   {isLoading
                     ? "Processing..."
@@ -399,7 +399,7 @@ export const InsuranceTopUpModal: FC<InsuranceTopUpModalProps> = ({
                 Percolator safer!
               </p>
               {txSignature && (
-                <div className="mb-4 rounded-none border border-[var(--border)]/30 bg-[var(--bg-elevated)] p-3">
+                <div className="mb-4 rounded-lg border border-[var(--border)]/30 bg-[var(--bg-elevated)] p-3">
                   <div className="text-[10px] uppercase tracking-[0.15em] text-[var(--text-dim)]">
                     Transaction
                   </div>
@@ -418,7 +418,7 @@ export const InsuranceTopUpModal: FC<InsuranceTopUpModalProps> = ({
               )}
               <button
                 onClick={onClose}
-                className="w-full rounded-none border border-[var(--accent)]/30 bg-[var(--accent)]/10 px-4 py-2 text-sm font-medium text-[var(--accent)] transition-colors hover:bg-[var(--accent)]/20"
+                className="w-full rounded-lg border border-[var(--accent)]/30 bg-[var(--accent)]/10 px-4 py-2 text-sm font-medium text-[var(--accent)] transition-colors hover:bg-[var(--accent)]/20"
               >
                 Close
               </button>

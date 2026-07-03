@@ -7,7 +7,7 @@ interface ShimmerSkeletonProps {
 
 export function ShimmerSkeleton({ className = "" }: ShimmerSkeletonProps) {
   return (
-    <div className={`relative overflow-hidden rounded-sm bg-[var(--border)] ${className}`}>
+    <div className={`relative overflow-hidden rounded-lg bg-[var(--border)] ${className}`}>
       <div
         className="absolute inset-0"
         style={{

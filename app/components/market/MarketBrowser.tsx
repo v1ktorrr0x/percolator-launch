@@ -44,7 +44,7 @@ export const MarketBrowser: FC = () => {
 
   if (loading) {
     return (
-      <div className="rounded-sm border border-[var(--border)] bg-[var(--panel-bg)] p-8 text-center shadow-sm">
+      <div className="rounded-lg border border-[var(--border)] bg-[var(--panel-bg)] p-8 text-center shadow-sm">
         <p className="text-[var(--text-secondary)]">Discovering markets...</p>
       </div>
     );
@@ -55,7 +55,7 @@ export const MarketBrowser: FC = () => {
       ? "Set the NEXT_PUBLIC_PROGRAM_ID environment variable to your Percolator program address."
       : error;
     return (
-      <div className="rounded-sm border border-[var(--border)] bg-[var(--panel-bg)] p-8 text-center shadow-sm">
+      <div className="rounded-lg border border-[var(--border)] bg-[var(--panel-bg)] p-8 text-center shadow-sm">
         <p className="text-[var(--short)]">Error: {helpMsg}</p>
       </div>
     );
@@ -63,14 +63,14 @@ export const MarketBrowser: FC = () => {
 
   if (markets.length === 0) {
     return (
-      <div className="rounded-sm border border-[var(--border)] bg-[var(--panel-bg)] p-8 text-center shadow-sm">
+      <div className="rounded-lg border border-[var(--border)] bg-[var(--panel-bg)] p-8 text-center shadow-sm">
         <p className="text-[var(--text-secondary)]">No markets found</p>
       </div>
     );
   }
 
   return (
-    <div className="rounded-sm border border-[var(--border)] bg-[var(--panel-bg)] shadow-sm">
+    <div className="rounded-lg border border-[var(--border)] bg-[var(--panel-bg)] shadow-sm">
       {/* Desktop table — hidden on mobile */}
       <div className="hidden sm:block overflow-x-auto">
         <table className="w-full text-left text-sm">
@@ -128,7 +128,7 @@ export const MarketBrowser: FC = () => {
                   <td className="px-4 py-3 text-right">
                     <Link
                       href={`/trade/${slab}`}
-                      className="rounded-sm border border-[var(--accent)]/40 text-[var(--accent)] bg-transparent px-3 py-1.5 text-xs font-medium transition-colors hover:bg-[var(--accent)]/[0.08] hover:border-[var(--accent)]/70"
+                      className="rounded-lg border border-[var(--accent)]/40 text-[var(--accent)] bg-transparent px-3 py-1.5 text-xs font-medium transition-colors hover:bg-[var(--accent)]/[0.08] hover:border-[var(--accent)]/70"
                     >
                       Trade
                     </Link>
@@ -165,7 +165,7 @@ export const MarketBrowser: FC = () => {
                   <HealthBadge level={health.level} />
                   <Link
                     href={`/trade/${slab}`}
-                    className="rounded-sm border border-[var(--accent)]/40 text-[var(--accent)] bg-transparent px-2.5 py-1 text-xs font-medium transition-colors hover:bg-[var(--accent)]/[0.08]"
+                    className="rounded-lg border border-[var(--accent)]/40 text-[var(--accent)] bg-transparent px-2.5 py-1 text-xs font-medium transition-colors hover:bg-[var(--accent)]/[0.08]"
                   >
                     Trade
                   </Link>

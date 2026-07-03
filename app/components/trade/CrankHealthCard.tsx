@@ -26,7 +26,7 @@ export const CrankHealthCard: FC = () => {
 
   if (loading || !engine) {
     return (
-      <div className="rounded-none border border-[var(--border)]/50 bg-[var(--bg)]/80 p-2">
+      <div className="rounded-lg border border-[var(--border)]/50 bg-[var(--bg)]/80 p-2">
         <span className="text-[10px] text-[var(--text-dim)]">Loading...</span>
       </div>
     );
@@ -61,7 +61,7 @@ export const CrankHealthCard: FC = () => {
   }
 
   return (
-    <div className="rounded-none border border-[var(--border)]/50 bg-[var(--bg)]/80 p-2">
+    <div className="rounded-lg border border-[var(--border)]/50 bg-[var(--bg)]/80 p-2">
       <div className="mb-1.5 flex items-center justify-between">
         <div className="flex items-center gap-1">
           <span className="text-[8px] uppercase tracking-[0.15em] text-[var(--text-dim)]">
@@ -81,9 +81,9 @@ export const CrankHealthCard: FC = () => {
           <span>Last update: {secondsBehind}s ago ({slotsBehind.toLocaleString()} slots)</span>
           <span>Max: {maxStaleness.toLocaleString()} slots</span>
         </div>
-        <div className="h-1 w-full rounded-none bg-[var(--border)]">
+        <div className="h-1 w-full rounded-lg bg-[var(--border)]">
           <div
-            className={`h-1 rounded-none transition-all duration-500 ${barColor}`}
+            className={`h-1 rounded-lg transition-all duration-500 ${barColor}`}
             style={{ width: `${progressPercent}%` }}
           />
         </div>

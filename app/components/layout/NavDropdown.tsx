@@ -75,7 +75,7 @@ export const NavDropdown: FC<NavDropdownProps> = ({ label, items }) => {
         aria-expanded={open}
         aria-haspopup="true"
         className={[
-          "flex min-h-10 items-center gap-1 rounded-sm px-3 text-sm font-medium transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--bg)]",
+          "flex min-h-10 items-center gap-1 rounded-lg px-3 text-sm font-medium transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--bg)]",
           hasActive || open
             ? "text-[var(--text)]"
             : "text-[#9ca3af] hover:text-[var(--text)]",
@@ -107,7 +107,7 @@ export const NavDropdown: FC<NavDropdownProps> = ({ label, items }) => {
         role="menu"
         aria-hidden={!open || undefined}
         className={[
-          "absolute left-0 top-full mt-1 min-w-[200px] rounded-xl border border-[var(--border)] bg-[var(--bg-elevated)] py-2 shadow-[0_8px_32px_rgba(0,0,0,0.48)] transition-all duration-[120ms] ease-out",
+          "absolute left-0 top-full mt-1 min-w-[200px] rounded-xl border border-[var(--border)] bg-[var(--bg-elevated)] py-2 transition-all duration-[120ms] ease-out",
           open
             ? "opacity-100 translate-y-0 pointer-events-auto"
             : "opacity-0 -translate-y-1 pointer-events-none",
@@ -125,8 +125,8 @@ export const NavDropdown: FC<NavDropdownProps> = ({ label, items }) => {
               className={[
                 "block px-4 py-2.5 text-sm transition-colors duration-150",
                 active
-                  ? "text-[#22d3ee] bg-[rgba(34,211,238,0.08)]"
-                  : "text-[#d1d5db] hover:text-[var(--text)] hover:bg-[var(--bg-surface)]",
+                  ? "text-[#14F195] bg-[#14F195]/[0.08]"
+                  : "text-[var(--text-secondary)] hover:text-[var(--text)] hover:bg-[var(--bg-surface)]",
               ].join(" ")}
             >
               {item.label}

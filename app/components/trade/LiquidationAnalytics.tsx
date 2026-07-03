@@ -26,7 +26,7 @@ export const LiquidationAnalytics: FC = () => {
 
   if (loading || !engine) {
     return (
-      <div className="rounded-none border border-[var(--border)]/50 bg-[var(--bg)]/80 p-3">
+      <div className="rounded-lg border border-[var(--border)]/50 bg-[var(--bg)]/80 p-3">
         <span className="text-[10px] text-[var(--text-dim)]">Loading...</span>
       </div>
     );
@@ -67,7 +67,7 @@ export const LiquidationAnalytics: FC = () => {
   ];
 
   return (
-    <div className="rounded-none border border-[var(--border)]/50 bg-[var(--bg)]/80 p-3">
+    <div className="rounded-lg border border-[var(--border)]/50 bg-[var(--bg)]/80 p-3">
       <div className="mb-3 flex items-center gap-1">
         <span className="text-[10px] font-bold uppercase tracking-[0.15em] text-[var(--text-dim)]">
           Liquidation Analytics
@@ -87,7 +87,7 @@ export const LiquidationAnalytics: FC = () => {
         ))}
       </div>
 
-      <div className="rounded-none border border-[var(--border)]/30 bg-[var(--bg-elevated)] p-2">
+      <div className="rounded-lg border border-[var(--border)]/30 bg-[var(--bg-elevated)] p-2">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-1">
             <span className="text-[10px] font-bold uppercase tracking-[0.15em] text-[var(--text-dim)]">Insurance Coverage</span>

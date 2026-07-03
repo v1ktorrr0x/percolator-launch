@@ -93,7 +93,7 @@ export const OracleBadge: FC<OracleBadgeProps> = memo(function OracleBadge({
 
   return (
     <span
-      className={`inline-flex items-center gap-1 rounded-sm border px-1.5 py-0.5 text-[9px] uppercase tracking-[0.08em] ${className}`}
+      className={`inline-flex items-center gap-1 rounded-lg border px-1.5 py-0.5 text-[9px] uppercase tracking-[0.08em] ${className}`}
       style={{
         borderColor: style.borderColor,
         backgroundColor: style.bgColor,

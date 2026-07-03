@@ -18,7 +18,7 @@ export default function PortfolioLoading() {
           {[1, 2, 3, 4].map((i) => (
             <div
               key={i}
-              className="rounded-sm border border-[var(--border)] bg-[var(--bg-surface)] p-4 hud-corners accent-top"
+              className="rounded-lg border border-[var(--border)] bg-[var(--bg-surface)] p-4 accent-top"
             >
               <ShimmerSkeleton className="h-3 w-20 mb-3" />
               <ShimmerSkeleton className="h-6 w-28 mb-2" />
@@ -34,14 +34,14 @@ export default function PortfolioLoading() {
             {[1, 2, 3].map((i) => (
               <div
                 key={i}
-                className="rounded-sm border border-[var(--border)] bg-[var(--bg-surface)] p-4 hud-corners"
+                className="rounded-lg border border-[var(--border)] bg-[var(--bg-surface)] p-4"
               >
                 <div className="flex items-center justify-between mb-3">
                   <div className="flex items-center gap-2">
                     <ShimmerSkeleton className="h-8 w-8 rounded-full" />
                     <ShimmerSkeleton className="h-5 w-32" />
                   </div>
-                  <ShimmerSkeleton className="h-6 w-16 rounded-sm" />
+                  <ShimmerSkeleton className="h-6 w-16 rounded-lg" />
                 </div>
                 <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
                   {[1, 2, 3, 4].map((j) => (

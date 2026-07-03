@@ -32,7 +32,7 @@ export const EngineHealthCard: FC = () => {
 
   if (loading || !engine) {
     return (
-      <div className="relative rounded-none border border-[var(--border)]/50 bg-[var(--bg)]/80 p-2">
+      <div className="relative rounded-lg border border-[var(--border)]/50 bg-[var(--bg)]/80 p-2">
         <p className="text-[10px] text-[var(--text-secondary)]">{loading ? "Loading..." : "No engine"}</p>
       </div>
     );
@@ -81,7 +81,7 @@ export const EngineHealthCard: FC = () => {
   ];
 
   return (
-    <div className="relative rounded-none border border-[var(--border)]/50 bg-[var(--bg)]/80 p-2">
+    <div className="relative rounded-lg border border-[var(--border)]/50 bg-[var(--bg)]/80 p-2">
       <div className="mb-1.5 flex items-center justify-between">
         <span className={`text-[10px] font-medium uppercase tracking-[0.15em] ${HEALTH_COLORS[health.level]}${health.level === "warning" || health.level === "caution" ? " animate-pulse" : ""}`}>
           {health.label}

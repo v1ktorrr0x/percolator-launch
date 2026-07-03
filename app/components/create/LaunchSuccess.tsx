@@ -258,7 +258,7 @@ export const LaunchSuccess: FC<LaunchSuccessProps> = ({
             type="button"
             onClick={handleMintAndTrade}
             disabled={mintLoading}
-            className="w-full sm:w-auto border border-[var(--long)]/50 bg-[var(--long)]/[0.08] px-8 py-3 text-[13px] font-bold uppercase tracking-[0.1em] text-[var(--long)] transition-all hud-btn-corners hover:bg-[var(--long)]/[0.15] disabled:cursor-not-allowed disabled:opacity-60"
+            className="w-full sm:w-auto border border-[var(--long)]/50 bg-[var(--long)]/[0.08] px-8 py-3 text-[13px] font-bold uppercase tracking-[0.1em] text-[var(--long)] transition-all hover:bg-[var(--long)] hover:text-white disabled:cursor-not-allowed disabled:opacity-60"
           >
             {mintLoading ? (
               <span className="flex items-center gap-2">
@@ -271,7 +271,7 @@ export const LaunchSuccess: FC<LaunchSuccessProps> = ({
         ) : (
           <Link
             href={`/trade/${marketAddress}`}
-            className="w-full sm:w-auto border border-[var(--accent)]/50 bg-[var(--accent)]/[0.08] px-8 py-3 text-[13px] font-bold uppercase tracking-[0.1em] text-[var(--accent)] transition-all hud-btn-corners hover:bg-[var(--accent)]/[0.15]"
+            className="w-full sm:w-auto border border-[var(--accent)]/50 bg-[var(--accent)]/[0.08] px-8 py-3 text-[13px] font-bold uppercase tracking-[0.1em] text-[var(--accent)] transition-all hover:bg-[var(--accent)] hover:text-white"
           >
             TRADE THIS MARKET →
           </Link>
@@ -279,7 +279,7 @@ export const LaunchSuccess: FC<LaunchSuccessProps> = ({
         <button
           type="button"
           onClick={onDeployAnother}
-          className="w-full sm:w-auto border border-[var(--border)] bg-transparent px-8 py-3 text-[12px] font-medium uppercase tracking-[0.1em] text-[var(--text-secondary)] transition-all hud-btn-corners hover:border-[var(--accent)]/30 hover:text-[var(--text)]"
+          className="w-full sm:w-auto border border-[var(--border)] bg-transparent px-8 py-3 text-[12px] font-medium uppercase tracking-[0.1em] text-[var(--text-secondary)] transition-all hover:border-[var(--accent)]/30 hover:text-[var(--text)]"
         >
           DEPLOY ANOTHER MARKET
         </button>

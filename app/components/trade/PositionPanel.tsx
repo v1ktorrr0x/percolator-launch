@@ -115,10 +115,10 @@ const AddMarginModal: FC<AddMarginModalProps> = ({ slabAddress, userIdx, symbol,
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 "
       onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}
     >
-      <div className="w-full max-w-sm rounded-none border border-[var(--border)]/60 bg-[var(--bg)] p-4 shadow-2xl">
+      <div className="w-full max-w-sm rounded-lg border border-[var(--border)]/60 bg-[var(--bg)] p-4 shadow-2xl">
         <div className="mb-3 flex items-center justify-between">
           <span className="text-[11px] font-bold uppercase tracking-[0.15em] text-[var(--text)]">Add Margin</span>
           <button
@@ -143,7 +143,7 @@ const AddMarginModal: FC<AddMarginModalProps> = ({ slabAddress, userIdx, symbol,
             onChange={(e) => setAmount(e.target.value.replace(/[^0-9.]/g, ""))}
             placeholder={`0.00 ${symbol}`}
             style={{ fontFamily: "var(--font-mono)" }}
-            className="w-full rounded-none border border-[var(--border)]/50 bg-[var(--bg)] px-3 py-2 text-sm text-[var(--text)] placeholder-[var(--text-muted)] focus:border-[var(--accent)]/40 focus:outline-none focus:ring-1 focus:ring-[var(--accent)]/20"
+            className="w-full rounded-lg border border-[var(--border)]/50 bg-[var(--bg)] px-3 py-2 text-sm text-[var(--text)] placeholder-[var(--text-muted)] focus:border-[var(--accent)]/40 focus:outline-none focus:ring-1 focus:ring-[var(--accent)]/20"
           />
           {parseError && (
             <p className="text-[10px] text-[var(--short)]">{parseError}</p>
@@ -153,7 +153,7 @@ const AddMarginModal: FC<AddMarginModalProps> = ({ slabAddress, userIdx, symbol,
         <button
           onClick={handleDeposit}
           disabled={!canSubmit}
-          className="w-full rounded-none bg-[var(--accent)] py-2 text-[10px] font-medium uppercase tracking-[0.1em] text-white transition-all hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-50"
+          className="w-full rounded-lg bg-[var(--accent)] py-2 text-[10px] font-medium uppercase tracking-[0.1em] text-white transition-all hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-50"
         >
           {loading ? "Depositing…" : "Deposit Margin"}
         </button>
@@ -221,7 +221,7 @@ export const PositionPanel: FC<{ slabAddress: string }> = ({ slabAddress }) => {
 
   if (!userAccount) {
     return (
-      <div className="relative rounded-none border border-[var(--border)]/50 bg-[var(--bg)]/80 p-3">
+      <div className="relative rounded-lg border border-[var(--border)]/50 bg-[var(--bg)]/80 p-3">
         <div className="flex flex-col items-center py-6 text-center">
           <p className="text-[11px] font-medium text-[var(--text)]">No open position</p>
           <p className="mt-1.5 text-[10px] text-[var(--text-secondary)] leading-relaxed max-w-[240px]">
@@ -390,7 +390,7 @@ export const PositionPanel: FC<{ slabAddress: string }> = ({ slabAddress }) => {
   };
 
   return (
-    <div className="relative rounded-none border border-[var(--border)]/50 bg-[var(--bg)]/80">
+    <div className="relative rounded-lg border border-[var(--border)]/50 bg-[var(--bg)]/80">
 
       {!hasPosition ? (
         /* 3.5: Improved empty state */
@@ -470,7 +470,7 @@ export const PositionPanel: FC<{ slabAddress: string }> = ({ slabAddress }) => {
 
             {/* 3.5: Liq warning when <15% away */}
             {showLiqWarning && (
-              <div className="mb-2 flex items-center gap-1.5 rounded-none border border-[var(--short)]/30 bg-[var(--short)]/5 px-2 py-1.5">
+              <div className="mb-2 flex items-center gap-1.5 rounded-lg border border-[var(--short)]/30 bg-[var(--short)]/5 px-2 py-1.5">
                 <span className="text-[8px] text-[var(--short)] font-medium uppercase tracking-[0.12em]">
                   ⚠ Liq. Risk
                 </span>
@@ -571,7 +571,7 @@ export const PositionPanel: FC<{ slabAddress: string }> = ({ slabAddress }) => {
 
             {/* LP underfunded warning */}
             {lpUnderfunded && (
-              <div className="mt-2 rounded-none border border-[var(--warning)]/30 bg-[var(--warning)]/5 p-2.5">
+              <div className="mt-2 rounded-lg border border-[var(--warning)]/30 bg-[var(--warning)]/5 p-2.5">
                 <p className="text-[10px] font-medium uppercase tracking-[0.15em] text-[var(--warning)]">LP Has No Capital</p>
                 <p className="mt-1 text-[10px] text-[var(--warning)]/70">
                   The liquidity provider has no capital to back the counterparty position. Closing trades will fail until the LP is funded.
@@ -583,7 +583,7 @@ export const PositionPanel: FC<{ slabAddress: string }> = ({ slabAddress }) => {
             <div className="mt-2 flex gap-1.5">
               <button
                 onClick={() => setShowAddMarginModal(true)}
-                className="flex-1 rounded-none border border-[var(--accent)]/30 py-2 text-[10px] font-medium uppercase tracking-[0.1em] text-[var(--accent)] transition-all duration-150 hover:bg-[var(--accent)]/8"
+                className="flex-1 rounded-lg border border-[var(--accent)]/30 py-2 text-[10px] font-medium uppercase tracking-[0.1em] text-[var(--accent)] transition-all duration-150 hover:bg-[var(--accent)]/8"
               >
                 + Margin
               </button>
@@ -591,14 +591,14 @@ export const PositionPanel: FC<{ slabAddress: string }> = ({ slabAddress }) => {
                 onClick={() => setShowCloseModal(true)}
                 disabled={closeLoading || lpUnderfunded || !hasValidMark}
                 title={!hasValidMark ? "Waiting for price data…" : undefined}
-                className="flex-1 rounded-none border border-[var(--short)]/30 py-2 text-[10px] font-medium uppercase tracking-[0.1em] text-[var(--short)] transition-all duration-150 hover:bg-[var(--short)]/8 disabled:cursor-not-allowed disabled:opacity-50"
+                className="flex-1 rounded-lg border border-[var(--short)]/30 py-2 text-[10px] font-medium uppercase tracking-[0.1em] text-[var(--short)] transition-all duration-150 hover:bg-[var(--short)]/8 disabled:cursor-not-allowed disabled:opacity-50"
               >
                 {!hasValidMark ? "Awaiting Price…" : "Close Position"}
               </button>
             </div>
 
             {closeError && (
-              <div className="mt-2 rounded-none border border-[var(--short)]/20 bg-[var(--short)]/5 px-3 py-2">
+              <div className="mt-2 rounded-lg border border-[var(--short)]/20 bg-[var(--short)]/5 px-3 py-2">
                 <p className="text-[10px] text-[var(--short)]">{closeError}</p>
               </div>
             )}
@@ -671,7 +671,7 @@ function AdlRankBadge({ rank, adlNeeded }: { rank: number | null; adlNeeded: boo
   return (
     <span
       title={tooltip}
-      className={`inline-flex items-center gap-0.5 rounded-none border px-1.5 py-0.5 text-[8px] font-bold uppercase tracking-[0.06em] ${color}`}
+      className={`inline-flex items-center gap-0.5 rounded-lg border px-1.5 py-0.5 text-[8px] font-bold uppercase tracking-[0.06em] ${color}`}
     >
       {label}
     </span>
@@ -725,7 +725,7 @@ const PnlSection: FC<PnlSectionProps> = ({
 
   return (
     <div
-      className={`rounded-none border-l-2 mb-2 min-h-[60px] p-2.5 transition-colors duration-500 ${
+      className={`rounded-lg border-l-2 mb-2 min-h-[60px] p-2.5 transition-colors duration-500 ${
         !hasValidMark
           ? "border-l-[var(--border)] bg-[var(--bg)]"
           : pnlTokens >= 0n

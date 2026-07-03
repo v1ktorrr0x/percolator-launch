@@ -78,7 +78,7 @@ export function OiCapMeter({
           OI Capacity
         </span>
         <span
-          className="text-[10px] uppercase tracking-[0.15em] font-medium px-2 py-0.5 rounded-sm border"
+          className="text-[10px] uppercase tracking-[0.15em] font-medium px-2 py-0.5 rounded-lg border"
           style={{
             color: barColor,
             borderColor: `${barColor}33`,
@@ -90,7 +90,7 @@ export function OiCapMeter({
       </div>
 
       {/* Meter bar */}
-      <div className="relative h-3 bg-[var(--border)] rounded-sm overflow-hidden">
+      <div className="relative h-3 bg-[var(--border)] rounded-lg overflow-hidden">
         {/* Segment markers */}
         <div className="absolute inset-0 flex">
           <div className="w-1/2 border-r border-[var(--bg)]/30" />
@@ -101,7 +101,7 @@ export function OiCapMeter({
 
         {/* Fill bar */}
         <div
-          className="absolute inset-y-0 left-0 rounded-sm transition-all duration-700 ease-out"
+          className="absolute inset-y-0 left-0 rounded-lg transition-all duration-700 ease-out"
           style={{
             width: `${utilPct}%`,
             backgroundColor: barColor,

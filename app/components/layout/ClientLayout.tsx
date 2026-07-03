@@ -15,7 +15,7 @@ const Aurora = dynamic(
 
 export function ClientLayout({ children }: { children: React.ReactNode }) {
   return (
-    <div className="relative min-h-screen bg-[#0A0A0F] text-white select-none">
+    <div className="relative min-h-dvh bg-[#0A0A0F] text-white select-none">
       {/* Global Aurora WebGL backdrop */}
       <div className="fixed inset-0 z-0 pointer-events-none opacity-80">
         <Aurora
@@ -28,7 +28,7 @@ export function ClientLayout({ children }: { children: React.ReactNode }) {
       {/* Dark vignette contrast overlay */}
       <div className="fixed inset-0 bg-black/35 z-[1] pointer-events-none" />
 
-      <div className="relative z-10 flex min-h-screen flex-col">
+      <div className="relative z-10 flex min-h-dvh flex-col">
         <ChromeGate>
           <TickerBanner />
           <MainnetBetaBanner />

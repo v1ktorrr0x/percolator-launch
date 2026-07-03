@@ -176,7 +176,7 @@ export default function DashboardPage() {
         {/* === MOBILE LAYOUT === */}
         <div className="md:hidden">
           {/* Mobile tab bar */}
-          <div className="mb-4 grid grid-cols-4 gap-0.5 rounded-sm border border-[var(--border)] bg-[var(--bg)] p-0.5">
+          <div className="mb-4 grid grid-cols-4 gap-0.5 rounded-lg border border-[var(--border)] bg-[var(--bg)] p-0.5">
             {(
               [
                 { key: "overview", icon: "📊", label: "Overview" },
@@ -189,7 +189,7 @@ export default function DashboardPage() {
                 key={tab.key}
                 onClick={() => setMobileTab(tab.key)}
                 className={[
-                  "rounded-sm px-2 py-2 text-center text-[10px] font-bold transition-all",
+                  "rounded-lg px-2 py-2 text-center text-[10px] font-bold transition-all",
                   mobileTab === tab.key
                     ? "bg-[var(--accent)]/15 text-[var(--accent)]"
                     : "text-[var(--text-muted)]",

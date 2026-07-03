@@ -65,7 +65,7 @@ export const ChartDisplayMenu: FC<ChartDisplayMenuProps> = ({ prefs, onToggle })
         aria-expanded={open}
         aria-haspopup="true"
         className={[
-          "flex items-center gap-1 rounded-none border border-[var(--border)] bg-[var(--bg-elevated)] px-2 py-1 text-xs transition-colors",
+          "flex items-center gap-1 rounded-lg border border-[var(--border)] bg-[var(--bg-elevated)] px-2 py-1 text-xs transition-colors",
           open
             ? "text-[var(--accent)]"
             : "text-[var(--text-secondary)] hover:text-[var(--text)]",
@@ -93,7 +93,7 @@ export const ChartDisplayMenu: FC<ChartDisplayMenuProps> = ({ prefs, onToggle })
       <div
         aria-hidden={!open || undefined}
         className={[
-          "absolute left-0 top-full z-20 mt-1 min-w-[200px] rounded-none border border-[var(--border)] bg-[var(--bg-elevated)] py-1 shadow-[0_8px_32px_rgba(0,0,0,0.48)] transition-opacity duration-[120ms] ease-out",
+          "absolute left-0 top-full z-20 mt-1 min-w-[200px] rounded-lg border border-[var(--border)] bg-[var(--bg-elevated)] py-1 transition-opacity duration-[120ms] ease-out",
           open ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none",
         ].join(" ")}
       >

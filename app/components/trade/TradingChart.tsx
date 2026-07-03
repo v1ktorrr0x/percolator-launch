@@ -125,7 +125,7 @@ function PositionSummary({ slabAddress }: PositionSummaryProps) {
   const dirColor = isLong ? "text-green-400" : "text-red-400";
 
   return (
-    <div className="absolute top-2 right-2 z-10 flex items-center gap-1.5 rounded-none border border-[var(--border)]/60 bg-[var(--bg)]/90 px-2 py-1 backdrop-blur-sm">
+    <div className="absolute top-2 right-2 z-10 flex items-center gap-1.5 rounded-lg border border-[var(--border)]/60 bg-[var(--bg)]/90 px-2 py-1 ">
       <span className={`text-[9px] font-bold uppercase tracking-[0.12em] ${dirColor}`}>{direction}</span>
       <span className="text-[9px] text-[var(--text-dim)]">position open</span>
     </div>
@@ -757,7 +757,7 @@ export const TradingChart: FC<{ slabAddress: string; mintAddress?: string }> = (
   const showEmptyOverlay = totalDataPoints === 0 || effectiveSparse;
 
   return (
-    <div className="rounded-none border border-[var(--border)] bg-[var(--bg)] p-3">
+    <div className="rounded-lg border border-[var(--border)] bg-[var(--bg)] p-3">
       {/* Header — shows timeframe % change + data-source badge only.
           The DEX pool's last-close price used to live here too (e.g. "$84.20 DEX")
           but that contradicted the mark price shown in the market info bar above,
@@ -770,7 +770,7 @@ export const TradingChart: FC<{ slabAddress: string; mintAddress?: string }> = (
             </span>
             {hasPercolatorData ? (
               <span
-                className="text-[9px] font-medium uppercase tracking-[0.08em] px-1.5 py-0.5 rounded-sm"
+                className="text-[9px] font-medium uppercase tracking-[0.08em] px-1.5 py-0.5 rounded-lg"
                 style={{ background: "var(--accent)/0.1", color: "var(--accent)", border: "1px solid color-mix(in srgb, var(--accent) 30%, transparent)" }}
                 title="Source: Percolator match engine (internal trades)"
               >
@@ -778,7 +778,7 @@ export const TradingChart: FC<{ slabAddress: string; mintAddress?: string }> = (
               </span>
             ) : hasPythData ? (
               <span
-                className="text-[9px] font-medium uppercase tracking-[0.08em] px-1.5 py-0.5 rounded-sm"
+                className="text-[9px] font-medium uppercase tracking-[0.08em] px-1.5 py-0.5 rounded-lg"
                 style={{ background: "var(--accent)/0.1", color: "var(--accent)", border: "1px solid color-mix(in srgb, var(--accent) 30%, transparent)" }}
                 title={`Source: Pyth Benchmarks · ${pythSymbol}`}
               >
@@ -786,7 +786,7 @@ export const TradingChart: FC<{ slabAddress: string; mintAddress?: string }> = (
               </span>
             ) : hasExternalData ? (
               <span
-                className="text-[9px] font-medium uppercase tracking-[0.08em] px-1.5 py-0.5 rounded-sm"
+                className="text-[9px] font-medium uppercase tracking-[0.08em] px-1.5 py-0.5 rounded-lg"
                 style={{ background: "var(--accent)/0.1", color: "var(--accent)", border: "1px solid color-mix(in srgb, var(--accent) 30%, transparent)" }}
                 title={poolAddress ? `GeckoTerminal pool: ${poolAddress}` : "Source: GeckoTerminal"}
               >
@@ -795,7 +795,7 @@ export const TradingChart: FC<{ slabAddress: string; mintAddress?: string }> = (
             ) : (
               mintAddress && externalStatus !== "idle" && (
                 <span
-                  className="text-[9px] font-medium uppercase tracking-[0.08em] px-1.5 py-0.5 rounded-sm"
+                  className="text-[9px] font-medium uppercase tracking-[0.08em] px-1.5 py-0.5 rounded-lg"
                   style={{ background: "var(--bg-elevated)", color: "var(--text-dim)", border: "1px solid var(--border)" }}
                   title="Showing oracle price history (no DEX data found)"
                 >
@@ -819,12 +819,12 @@ export const TradingChart: FC<{ slabAddress: string; mintAddress?: string }> = (
           />
 
           {/* PERC-8090: 1m/5m/15m/1h/4h/1d only — 7d/30d collapsed */}
-          <div className="flex gap-1 rounded-none border border-[var(--border)] bg-[var(--bg-elevated)] p-0.5">
+          <div className="flex gap-1 rounded-lg border border-[var(--border)] bg-[var(--bg-elevated)] p-0.5">
             {VISIBLE_TIMEFRAMES.map((tf) => (
               <button
                 key={tf}
                 onClick={() => setTimeframe(tf)}
-                className={`rounded-none px-1.5 sm:px-2 py-1 text-xs transition-colors ${
+                className={`rounded-lg px-1.5 sm:px-2 py-1 text-xs transition-colors ${
                   timeframe === tf
                     ? "bg-[var(--accent)]/10 text-[var(--accent)]"
                     : "text-[var(--text-secondary)] hover:bg-[var(--bg-surface)] hover:text-[var(--text)]"
@@ -898,7 +898,7 @@ export const TradingChart: FC<{ slabAddress: string; mintAddress?: string }> = (
 
         {/* GH#1652: empty-state overlay — shown when no data yet, sits above canvas */}
         {showEmptyOverlay && (
-          <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center backdrop-blur-[1px]" style={{ background: `${chartTheme.bg}e8` }}>
+          <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center " style={{ background: `${chartTheme.bg}e8` }}>
             {priceUsd != null && priceUsd > 0 ? (
               <>
                 <div
@@ -970,7 +970,7 @@ export const TradingChart: FC<{ slabAddress: string; mintAddress?: string }> = (
             2px of clearance). Hidden entirely when not hovering. */}
         {hoverBar && !showEmptyOverlay && (
           <div
-            className="pointer-events-none absolute top-2 left-2 md:left-14 z-10 rounded-none border border-[var(--border)]/60 bg-[var(--bg)]/90 px-2 py-1 font-mono text-[10px] shadow-sm backdrop-blur-sm"
+            className="pointer-events-none absolute top-2 left-2 md:left-14 z-10 rounded-lg border border-[var(--border)]/60 bg-[var(--bg)]/90 px-2 py-1 font-mono text-[10px] shadow-sm "
             aria-hidden="true"
           >
             <div className="flex items-center gap-3 whitespace-nowrap">

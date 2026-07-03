@@ -90,7 +90,7 @@ export function VaultGrid({ markets, loading }: VaultGridProps) {
             placeholder="Search markets..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full h-9 px-3 pl-8 text-[13px] bg-[var(--panel-bg)] border border-[var(--border)] rounded-sm text-[var(--text)] placeholder:text-[var(--text-muted)] focus:outline-none focus:border-[var(--accent)]/30 transition-colors"
+            className="w-full h-9 px-3 pl-8 text-[13px] bg-[var(--panel-bg)] border border-[var(--border)] rounded-lg text-[var(--text)] placeholder:text-[var(--text-muted)] focus:outline-none focus:border-[var(--accent)]/30 transition-colors"
           />
           <svg
             className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-[var(--text-muted)]"
@@ -123,7 +123,7 @@ export function VaultGrid({ markets, loading }: VaultGridProps) {
             <button
               key={key}
               onClick={() => setSortBy(key)}
-              className={`px-3 py-1.5 text-[11px] rounded-sm border transition-all duration-150 ${
+              className={`px-3 py-1.5 text-[11px] rounded-lg border transition-all duration-150 ${
                 sortBy === key
                   ? 'border-[var(--accent)]/40 bg-[var(--accent)]/[0.06] text-[var(--accent)]'
                   : 'border-[var(--border)] text-[var(--text-secondary)] hover:border-[var(--accent)]/20 hover:text-[var(--text)]'
@@ -141,12 +141,12 @@ export function VaultGrid({ markets, loading }: VaultGridProps) {
           {[1, 2, 3, 4, 5, 6].map((i) => (
             <div
               key={i}
-              className="h-[280px] animate-pulse bg-[var(--panel-bg)] border border-[var(--border)] rounded-sm"
+              className="h-[280px] animate-pulse bg-[var(--panel-bg)] border border-[var(--border)] rounded-lg"
             />
           ))}
         </div>
       ) : sorted.length === 0 ? (
-        <div className="border border-[var(--border)] bg-[var(--panel-bg)] rounded-sm p-12 text-center">
+        <div className="border border-[var(--border)] bg-[var(--panel-bg)] rounded-lg p-12 text-center">
           <div className="text-3xl mb-3">🔍</div>
           <p className="text-[13px] text-[var(--text-secondary)]">
             {searchQuery

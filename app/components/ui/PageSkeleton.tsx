@@ -48,7 +48,7 @@ export function PageSkeleton({
             {Array.from({ length: cards }).map((_, i) => (
               <div
                 key={i}
-                className="rounded-sm border border-[var(--border)] bg-[var(--bg-surface)] p-5 hud-corners"
+                className="rounded-lg border border-[var(--border)] bg-[var(--bg-surface)] p-5"
               >
                 <ShimmerSkeleton className="h-4 w-24 mb-3" />
                 <ShimmerSkeleton className="h-3 w-full mb-2" />
@@ -60,7 +60,7 @@ export function PageSkeleton({
 
         {/* Form layout */}
         {form && (
-          <div className="rounded-sm border border-[var(--border)] bg-[var(--bg-surface)] p-6 hud-corners space-y-4">
+          <div className="rounded-lg border border-[var(--border)] bg-[var(--bg-surface)] p-6 space-y-4">
             {[1, 2, 3, 4].map((i) => (
               <div key={i}>
                 <ShimmerSkeleton className="h-3 w-20 mb-2" />

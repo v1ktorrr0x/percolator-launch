@@ -177,7 +177,7 @@ function CompetitionBanner() {
       >
         <div className="flex items-center gap-2">
           <span
-            className="text-[10px] font-bold uppercase tracking-[0.2em] px-1.5 py-0.5 rounded-sm"
+            className="text-[10px] font-bold uppercase tracking-[0.2em] px-1.5 py-0.5 rounded-lg"
             style={{ background: "var(--accent)", color: "#fff" }}
           >
             LIVE
@@ -529,7 +529,7 @@ export default function LeaderboardPage() {
             {/* Network badge: hidden on mainnet (GH#1572) */}
             {!IS_MAINNET && (
               <span
-                className="text-xs font-mono px-2 py-0.5 rounded-sm border"
+                className="text-xs font-mono px-2 py-0.5 rounded-lg border"
                 style={{
                   color: "var(--accent)",
                   borderColor: "var(--accent)",

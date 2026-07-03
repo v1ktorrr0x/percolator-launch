@@ -155,7 +155,7 @@ export function DepositWithdrawPanel({
 
   if (!connected) {
     return (
-      <div className="border border-[var(--border)] bg-[var(--panel-bg)] rounded-sm p-8 text-center hud-corners">
+      <div className="border border-[var(--border)] bg-[var(--panel-bg)] rounded-lg p-8 text-center">
         <div className="text-3xl mb-3">🔐</div>
         <p className="text-[13px] text-[var(--text-secondary)] mb-4">
           Connect your wallet to deposit or withdraw
@@ -166,7 +166,7 @@ export function DepositWithdrawPanel({
   }
 
   return (
-    <div className="border border-[var(--border)] bg-[var(--panel-bg)] rounded-sm overflow-hidden hud-corners">
+    <div className="border border-[var(--border)] bg-[var(--panel-bg)] rounded-lg overflow-hidden">
       <div className="h-px bg-gradient-to-r from-transparent via-[var(--accent)]/40 to-transparent" />
 
       {/* Tab switcher */}
@@ -217,7 +217,7 @@ export function DepositWithdrawPanel({
                 const v = e.target.value;
                 if (/^\d*\.?\d*$/.test(v)) setAmount(v);
               }}
-              className="w-full h-12 px-4 pr-16 text-lg font-mono tabular-nums bg-[var(--bg)] border border-[var(--border)] rounded-sm text-[var(--text)] placeholder:text-[var(--text-muted)] focus:outline-none focus:border-[var(--accent)]/40 transition-colors"
+              className="w-full h-12 px-4 pr-16 text-lg font-mono tabular-nums bg-[var(--bg)] border border-[var(--border)] rounded-lg text-[var(--text)] placeholder:text-[var(--text-muted)] focus:outline-none focus:border-[var(--accent)]/40 transition-colors"
             />
             <span className="absolute right-4 top-1/2 -translate-y-1/2 text-[12px] text-[var(--text-secondary)]">
               {tab === 'deposit' ? collateralSymbol : 'LP'}
@@ -230,7 +230,7 @@ export function DepositWithdrawPanel({
               <button
                 key={pct}
                 onClick={() => handleSetPercent(pct)}
-                className="flex-1 py-1.5 text-[10px] font-medium border border-[var(--border)] rounded-sm text-[var(--text-secondary)] hover:border-[var(--accent)]/30 hover:text-[var(--text)] transition-all"
+                className="flex-1 py-1.5 text-[10px] font-medium border border-[var(--border)] rounded-lg text-[var(--text-secondary)] hover:border-[var(--accent)]/30 hover:text-[var(--text)] transition-all"
               >
                 {pct}%
               </button>
@@ -240,7 +240,7 @@ export function DepositWithdrawPanel({
 
         {/* Preview */}
         {rawAmount > 0n && tab === 'deposit' && (
-          <div className="mb-4 p-3 bg-[var(--bg)] border border-[var(--border)] rounded-sm">
+          <div className="mb-4 p-3 bg-[var(--bg)] border border-[var(--border)] rounded-lg">
             <div className="text-[10px] uppercase tracking-[0.15em] text-[var(--text-secondary)] mb-2">
               You will receive
             </div>
@@ -259,7 +259,7 @@ export function DepositWithdrawPanel({
 
         {/* Withdrawal preview */}
         {rawAmount > 0n && tab === 'withdraw' && (
-          <div className={`mb-4 p-3 border rounded-sm ${
+          <div className={`mb-4 p-3 border rounded-lg ${
             withdrawConfirming
               ? 'bg-[var(--warning)]/5 border-[var(--warning)]/30'
               : 'bg-[var(--bg)] border-[var(--border)]'
@@ -330,7 +330,7 @@ export function DepositWithdrawPanel({
 
         {/* Cooldown warning — shown when no amount entered yet */}
         {tab === 'withdraw' && !cooldownElapsed && rawAmount === 0n && (
-          <div className="mb-4 p-3 bg-[var(--warning)]/5 border border-[var(--warning)]/20 rounded-sm">
+          <div className="mb-4 p-3 bg-[var(--warning)]/5 border border-[var(--warning)]/20 rounded-lg">
             <p className="text-[11px] text-[var(--warning)]">
               Cooldown period has not elapsed. You cannot withdraw yet.
             </p>
@@ -339,12 +339,12 @@ export function DepositWithdrawPanel({
 
         {/* Error / Success */}
         {txError && (
-          <div className="mb-4 p-3 bg-[var(--short)]/5 border border-[var(--short)]/20 rounded-sm">
+          <div className="mb-4 p-3 bg-[var(--short)]/5 border border-[var(--short)]/20 rounded-lg">
             <p className="text-[11px] text-[var(--short)]">{txError}</p>
           </div>
         )}
         {txSuccess && (
-          <div className="mb-4 p-3 bg-[var(--cyan)]/5 border border-[var(--cyan)]/20 rounded-sm">
+          <div className="mb-4 p-3 bg-[var(--cyan)]/5 border border-[var(--cyan)]/20 rounded-lg">
             <p className="text-[11px] text-[var(--cyan)]">{txSuccess}</p>
           </div>
         )}
@@ -354,7 +354,7 @@ export function DepositWithdrawPanel({
           {withdrawConfirming && (
             <button
               onClick={() => setWithdrawConfirming(false)}
-              className="flex-none px-4 py-2.5 text-[12px] font-medium border border-[var(--border)] rounded-sm text-[var(--text-secondary)] hover:text-[var(--text)] hover:border-[var(--accent)]/30 transition-all"
+              className="flex-none px-4 py-2.5 text-[12px] font-medium border border-[var(--border)] rounded-lg text-[var(--text-secondary)] hover:text-[var(--text)] hover:border-[var(--accent)]/30 transition-all"
             >
               Cancel
             </button>

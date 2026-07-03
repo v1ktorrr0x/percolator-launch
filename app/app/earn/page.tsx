@@ -148,7 +148,7 @@ export default function EarnPage() {
 
         {/* Error toast */}
         {error && (
-          <div className="fixed bottom-4 right-4 z-50 bg-[var(--short)]/10 border border-[var(--short)]/30 rounded-sm px-4 py-3 text-[12px] text-[var(--short)]">
+          <div className="fixed bottom-4 right-4 z-50 bg-[var(--short)]/10 border border-[var(--short)]/30 rounded-lg px-4 py-3 text-[12px] text-[var(--short)]">
             {error}
           </div>
         )}
@@ -168,7 +168,7 @@ function Step({
 }) {
   return (
     <div className="flex items-start gap-3">
-      <div className="w-5 h-5 rounded-sm bg-[var(--accent)]/10 border border-[var(--accent)]/20 flex items-center justify-center text-[10px] font-bold text-[var(--accent)] shrink-0 mt-0.5">
+      <div className="w-5 h-5 rounded-lg bg-[var(--accent)]/10 border border-[var(--accent)]/20 flex items-center justify-center text-[10px] font-bold text-[var(--accent)] shrink-0 mt-0.5">
         {num}
       </div>
       <div>

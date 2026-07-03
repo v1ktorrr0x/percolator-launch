@@ -250,7 +250,7 @@ export const AccountRiskSidebar: FC<{ slabAddress: string }> = ({ slabAddress })
       : "var(--short)";
 
   return (
-    <div className="rounded-none border border-[var(--border)] bg-[var(--panel-bg)]/80 p-3 text-[12px] text-[var(--text)]">
+    <div className="rounded-lg border border-[var(--border)] bg-[var(--panel-bg)]/80 p-3 text-[12px] text-[var(--text)]">
       {/* Header */}
       <div className="mb-3 flex items-center justify-between">
         <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-[var(--text-muted)]">
@@ -274,9 +274,9 @@ export const AccountRiskSidebar: FC<{ slabAddress: string }> = ({ slabAddress })
             {hasPosition ? `${liqDistPct.toFixed(1)}%` : "—"}
           </span>
         </div>
-        <div className="h-1.5 w-full rounded-sm bg-[var(--border)]/40">
+        <div className="h-1.5 w-full rounded-lg bg-[var(--border)]/40">
           <div
-            className="h-full rounded-sm transition-[width] duration-300 ease-out"
+            className="h-full rounded-lg transition-[width] duration-300 ease-out"
             style={{
               width: `${hasPosition ? liqDistPct : 0}%`,
               background: liqColor,
@@ -312,9 +312,9 @@ export const AccountRiskSidebar: FC<{ slabAddress: string }> = ({ slabAddress })
               : `${formatTokenAmount(account.capital, decimals)} ${collateralSymbol} idle`}
           </span>
         </div>
-        <div className="h-1.5 w-full rounded-sm bg-[var(--border)]/40">
+        <div className="h-1.5 w-full rounded-lg bg-[var(--border)]/40">
           <div
-            className="h-full rounded-sm bg-[var(--accent)]/70 transition-[width] duration-300 ease-out"
+            className="h-full rounded-lg bg-[var(--accent)]/70 transition-[width] duration-300 ease-out"
             style={{ width: `${marginUsedPct}%` }}
           />
         </div>
@@ -322,7 +322,7 @@ export const AccountRiskSidebar: FC<{ slabAddress: string }> = ({ slabAddress })
 
       {/* ── Leverage ──────────────────────────────────────────── */}
       <div className="mb-3.5 grid grid-cols-2 gap-2">
-        <div className="rounded-sm border border-[var(--border)]/60 bg-[var(--bg)]/40 p-2">
+        <div className="rounded-lg border border-[var(--border)]/60 bg-[var(--bg)]/40 p-2">
           <div className="font-mono text-[9.5px] uppercase tracking-[0.16em] text-[var(--text-muted)]">
             Order lev
           </div>
@@ -333,7 +333,7 @@ export const AccountRiskSidebar: FC<{ slabAddress: string }> = ({ slabAddress })
             {hasPosition ? `${orderLeverage.toFixed(2)}x` : "—"}
           </div>
         </div>
-        <div className="rounded-sm border border-[var(--border)]/60 bg-[var(--bg)]/40 p-2">
+        <div className="rounded-lg border border-[var(--border)]/60 bg-[var(--bg)]/40 p-2">
           <div className="font-mono text-[9.5px] uppercase tracking-[0.16em] text-[var(--text-muted)]">
             Risk lev
           </div>
@@ -350,7 +350,7 @@ export const AccountRiskSidebar: FC<{ slabAddress: string }> = ({ slabAddress })
       </div>
 
       {/* ── P&L with sparkline ────────────────────────────────── */}
-      <div className="mb-3.5 rounded-sm border border-[var(--border)]/60 bg-[var(--bg)]/40 p-2">
+      <div className="mb-3.5 rounded-lg border border-[var(--border)]/60 bg-[var(--bg)]/40 p-2">
         <div className="flex items-start justify-between">
           <div>
             <div className="font-mono text-[9.5px] uppercase tracking-[0.16em] text-[var(--text-muted)]">

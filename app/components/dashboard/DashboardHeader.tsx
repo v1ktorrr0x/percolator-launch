@@ -22,7 +22,7 @@ function CopyableAddress({ address }: { address: string }) {
   return (
     <button
       onClick={handleCopy}
-      className="flex items-center gap-1.5 rounded-sm border border-[var(--border)] bg-[var(--bg)] px-2.5 py-1 text-[11px] transition-all hover:border-[var(--accent)]/30"
+      className="flex items-center gap-1.5 rounded-lg border border-[var(--border)] bg-[var(--bg)] px-2.5 py-1 text-[11px] transition-all hover:border-[var(--accent)]/30"
       title="Click to copy full address"
     >
       <span className="h-1.5 w-1.5 rounded-full bg-[var(--long)]" />

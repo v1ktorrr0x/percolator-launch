@@ -60,7 +60,7 @@ export const ChartPnlBadge: FC<ChartPnlBadgeProps> = ({ slabAddress }) => {
     sign === "positive" ? "text-green-400" : sign === "negative" ? "text-red-400" : "text-[var(--text-dim)]";
 
   return (
-    <div className="absolute top-10 right-2 z-10 flex items-center gap-1.5 rounded-none border border-[var(--border)]/60 bg-[var(--bg)]/90 px-2 py-1 backdrop-blur-sm">
+    <div className="absolute top-10 right-2 z-10 flex items-center gap-1.5 rounded-lg border border-[var(--border)]/60 bg-[var(--bg)]/90 px-2 py-1 ">
       <span className="text-[9px] font-bold uppercase tracking-[0.12em] text-[var(--text-dim)]">PnL</span>
       <span className={`text-[10px] font-mono ${colorClass}`}>{display}</span>
     </div>

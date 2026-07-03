@@ -120,7 +120,7 @@ export const TradeConfirmationModal: FC<TradeConfirmationModalProps> = ({
         role="dialog"
         aria-modal="true"
         aria-labelledby="trade-confirm-title"
-        className="relative w-full max-w-md rounded-none border border-[var(--border)] bg-[var(--bg)] p-6 shadow-2xl"
+        className="relative w-full max-w-md rounded-lg border border-[var(--border)] bg-[var(--bg)] p-6 shadow-2xl"
       style={{ opacity: 0 }}
       >
         {/* Header */}
@@ -140,7 +140,7 @@ export const TradeConfirmationModal: FC<TradeConfirmationModalProps> = ({
         </div>
 
         {/* Warning banner */}
-        <div className={`mb-4 rounded-none border p-3 ${
+        <div className={`mb-4 rounded-lg border p-3 ${
           direction === "long"
             ? "border-[var(--long)]/30 bg-[var(--long)]/5"
             : "border-[var(--short)]/30 bg-[var(--short)]/5"
@@ -202,7 +202,7 @@ export const TradeConfirmationModal: FC<TradeConfirmationModalProps> = ({
         </div>
 
         {/* Risk warning */}
-        <div className="mb-6 rounded-none border border-[var(--warning)]/30 bg-[var(--warning)]/5 p-3">
+        <div className="mb-6 rounded-lg border border-[var(--warning)]/30 bg-[var(--warning)]/5 p-3">
           <p className="text-[10px] font-medium uppercase tracking-[0.15em] text-[var(--warning)]">
             ⚠️ Risk Warning
           </p>
@@ -216,13 +216,13 @@ export const TradeConfirmationModal: FC<TradeConfirmationModalProps> = ({
         <div className="flex gap-3">
           <button
             onClick={onCancel}
-            className="flex-1 rounded-none border border-[var(--border)] py-2.5 text-[11px] font-medium uppercase tracking-[0.1em] text-[var(--text-secondary)] transition-colors hover:border-[var(--text-muted)] hover:text-[var(--text)]"
+            className="flex-1 rounded-lg border border-[var(--border)] py-2.5 text-[11px] font-medium uppercase tracking-[0.1em] text-[var(--text-secondary)] transition-colors hover:border-[var(--text-muted)] hover:text-[var(--text)]"
           >
             Cancel
           </button>
           <button
             onClick={onConfirm}
-            className={`flex-1 rounded-none py-2.5 text-[11px] font-medium uppercase tracking-[0.1em] text-white transition-all duration-150 hover:brightness-110 ${
+            className={`flex-1 rounded-lg py-2.5 text-[11px] font-medium uppercase tracking-[0.1em] text-white transition-all duration-150 hover:brightness-110 ${
               direction === "long" ? "bg-[var(--long)]" : "bg-[var(--short)]"
             }`}
           >

@@ -8,7 +8,7 @@ const card = "glass-card glass-card--hover p-6";
 const h2Style = "text-lg font-bold text-[var(--text)] mb-4";
 const h3Style = "text-sm font-semibold text-[var(--accent)] mb-2 uppercase tracking-wider";
 const textMuted = "text-[13px] leading-relaxed text-[var(--text-secondary)]";
-const badge = "inline-block rounded-sm px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider";
+const badge = "inline-block rounded-lg px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider";
 
 export default function AgentsPage() {
   return (
@@ -53,28 +53,28 @@ export default function AgentsPage() {
           <h2 className={h2Style}>How It Works</h2>
           <div className="space-y-4">
             <div className="flex gap-4">
-              <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-sm bg-[var(--accent)]/10 text-sm font-bold text-[var(--accent)]">1</div>
+              <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-[var(--accent)]/10 text-sm font-bold text-[var(--accent)]">1</div>
               <div>
                 <p className="text-sm font-medium text-[var(--text)]">Fork the repository</p>
                 <p className={textMuted}>Clone dcccrypto/percolator-launch to your own GitHub</p>
               </div>
             </div>
             <div className="flex gap-4">
-              <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-sm bg-[var(--accent)]/10 text-sm font-bold text-[var(--accent)]">2</div>
+              <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-[var(--accent)]/10 text-sm font-bold text-[var(--accent)]">2</div>
               <div>
                 <p className="text-sm font-medium text-[var(--text)]">Point your agent at the code</p>
                 <p className={textMuted}>Give it the architecture context and a specific task</p>
               </div>
             </div>
             <div className="flex gap-4">
-              <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-sm bg-[var(--accent)]/10 text-sm font-bold text-[var(--accent)]">3</div>
+              <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-[var(--accent)]/10 text-sm font-bold text-[var(--accent)]">3</div>
               <div>
                 <p className="text-sm font-medium text-[var(--text)]">Agent builds on a feature branch</p>
                 <p className={textMuted}>TypeScript must compile clean. Follow the design system.</p>
               </div>
             </div>
             <div className="flex gap-4">
-              <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-sm bg-[var(--accent)]/10 text-sm font-bold text-[var(--accent)]">4</div>
+              <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-[var(--accent)]/10 text-sm font-bold text-[var(--accent)]">4</div>
               <div>
                 <p className="text-sm font-medium text-[var(--text)]">Submit a PR</p>
                 <p className={textMuted}>Main branch is protected. All changes go through review.</p>
@@ -114,7 +114,7 @@ Key concepts:
         <div className={card}>
           <h2 className={h2Style}>What To Work On</h2>
           <div className="grid gap-4 sm:grid-cols-2">
-            <div className="rounded-sm border border-[var(--border)] p-4">
+            <div className="rounded-lg border border-[var(--border)] p-4">
               <div className="mb-2 flex items-center gap-2">
                 <span className={`${badge} bg-[var(--long)]/20 text-[var(--long)]`}>Easy</span>
                 <h3 className="text-sm font-medium text-[var(--text)]">Bug Fixes</h3>
@@ -123,7 +123,7 @@ Key concepts:
                 Fix console errors, null rendering, missing loading states, TypeScript issues, mobile layout
               </p>
             </div>
-            <div className="rounded-sm border border-[var(--border)] p-4">
+            <div className="rounded-lg border border-[var(--border)] p-4">
               <div className="mb-2 flex items-center gap-2">
                 <span className={`${badge} bg-[var(--long)]/20 text-[var(--long)]`}>Easy</span>
                 <h3 className="text-sm font-medium text-[var(--text)]">UI Polish</h3>
@@ -132,7 +132,7 @@ Key concepts:
                 Better skeletons, animations, accessibility, responsive design, performance
               </p>
             </div>
-            <div className="rounded-sm border border-[var(--border)] p-4">
+            <div className="rounded-lg border border-[var(--border)] p-4">
               <div className="mb-2 flex items-center gap-2">
                 <span className={`${badge} bg-[var(--warning)]/20 text-[var(--warning)]`}>Medium</span>
                 <h3 className="text-sm font-medium text-[var(--text)]">Backend Features</h3>
@@ -141,7 +141,7 @@ Key concepts:
                 Trade history indexing, market stats, WebSocket reliability, monitoring dashboards
               </p>
             </div>
-            <div className="rounded-sm border border-[var(--border)] p-4">
+            <div className="rounded-lg border border-[var(--border)] p-4">
               <div className="mb-2 flex items-center gap-2">
                 <span className={`${badge} bg-[var(--short)]/20 text-[var(--short)]`}>Hard</span>
                 <h3 className="text-sm font-medium text-[var(--text)]">Solana Program</h3>

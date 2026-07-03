@@ -11,7 +11,7 @@ interface GlassCardProps extends HTMLAttributes<HTMLDivElement> {
   /**
    * "glass" (default) — the homepage-hero surface: soft translucent black,
    * hairline border, inner top highlight, tinted depth, rounded-xl.
-   * "terminal" — the legacy sharp panel (rounded-sm + hud-corners) for
+   * "terminal" — the legacy sharp panel (rounded-lg +) for
    * dense data contexts that still want the original terminal edge.
    */
   variant?: "glass" | "terminal";
@@ -29,11 +29,11 @@ export const GlassCard = forwardRef<HTMLDivElement, GlassCardProps>(
       <div
         ref={ref}
         className={[
-          terminal ? "rounded-sm border border-[var(--border)] bg-[var(--panel-bg)] hud-corners" : "glass-card",
+          terminal ? "rounded-lg border border-[var(--border)] bg-[var(--panel-bg)]" : "glass-card",
           terminal
             ? hover ? "transition-all duration-200 hover:border-[var(--accent)]/20" : ""
             : hover ? "glass-card--hover" : "",
-          glow ? "shadow-[0_0_40px_-12px_rgba(153,69,255,0.30)]" : "",
+          glow ? "" : "",
           accent ? "accent-top overflow-hidden" : "",
           paddingMap[padding],
           className,

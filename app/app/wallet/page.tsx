@@ -123,11 +123,11 @@ function WalletPageInner() {
                 </div>
               </div>
               <div className="flex flex-col gap-2 text-right text-[11px] text-[var(--text-secondary)]">
-                <span className="rounded-sm border border-[var(--border)] px-2 py-1 uppercase tracking-[0.2em] text-[9px]">
+                <span className="rounded-lg border border-[var(--border)] px-2 py-1 uppercase tracking-[0.2em] text-[9px]">
                   {network}
                 </span>
                 {embeddedWallet?.address && activeWallet?.address === embeddedWallet.address && (
-                  <span className="rounded-sm border border-[var(--accent)]/30 px-2 py-1 text-[9px] uppercase tracking-[0.2em] text-[var(--accent)]">
+                  <span className="rounded-lg border border-[var(--accent)]/30 px-2 py-1 text-[9px] uppercase tracking-[0.2em] text-[var(--accent)]">
                     embedded
                   </span>
                 )}
@@ -199,7 +199,7 @@ function WalletPageInner() {
                       type="button"
                       onClick={() => setPreferredAddress(wallet.address)}
                       className={[
-                        "flex items-center justify-between rounded-sm border px-4 py-3 text-left transition-all duration-200",
+                        "flex items-center justify-between rounded-lg border px-4 py-3 text-left transition-all duration-200",
                         isActive
                           ? "border-[var(--accent)] bg-[var(--accent)]/[0.08] ring-1 ring-[var(--accent)]/30"
                           : "border-[var(--border)] bg-[var(--bg-elevated)] hover:border-[var(--accent)]/40 hover:bg-[var(--accent)]/[0.03]",
@@ -214,12 +214,12 @@ function WalletPageInner() {
                       </div>
                       <div className="flex flex-col items-end gap-1">
                         {isActive && (
-                          <span className="rounded-sm border border-[var(--accent)]/40 bg-[var(--accent)]/10 px-2 py-0.5 text-[9px] font-semibold uppercase tracking-[0.2em] text-[var(--accent)]">
+                          <span className="rounded-lg border border-[var(--accent)]/40 bg-[var(--accent)]/10 px-2 py-0.5 text-[9px] font-semibold uppercase tracking-[0.2em] text-[var(--accent)]">
                             active
                           </span>
                         )}
                         {isEmbedded && (
-                          <span className="rounded-sm border border-[var(--accent)]/30 px-2 py-0.5 text-[9px] uppercase tracking-[0.2em] text-[var(--accent)]">
+                          <span className="rounded-lg border border-[var(--accent)]/30 px-2 py-0.5 text-[9px] uppercase tracking-[0.2em] text-[var(--accent)]">
                             embedded
                           </span>
                         )}

@@ -510,12 +510,12 @@ export const TradeForm: FC<{ slabAddress: string }> = ({ slabAddress }) => {
   }
 
   return (
-    <div className="relative rounded-none bg-[var(--bg)]/80 border border-[var(--border)]/50 p-3">
+    <div className="relative rounded-lg bg-[var(--bg)]/80 border border-[var(--border)]/50 p-3">
 
       {/* GH#1272: Vault-empty warning — shown when no LP has deposited. Prevents
           silent button failures by surfacing the real reason trading is blocked. */}
       {vaultEmpty && (
-        <div className="mb-3 rounded-none border border-[var(--warning)]/30 bg-[var(--warning)]/5 p-2.5">
+        <div className="mb-3 rounded-lg border border-[var(--warning)]/30 bg-[var(--warning)]/5 p-2.5">
           <p className="text-[9px] font-bold uppercase tracking-[0.15em] text-[var(--warning)]">No Vault Liquidity</p>
           <p className="mt-1 text-[9px] text-[var(--text-secondary)] leading-relaxed">
             This market has no LP deposits. Trading will be enabled once liquidity is added to the vault.
@@ -525,7 +525,7 @@ export const TradeForm: FC<{ slabAddress: string }> = ({ slabAddress }) => {
 
       {/* LP underfunded warning */}
       {lpUnderfunded && !vaultEmpty && (
-        <div className="mb-3 rounded-none border border-[var(--warning)]/30 bg-[var(--warning)]/5 p-2.5">
+        <div className="mb-3 rounded-lg border border-[var(--warning)]/30 bg-[var(--warning)]/5 p-2.5">
           <p className="text-[9px] font-bold uppercase tracking-[0.15em] text-[var(--warning)]">Liquidity Unavailable</p>
           <p className="mt-1 text-[9px] text-[var(--text-secondary)] leading-relaxed">
             The LP has no capital. Trades cannot execute until the LP is funded.
@@ -535,7 +535,7 @@ export const TradeForm: FC<{ slabAddress: string }> = ({ slabAddress }) => {
 
       {/* ── Open Position Card (replaces simple banner) ── */}
       {hasOpenPosition && userAccount && (
-        <div className="mb-3 rounded-none border border-cyan-500/30 bg-cyan-950/30 p-3.5">
+        <div className="mb-3 rounded-lg border border-cyan-500/30 bg-cyan-950/30 p-3.5">
           {/* Header row */}
           <div className="mb-2.5 flex items-center justify-between">
             <div className="flex items-center gap-2">
@@ -553,7 +553,7 @@ export const TradeForm: FC<{ slabAddress: string }> = ({ slabAddress }) => {
             </div>
             <button
               onClick={() => setShowCloseModal(true)}
-              className="rounded-none border border-red-500/40 bg-red-500/10 px-2.5 py-1 text-[9px] font-bold uppercase tracking-[0.1em] text-red-400 transition-colors hover:bg-red-500/20"
+              className="rounded-lg border border-red-500/40 bg-red-500/10 px-2.5 py-1 text-[9px] font-bold uppercase tracking-[0.1em] text-red-400 transition-colors hover:bg-red-500/20"
             >
               Close
             </button>
@@ -603,13 +603,13 @@ export const TradeForm: FC<{ slabAddress: string }> = ({ slabAddress }) => {
                 const deposit = document.querySelector('[data-deposit-trigger]');
                 if (deposit) deposit.scrollIntoView({ behavior: 'smooth', block: 'center' });
               }}
-              className="rounded-none border border-[var(--border)] py-1.5 text-[10px] font-medium uppercase tracking-[0.08em] text-[var(--text-secondary)] transition-colors hover:border-cyan-500/30 hover:text-cyan-400"
+              className="rounded-lg border border-[var(--border)] py-1.5 text-[10px] font-medium uppercase tracking-[0.08em] text-[var(--text-secondary)] transition-colors hover:border-cyan-500/30 hover:text-cyan-400"
             >
               Add Margin
             </button>
             <button
               onClick={() => setShowCloseModal(true)}
-              className="rounded-none bg-red-500/80 py-1.5 text-[10px] font-bold uppercase tracking-[0.08em] text-white transition-colors hover:bg-red-500"
+              className="rounded-lg bg-red-500/80 py-1.5 text-[10px] font-bold uppercase tracking-[0.08em] text-white transition-colors hover:bg-red-500"
             >
               Close Position
             </button>
@@ -619,7 +619,7 @@ export const TradeForm: FC<{ slabAddress: string }> = ({ slabAddress }) => {
 
       {/* Market paused banner */}
       {header?.paused && (
-        <div className="mb-3 rounded-none border border-[var(--short)]/30 bg-[var(--short)]/5 p-3 text-center">
+        <div className="mb-3 rounded-lg border border-[var(--short)]/30 bg-[var(--short)]/5 p-3 text-center">
           <p className="text-[10px] font-bold uppercase tracking-[0.15em] text-[var(--short)]">⛔ MARKET PAUSED</p>
           <p className="mt-1 text-[10px] text-[var(--short)]/70">
             Trading, deposits, and withdrawals are disabled by the market admin.
@@ -629,7 +629,7 @@ export const TradeForm: FC<{ slabAddress: string }> = ({ slabAddress }) => {
 
       {/* Risk gate warning */}
       {riskGateActive && (
-        <div className="mb-3 rounded-none border border-[var(--warning)]/30 bg-[var(--warning)]/5 p-3">
+        <div className="mb-3 rounded-lg border border-[var(--warning)]/30 bg-[var(--warning)]/5 p-3">
           <p className="text-[10px] font-medium uppercase tracking-[0.15em] text-[var(--warning)]">Risk Reduction Mode</p>
           <p className="mt-1 text-[10px] text-[var(--warning)]/70">
             This market is in de-risking mode. Only closing trades are allowed right now.
@@ -642,7 +642,7 @@ export const TradeForm: FC<{ slabAddress: string }> = ({ slabAddress }) => {
           oracle feed unavailable), we disable the trade button to prevent 0-price
           transactions that would fail on-chain with a cryptic error. */}
       {!priceUsd && !mockMode && (
-        <div className="mb-3 rounded-none border border-[var(--warning)]/30 bg-[var(--warning)]/5 p-2.5">
+        <div className="mb-3 rounded-lg border border-[var(--warning)]/30 bg-[var(--warning)]/5 p-2.5">
           <p className="text-[9px] font-bold uppercase tracking-[0.15em] text-[var(--warning)]">No Oracle Price</p>
           <p className="mt-1 text-[9px] text-[var(--text-secondary)] leading-relaxed">
             Waiting for price feed. Trades will be enabled once oracle data is available.
@@ -655,7 +655,7 @@ export const TradeForm: FC<{ slabAddress: string }> = ({ slabAddress }) => {
           "stale" = price exists but hasn't updated recently. Both prevent "Oracle is invalid" tx failure.
           P3-5: Use consistent amber/orange design language matching OracleFreshnessIndicator warning strip. */}
       {oracleStale && !mockMode && (
-        <div className="mb-3 rounded-none border border-amber-500/30 bg-amber-500/[0.07] p-2.5">
+        <div className="mb-3 rounded-lg border border-amber-500/30 bg-amber-500/[0.07] p-2.5">
           <p className="text-[9px] font-bold uppercase tracking-[0.15em] text-amber-400">
             {oracleUnavailable ? "⚠ Oracle Unavailable" : "⚠ Oracle Stale"}
           </p>
@@ -670,7 +670,7 @@ export const TradeForm: FC<{ slabAddress: string }> = ({ slabAddress }) => {
       {/* Order type indicator — market orders only */}
       <div className="mb-3 flex items-center gap-1.5">
         <span className="text-[10px] uppercase tracking-[0.15em] text-[var(--text)]">Order Type</span>
-        <span className="rounded-none border border-[var(--accent)]/30 bg-[var(--accent)]/10 px-2 py-0.5 text-[10px] font-medium uppercase tracking-[0.1em] text-[var(--accent)]">
+        <span className="rounded-lg border border-[var(--accent)]/30 bg-[var(--accent)]/10 px-2 py-0.5 text-[10px] font-medium uppercase tracking-[0.1em] text-[var(--accent)]">
           Market
         </span>
       </div>
@@ -680,7 +680,7 @@ export const TradeForm: FC<{ slabAddress: string }> = ({ slabAddress }) => {
         <button
           ref={longBtnRef}
           onClick={() => setDirection("long")}
-          className={`flex-1 rounded-none py-2.5 text-[11px] font-bold uppercase tracking-[0.1em] transition-all duration-150 ${
+          className={`flex-1 rounded-lg py-2.5 text-[11px] font-bold uppercase tracking-[0.1em] transition-all duration-150 ${
             direction === "long"
               ? "bg-green-500 border border-green-500 text-black"
               : "border border-[var(--border)] bg-[var(--bg-surface)] text-[var(--text-secondary)]"
@@ -691,7 +691,7 @@ export const TradeForm: FC<{ slabAddress: string }> = ({ slabAddress }) => {
         <button
           ref={shortBtnRef}
           onClick={() => setDirection("short")}
-          className={`flex-1 rounded-none py-2.5 text-[11px] font-bold uppercase tracking-[0.1em] transition-all duration-150 ${
+          className={`flex-1 rounded-lg py-2.5 text-[11px] font-bold uppercase tracking-[0.1em] transition-all duration-150 ${
             direction === "short"
               ? "bg-red-500 border border-red-500 text-white"
               : "border border-red-400/60 bg-red-500/[0.08] text-red-400 hover:bg-red-500/20 hover:border-red-400/80"
@@ -720,7 +720,7 @@ export const TradeForm: FC<{ slabAddress: string }> = ({ slabAddress }) => {
                 onFocus={() => setSizeMode("contracts")}
                 placeholder="0.000000"
                 style={{ fontFamily: "var(--font-mono)", fontVariantNumeric: "tabular-nums" }}
-                className={`w-full rounded-none border px-2 py-2 text-right text-sm text-[var(--text)] placeholder-[var(--text-muted)] focus:outline-none focus:ring-1 ${
+                className={`w-full rounded-lg border px-2 py-2 text-right text-sm text-[var(--text)] placeholder-[var(--text-muted)] focus:outline-none focus:ring-1 ${
                   sizeMode === "contracts"
                     ? "border-[var(--accent)]/50 bg-[var(--bg)] focus:border-[var(--accent)] focus:ring-[var(--accent)]/20"
                     : "border-[var(--border)]/40 bg-[var(--bg)] focus:border-[var(--accent)]/30 focus:ring-[var(--accent)]/10"
@@ -739,7 +739,7 @@ export const TradeForm: FC<{ slabAddress: string }> = ({ slabAddress }) => {
                 onFocus={() => setSizeMode("usdc")}
                 placeholder="$0.00"
                 style={{ fontFamily: "var(--font-mono)", fontVariantNumeric: "tabular-nums" }}
-                className={`w-full rounded-none border px-2 py-2 text-right text-sm text-[var(--text)] placeholder-[var(--text-muted)] focus:outline-none focus:ring-1 ${
+                className={`w-full rounded-lg border px-2 py-2 text-right text-sm text-[var(--text)] placeholder-[var(--text-muted)] focus:outline-none focus:ring-1 ${
                   sizeMode === "usdc"
                     ? "border-[var(--accent)]/50 bg-[var(--bg)] focus:border-[var(--accent)] focus:ring-[var(--accent)]/20"
                     : "border-[var(--border)]/40 bg-[var(--bg)] focus:border-[var(--accent)]/30 focus:ring-[var(--accent)]/10"
@@ -762,7 +762,7 @@ export const TradeForm: FC<{ slabAddress: string }> = ({ slabAddress }) => {
           <button
             key={pct}
             onClick={() => setMarginPercent(pct)}
-            className="flex-1 rounded-none border border-[var(--border)]/30 py-1 text-[10px] font-medium text-[var(--text-secondary)] transition-colors hover:border-[var(--accent)]/30 hover:text-[var(--text)] focus-visible:ring-1 focus-visible:ring-[var(--accent)]/30"
+            className="flex-1 rounded-lg border border-[var(--border)]/30 py-1 text-[10px] font-medium text-[var(--text-secondary)] transition-colors hover:border-[var(--accent)]/30 hover:text-[var(--text)] focus-visible:ring-1 focus-visible:ring-[var(--accent)]/30"
           >
             {pct === 100 ? "MAX" : `${pct}%`}
           </button>
@@ -794,7 +794,7 @@ export const TradeForm: FC<{ slabAddress: string }> = ({ slabAddress }) => {
                 setLeverageText(String(leverage));
               }}
               style={{ fontFamily: "var(--font-mono)", fontVariantNumeric: "tabular-nums" }}
-              className="w-12 rounded-none border border-[var(--border)]/50 bg-[var(--bg)] px-1.5 py-0.5 text-right text-[11px] text-[var(--text)] focus:border-[var(--accent)]/50 focus:outline-none focus:ring-1 focus:ring-[var(--accent)]/20"
+              className="w-12 rounded-lg border border-[var(--border)]/50 bg-[var(--bg)] px-1.5 py-0.5 text-right text-[11px] text-[var(--text)] focus:border-[var(--accent)]/50 focus:outline-none focus:ring-1 focus:ring-[var(--accent)]/20"
             />
             <span className="text-[11px] font-medium text-[var(--text)]">x</span>
           </div>
@@ -812,14 +812,14 @@ export const TradeForm: FC<{ slabAddress: string }> = ({ slabAddress }) => {
           style={{
             background: `linear-gradient(to right, var(--accent) 0%, var(--accent) ${maxLeverage > 1 ? ((leverage - 1) / (maxLeverage - 1)) * 100 : 100}%, var(--bg-surface) ${maxLeverage > 1 ? ((leverage - 1) / (maxLeverage - 1)) * 100 : 100}%, var(--bg-surface) 100%)`,
           }}
-          className="mb-3 h-1.5 w-full cursor-pointer appearance-none touch-none accent-[var(--accent)] [&::-webkit-slider-runnable-track]:rounded-full [&::-webkit-slider-runnable-track]:bg-[var(--bg-surface)] [&::-webkit-slider-thumb]:h-5 [&::-webkit-slider-thumb]:w-5 [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-[var(--accent)] [&::-webkit-slider-thumb]:shadow-[0_0_6px_rgba(153,69,255,0.4)] [&::-moz-range-thumb]:h-5 [&::-moz-range-thumb]:w-5 [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:border-0 [&::-moz-range-thumb]:bg-[var(--accent)] [&::-moz-range-track]:rounded-full [&::-moz-range-track]:bg-[var(--bg-surface)]"
+          className="mb-3 h-1.5 w-full cursor-pointer appearance-none touch-none accent-[var(--accent)] [&::-webkit-slider-runnable-track]:rounded-full [&::-webkit-slider-runnable-track]:bg-[var(--bg-surface)] [&::-webkit-slider-thumb]:h-5 [&::-webkit-slider-thumb]:w-5 [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-[var(--accent)] [&::-webkit-slider-thumb]:[&::-moz-range-thumb]:h-5 [&::-moz-range-thumb]:w-5 [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:border-0 [&::-moz-range-thumb]:bg-[var(--accent)] [&::-moz-range-track]:rounded-full [&::-moz-range-track]:bg-[var(--bg-surface)]"
         />
         <div className="flex flex-wrap gap-1">
           {availableLeverage.map((l) => (
             <button
               key={l}
               onClick={() => updateLeverage(l)}
-              className={`flex-1 basis-0 min-w-[32px] rounded-none py-1.5 min-h-[36px] text-[9px] font-medium transition-all duration-150 focus-visible:ring-1 focus-visible:ring-[var(--accent)]/30 touch-manipulation ${
+              className={`flex-1 basis-0 min-w-[32px] rounded-lg py-1.5 min-h-[36px] text-[9px] font-medium transition-all duration-150 focus-visible:ring-1 focus-visible:ring-[var(--accent)]/30 touch-manipulation ${
                 leverage === l
                   ? "bg-[var(--accent)] text-white"
                   : "border border-[var(--border)] text-[var(--text-secondary)] hover:border-[var(--accent)]/50 hover:text-[var(--text)]"
@@ -862,7 +862,7 @@ export const TradeForm: FC<{ slabAddress: string }> = ({ slabAddress }) => {
       {needsWallet ? (
         <button
           onClick={() => openWalletModal()}
-          className="w-full rounded-none py-2.5 text-[11px] font-medium uppercase tracking-[0.1em] text-white transition-all duration-150 hover:scale-[1.01] active:scale-[0.99] bg-[var(--accent)] hover:brightness-110 focus-visible:ring-1 focus-visible:ring-offset-1 focus-visible:ring-offset-[var(--bg)] focus-visible:ring-[var(--accent)]"
+          className="w-full rounded-lg py-2.5 text-[11px] font-medium uppercase tracking-[0.1em] text-white transition-all duration-150 hover:scale-[1.01] active:scale-[0.99] bg-[var(--accent)] hover:brightness-110 focus-visible:ring-1 focus-visible:ring-offset-1 focus-visible:ring-offset-[var(--bg)] focus-visible:ring-[var(--accent)]"
         >
           Connect Wallet
         </button>
@@ -896,7 +896,7 @@ export const TradeForm: FC<{ slabAddress: string }> = ({ slabAddress }) => {
                 onClick={canOneClick ? onClickDirect : () => setShowInlineDeposit((v) => !v)}
                 disabled={initLoading}
                 aria-expanded={showInlineDeposit}
-                className={`w-full rounded-none py-2.5 text-[11px] font-bold uppercase tracking-[0.1em] text-black transition-all duration-150 hover:scale-[1.01] active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-70 focus-visible:ring-1 focus-visible:ring-offset-1 focus-visible:ring-offset-[var(--bg)] ${
+                className={`w-full rounded-lg py-2.5 text-[11px] font-bold uppercase tracking-[0.1em] text-black transition-all duration-150 hover:scale-[1.01] active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-70 focus-visible:ring-1 focus-visible:ring-offset-1 focus-visible:ring-offset-[var(--bg)] ${
                   direction === "long"
                     ? "bg-green-500 hover:bg-green-400 focus-visible:ring-green-500"
                     : "bg-red-500 hover:bg-red-400 focus-visible:ring-red-500"
@@ -952,7 +952,7 @@ export const TradeForm: FC<{ slabAddress: string }> = ({ slabAddress }) => {
             setShowConfirmModal(true);
           }}
           disabled={tradePhase !== "idle" || loading || !marginInput || positionSize <= 0n || exceedsMargin || riskGateActive || header?.paused || lpUnderfunded || vaultEmpty || (!priceUsd && !mockMode) || (oracleStale && !mockMode)}
-          className={`w-full rounded-none py-2.5 text-[11px] font-bold uppercase tracking-[0.1em] text-black transition-all duration-150 hover:scale-[1.01] active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:scale-100 focus-visible:ring-1 focus-visible:ring-offset-1 focus-visible:ring-offset-[var(--bg)] ${
+          className={`w-full rounded-lg py-2.5 text-[11px] font-bold uppercase tracking-[0.1em] text-black transition-all duration-150 hover:scale-[1.01] active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:scale-100 focus-visible:ring-1 focus-visible:ring-offset-1 focus-visible:ring-offset-[var(--bg)] ${
             direction === "long"
               ? "bg-green-500 hover:bg-green-400 focus-visible:ring-green-500"
               : "bg-red-500 hover:bg-red-400 focus-visible:ring-red-500"
@@ -975,7 +975,7 @@ export const TradeForm: FC<{ slabAddress: string }> = ({ slabAddress }) => {
       )}
 
       {humanError && (
-        <div ref={errorRef} className="mt-2 rounded-none border border-[var(--short)]/20 bg-[var(--short)]/5 px-3 py-2">
+        <div ref={errorRef} className="mt-2 rounded-lg border border-[var(--short)]/20 bg-[var(--short)]/5 px-3 py-2">
           <p className="text-[10px] text-[var(--short)]">{humanError}</p>
         </div>
       )}

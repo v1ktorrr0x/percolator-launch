@@ -41,7 +41,7 @@ export default function NotFound() {
         <div className="flex flex-col gap-3 sm:flex-row sm:justify-center">
           <Link
             href="/"
-            className="border border-[var(--accent)]/50 bg-[var(--accent)]/[0.08] px-6 py-3 text-xs font-semibold uppercase tracking-wider text-[var(--accent)] transition-all hover:border-[var(--accent)] hover:bg-[var(--accent)]/[0.15]"
+            className="border border-[var(--accent)]/50 bg-[var(--accent)]/[0.08] px-6 py-3 text-xs font-semibold uppercase tracking-wider text-[var(--accent)] transition-all hover:border-[var(--accent)] hover:bg-[var(--accent)] hover:text-white"
           >
             Go Home
           </Link>

@@ -140,7 +140,7 @@ export const ClosePositionModal: FC<ClosePositionModalProps> = ({
         role="dialog"
         aria-modal="true"
         aria-labelledby="close-position-title"
-        className="relative w-full max-w-md rounded-none border border-[var(--border)] bg-[var(--bg)] p-6 shadow-2xl"
+        className="relative w-full max-w-md rounded-lg border border-[var(--border)] bg-[var(--bg)] p-6 shadow-2xl"
       style={{ opacity: 0 }}
       >
         {/* Header */}
@@ -160,7 +160,7 @@ export const ClosePositionModal: FC<ClosePositionModalProps> = ({
         </div>
 
         {/* Position info banner */}
-        <div className={`mb-4 rounded-none border p-3 ${
+        <div className={`mb-4 rounded-lg border p-3 ${
           isLong
             ? "border-[var(--long)]/30 bg-[var(--long)]/5"
             : "border-[var(--short)]/30 bg-[var(--short)]/5"
@@ -197,7 +197,7 @@ export const ClosePositionModal: FC<ClosePositionModalProps> = ({
               <button
                 key={p}
                 onClick={() => setPercent(p)}
-                className={`flex-1 rounded-none py-1 text-[10px] font-medium transition-all duration-150 ${
+                className={`flex-1 rounded-lg py-1 text-[10px] font-medium transition-all duration-150 ${
                   percent === p
                     ? "bg-[var(--short)] text-white"
                     : "border border-[var(--border)]/30 text-[var(--text-muted)] hover:border-[var(--short)]/30 hover:text-[var(--text-secondary)]"
@@ -245,7 +245,7 @@ export const ClosePositionModal: FC<ClosePositionModalProps> = ({
 
         {/* GH#1842: Oracle staleness warning — mirrors TradeForm oracle stale block */}
         {oracleStale && (
-          <div className="mb-4 rounded-none border border-amber-500/30 bg-amber-500/[0.07] p-2.5">
+          <div className="mb-4 rounded-lg border border-amber-500/30 bg-amber-500/[0.07] p-2.5">
             <p className="text-[9px] font-bold uppercase tracking-[0.15em] text-amber-400">
               ⚠ Oracle Stale
             </p>
@@ -260,14 +260,14 @@ export const ClosePositionModal: FC<ClosePositionModalProps> = ({
           <button
             onClick={onCancel}
             disabled={loading}
-            className="flex-1 rounded-none border border-[var(--border)] py-2.5 text-[11px] font-medium uppercase tracking-[0.1em] text-[var(--text-secondary)] transition-colors hover:border-[var(--text-muted)] hover:text-[var(--text)] disabled:opacity-50"
+            className="flex-1 rounded-lg border border-[var(--border)] py-2.5 text-[11px] font-medium uppercase tracking-[0.1em] text-[var(--text-secondary)] transition-colors hover:border-[var(--text-muted)] hover:text-[var(--text)] disabled:opacity-50"
           >
             Cancel
           </button>
           <button
             onClick={() => onConfirm(percent)}
             disabled={loading || oracleStale}
-            className="flex-1 rounded-none bg-[var(--short)] py-2.5 text-[11px] font-medium uppercase tracking-[0.1em] text-white transition-all duration-150 hover:brightness-110 disabled:opacity-50"
+            className="flex-1 rounded-lg bg-[var(--short)] py-2.5 text-[11px] font-medium uppercase tracking-[0.1em] text-white transition-all duration-150 hover:brightness-110 disabled:opacity-50"
           >
             {loading ? (
               <span className="inline-flex items-center gap-2">

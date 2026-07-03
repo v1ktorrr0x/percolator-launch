@@ -92,7 +92,7 @@ export function WalletDebugPanel() {
             href={solflareBrowseUrl}
             target="_blank"
             rel="noreferrer"
-            className="rounded-sm border border-[var(--border)] px-3 py-2 text-[11px] font-medium text-[var(--text-secondary)] hover:border-[var(--accent)]/40 hover:text-[var(--text)]"
+            className="rounded-lg border border-[var(--border)] px-3 py-2 text-[11px] font-medium text-[var(--text-secondary)] hover:border-[var(--accent)]/40 hover:text-[var(--text)]"
           >
             Open in Solflare
           </a>

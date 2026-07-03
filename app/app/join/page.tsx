@@ -9,9 +9,9 @@ const h2Style = "text-lg font-bold text-[var(--text)] mb-4";
 const textMuted = "text-[13px] leading-relaxed text-[var(--text-secondary)]";
 const labelStyle = "block text-[11px] font-medium uppercase tracking-[0.15em] text-[var(--text-muted)] mb-1.5";
 const inputStyle =
-  "w-full rounded-sm border border-[var(--border)] bg-[var(--bg-elevated)] px-3 py-2.5 text-[13px] text-[var(--text)] placeholder:text-[var(--text-dim)] focus:border-[var(--accent)] focus:outline-none transition-colors";
+  "w-full rounded-lg border border-[var(--border)] bg-[var(--bg-elevated)] px-3 py-2.5 text-[13px] text-[var(--text)] placeholder:text-[var(--text-dim)] focus:border-[var(--accent)] focus:outline-none transition-colors";
 const textareaStyle =
-  "w-full rounded-sm border border-[var(--border)] bg-[var(--bg-elevated)] px-3 py-2.5 text-[13px] text-[var(--text)] placeholder:text-[var(--text-dim)] focus:border-[var(--accent)] focus:outline-none transition-colors resize-none";
+  "w-full rounded-lg border border-[var(--border)] bg-[var(--bg-elevated)] px-3 py-2.5 text-[13px] text-[var(--text)] placeholder:text-[var(--text-dim)] focus:border-[var(--accent)] focus:outline-none transition-colors resize-none";
 
 const ROLE_OPTIONS = [
   { value: "developer", label: "Developer", desc: "Smart contracts, frontend, backend" },
@@ -277,7 +277,7 @@ export default function JoinPage() {
                       <button
                         key={opt.value}
                         onClick={() => update("desired_role", opt.value)}
-                        className={`rounded-sm border px-3 py-2.5 text-left transition-all ${
+                        className={`rounded-lg border px-3 py-2.5 text-left transition-all ${
                           form.desired_role === opt.value
                             ? "border-[var(--accent)] bg-[var(--accent)]/5"
                             : "border-[var(--border)] hover:border-[var(--border-hover)]"
@@ -296,7 +296,7 @@ export default function JoinPage() {
                       <button
                         key={opt.value}
                         onClick={() => update("experience_level", opt.value)}
-                        className={`rounded-sm border px-4 py-1.5 text-[11px] font-medium transition-all ${
+                        className={`rounded-lg border px-4 py-1.5 text-[11px] font-medium transition-all ${
                           form.experience_level === opt.value
                             ? "border-[var(--accent)] bg-[var(--accent)]/10 text-[var(--text)]"
                             : "border-[var(--border)] text-[var(--text-muted)] hover:border-[var(--border-hover)] hover:text-[var(--text)]"
@@ -344,7 +344,7 @@ export default function JoinPage() {
                     onDragLeave={() => setDragOver(false)}
                     onDrop={handleDrop}
                     onClick={() => fileRef.current?.click()}
-                    className={`rounded-sm border-2 border-dashed px-4 py-8 text-center cursor-pointer transition-all ${
+                    className={`rounded-lg border-2 border-dashed px-4 py-8 text-center cursor-pointer transition-all ${
                       dragOver
                         ? "border-[var(--accent)] bg-[var(--accent)]/5"
                         : cvFile
@@ -397,7 +397,7 @@ export default function JoinPage() {
                       <button
                         key={opt.value}
                         onClick={() => update("availability", opt.value)}
-                        className={`rounded-sm border px-4 py-1.5 text-[11px] font-medium transition-all ${
+                        className={`rounded-lg border px-4 py-1.5 text-[11px] font-medium transition-all ${
                           form.availability === opt.value
                             ? "border-[var(--accent)] bg-[var(--accent)]/10 text-[var(--text)]"
                             : "border-[var(--border)] text-[var(--text-muted)] hover:border-[var(--border-hover)] hover:text-[var(--text)]"
@@ -425,7 +425,7 @@ export default function JoinPage() {
 
             {/* Error + Submit */}
             {error && (
-              <div className="rounded-sm border border-[var(--short)]/30 bg-[var(--short)]/5 px-4 py-3 text-[12px] text-[var(--short)]">
+              <div className="rounded-lg border border-[var(--short)]/30 bg-[var(--short)]/5 px-4 py-3 text-[12px] text-[var(--short)]">
                 {error}
               </div>
             )}

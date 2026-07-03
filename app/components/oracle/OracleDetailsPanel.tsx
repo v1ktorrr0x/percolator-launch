@@ -223,7 +223,7 @@ function PanelContent({
         </div>
         <button
           onClick={onClose}
-          className="flex h-6 w-6 items-center justify-center rounded-sm text-[var(--text-muted)] transition-colors hover:bg-[var(--bg-elevated)] hover:text-[var(--text)]"
+          className="flex h-6 w-6 items-center justify-center rounded-lg text-[var(--text-muted)] transition-colors hover:bg-[var(--bg-elevated)] hover:text-[var(--text)]"
         >
           ✕
         </button>

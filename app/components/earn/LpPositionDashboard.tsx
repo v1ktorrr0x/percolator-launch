@@ -53,7 +53,7 @@ export function LpPositionDashboard({
 
   if (loading) {
     return (
-      <div className="border border-[var(--border)] bg-[var(--panel-bg)] rounded-sm p-5 hud-corners animate-pulse">
+      <div className="border border-[var(--border)] bg-[var(--panel-bg)] rounded-lg p-5 animate-pulse">
         <div className="h-5 w-36 bg-[var(--border)] rounded mb-6" />
         <div className="grid grid-cols-2 gap-4">
           {[1, 2, 3, 4].map((i) => (
@@ -68,7 +68,7 @@ export function LpPositionDashboard({
   }
 
   return (
-    <div className="border border-[var(--border)] bg-[var(--panel-bg)] rounded-sm overflow-hidden hud-corners">
+    <div className="border border-[var(--border)] bg-[var(--panel-bg)] rounded-lg overflow-hidden">
       <div className="h-px bg-gradient-to-r from-transparent via-[var(--cyan)]/30 to-transparent" />
 
       <div className="p-5">
@@ -80,7 +80,7 @@ export function LpPositionDashboard({
             Your LP Position
           </h3>
           {hasPosition && (
-            <span className="text-[10px] px-2 py-0.5 rounded-sm bg-[var(--cyan)]/10 border border-[var(--cyan)]/20 text-[var(--cyan)]">
+            <span className="text-[10px] px-2 py-0.5 rounded-lg bg-[var(--cyan)]/10 border border-[var(--cyan)]/20 text-[var(--cyan)]">
               Active
             </span>
           )}
@@ -99,7 +99,7 @@ export function LpPositionDashboard({
         ) : (
           <>
             {/* Main value */}
-            <div className="mb-5 p-4 bg-[var(--bg)] border border-[var(--border)] rounded-sm">
+            <div className="mb-5 p-4 bg-[var(--bg)] border border-[var(--border)] rounded-lg">
               <div className="text-[10px] uppercase tracking-[0.2em] text-[var(--text-secondary)] mb-1">
                 Position Value
               </div>

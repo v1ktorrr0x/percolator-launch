@@ -22,7 +22,7 @@ export function CodeBlock({ children, className = "" }: CodeBlockProps) {
 
   return (
     <div className="relative group">
-      <pre className={`rounded-sm bg-[#0D0D14] border border-[var(--border)] p-4 text-[12px] font-mono text-[var(--text-secondary)] overflow-x-auto whitespace-pre ${className}`}>
+      <pre className={`rounded-lg bg-[#0D0D14] border border-[var(--border)] p-4 text-[12px] font-mono text-[var(--text-secondary)] overflow-x-auto whitespace-pre ${className}`}>
         {children}
       </pre>
       <button

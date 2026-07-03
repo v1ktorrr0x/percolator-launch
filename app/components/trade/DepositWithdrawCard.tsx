@@ -63,7 +63,7 @@ export const DepositWithdrawCard: FC<DepositWithdrawCardProps> = ({ slabAddress,
 
   if (!connected) {
     return (
-      <div className="relative rounded-none border border-[var(--border)]/50 bg-[var(--bg)]/80 p-3">
+      <div className="relative rounded-lg border border-[var(--border)]/50 bg-[var(--bg)]/80 p-3">
         <p className="text-[11px] text-[var(--text-muted)]">Connect wallet</p>
       </div>
     );
@@ -72,7 +72,7 @@ export const DepositWithdrawCard: FC<DepositWithdrawCardProps> = ({ slabAddress,
   if (!userAccount) {
     const hasTokens = walletBalance !== null && walletBalance > 0n;
     return (
-      <div className="relative rounded-none border border-[var(--border)]/50 bg-[var(--bg)]/80 p-3">
+      <div className="relative rounded-lg border border-[var(--border)]/50 bg-[var(--bg)]/80 p-3">
         <p className="mb-1 text-[10px] uppercase tracking-[0.15em] text-[var(--text-dim)]">Create Account</p>
         {walletBalance !== null && (
           <p className="mb-2 text-[10px] text-[var(--text-dim)]" style={{ fontFamily: "var(--font-mono)" }}>
@@ -111,7 +111,7 @@ export const DepositWithdrawCard: FC<DepositWithdrawCardProps> = ({ slabAddress,
                 }
               }}
               disabled={initLoading}
-              className="w-full rounded-none bg-[var(--accent)] py-2 text-[10px] font-medium uppercase tracking-[0.1em] text-white hover:bg-[var(--accent-muted)] hover:scale-[1.01] active:scale-[0.99] transition-transform disabled:opacity-50"
+              className="w-full rounded-lg bg-[var(--accent)] py-2 text-[10px] font-medium uppercase tracking-[0.1em] text-white hover:bg-[var(--accent-muted)] hover:scale-[1.01] active:scale-[0.99] transition-transform disabled:opacity-50"
             >
               {initLoading ? "Creating account..." : "Create Trading Account"}
             </button>
@@ -123,7 +123,7 @@ export const DepositWithdrawCard: FC<DepositWithdrawCardProps> = ({ slabAddress,
             </p>
             <button
               disabled
-              className="w-full rounded-none bg-[var(--bg-surface)] py-2 text-[10px] font-medium text-[var(--text-muted)] cursor-not-allowed opacity-50"
+              className="w-full rounded-lg bg-[var(--bg-surface)] py-2 text-[10px] font-medium text-[var(--text-muted)] cursor-not-allowed opacity-50"
             >
               Create Account
             </button>
@@ -188,7 +188,7 @@ export const DepositWithdrawCard: FC<DepositWithdrawCardProps> = ({ slabAddress,
   }
 
   return (
-    <div className="relative rounded-none border border-[var(--border)]/50 bg-[var(--bg)]/80 p-3">
+    <div className="relative rounded-lg border border-[var(--border)]/50 bg-[var(--bg)]/80 p-3">
       {/* Onboarding hint for new users */}
       {capital === 0n && !mockMode && (
         <div className="mb-3 border-b border-[var(--border)]/30 pb-3">
@@ -236,8 +236,8 @@ export const DepositWithdrawCard: FC<DepositWithdrawCardProps> = ({ slabAddress,
       )}
 
       <div className="mb-2 flex gap-1">
-        <button onClick={() => setMode("deposit")} className={`flex-1 rounded-none py-1.5 text-[10px] font-medium uppercase tracking-[0.1em] ${mode === "deposit" ? "bg-[var(--accent)] text-white" : "border border-[var(--border)]/30 text-[var(--text-muted)] hover:text-[var(--text-secondary)]"}`}>Deposit</button>
-        <button onClick={() => setMode("withdraw")} className={`flex-1 rounded-none py-1.5 text-[10px] font-medium uppercase tracking-[0.1em] ${mode === "withdraw" ? "bg-[var(--warning)] text-[var(--bg)]" : "border border-[var(--border)]/30 text-[var(--text-muted)] hover:text-[var(--text-secondary)]"}`}>Withdraw</button>
+        <button onClick={() => setMode("deposit")} className={`flex-1 rounded-lg py-1.5 text-[10px] font-medium uppercase tracking-[0.1em] ${mode === "deposit" ? "bg-[var(--accent)] text-white" : "border border-[var(--border)]/30 text-[var(--text-muted)] hover:text-[var(--text-secondary)]"}`}>Deposit</button>
+        <button onClick={() => setMode("withdraw")} className={`flex-1 rounded-lg py-1.5 text-[10px] font-medium uppercase tracking-[0.1em] ${mode === "withdraw" ? "bg-[var(--warning)] text-[var(--bg)]" : "border border-[var(--border)]/30 text-[var(--text-muted)] hover:text-[var(--text-secondary)]"}`}>Withdraw</button>
       </div>
 
       <div className="mb-2">
@@ -254,13 +254,13 @@ export const DepositWithdrawCard: FC<DepositWithdrawCardProps> = ({ slabAddress,
             }}
             placeholder={`Amount (${symbol})`}
             style={{ fontFamily: "var(--font-mono)" }}
-            className="w-full rounded-none border border-[var(--border)]/50 bg-[var(--bg)] px-3 py-2 pr-14 text-sm text-[var(--text)] placeholder-[var(--text-muted)] focus:border-[var(--accent)]/40 focus:outline-none focus:ring-1 focus:ring-[var(--accent)]/20"
+            className="w-full rounded-lg border border-[var(--border)]/50 bg-[var(--bg)] px-3 py-2 pr-14 text-sm text-[var(--text)] placeholder-[var(--text-muted)] focus:border-[var(--accent)]/40 focus:outline-none focus:ring-1 focus:ring-[var(--accent)]/20"
           />
           {mode === "withdraw" && capital > 0n && (
             <button
               type="button"
               onClick={() => { maxRawRef.current = capital; setAmount(formatTokenAmount(capital, decimals)); }}
-              className="absolute right-2 top-1/2 -translate-y-1/2 rounded-none px-2 py-0.5 text-[9px] font-semibold uppercase text-[var(--accent)] hover:bg-[var(--accent)]/10"
+              className="absolute right-2 top-1/2 -translate-y-1/2 rounded-lg px-2 py-0.5 text-[9px] font-semibold uppercase text-[var(--accent)] hover:bg-[var(--accent)]/10"
             >
               Max
             </button>
@@ -269,7 +269,7 @@ export const DepositWithdrawCard: FC<DepositWithdrawCardProps> = ({ slabAddress,
             <button
               type="button"
               onClick={() => { maxRawRef.current = walletBalance; setAmount(formatTokenAmount(walletBalance, decimals)); }}
-              className="absolute right-2 top-1/2 -translate-y-1/2 rounded-none px-2 py-0.5 text-[9px] font-semibold uppercase text-[var(--accent)] hover:bg-[var(--accent)]/10"
+              className="absolute right-2 top-1/2 -translate-y-1/2 rounded-lg px-2 py-0.5 text-[9px] font-semibold uppercase text-[var(--accent)] hover:bg-[var(--accent)]/10"
             >
               Max
             </button>
@@ -289,7 +289,7 @@ export const DepositWithdrawCard: FC<DepositWithdrawCardProps> = ({ slabAddress,
       <button
         onClick={handleSubmit}
         disabled={loading || !amount || !!validationError}
-        className={`w-full rounded-none py-2 text-[10px] font-medium uppercase tracking-[0.1em] hover:scale-[1.01] active:scale-[0.99] transition-transform disabled:cursor-not-allowed disabled:opacity-50 ${mode === "deposit" ? "bg-[var(--accent)] text-white hover:brightness-110" : "bg-[var(--warning)] text-[var(--bg)] hover:brightness-110"}`}
+        className={`w-full rounded-lg py-2 text-[10px] font-medium uppercase tracking-[0.1em] hover:scale-[1.01] active:scale-[0.99] transition-transform disabled:cursor-not-allowed disabled:opacity-50 ${mode === "deposit" ? "bg-[var(--accent)] text-white hover:brightness-110" : "bg-[var(--warning)] text-[var(--bg)] hover:brightness-110"}`}
       >
         {loading ? "Sending..." : validationError ? validationError : mode === "deposit" ? `Deposit ${symbol}` : `Withdraw ${symbol}`}
       </button>

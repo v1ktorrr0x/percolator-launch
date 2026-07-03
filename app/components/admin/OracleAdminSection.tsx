@@ -10,11 +10,11 @@ import type { DiscoveredMarket } from "@percolatorct/sdk";
 
 // ─── Style tokens (matches admin/page.tsx) ────────────────────────────────────
 const card =
-  "rounded-none bg-[var(--panel-bg)] border border-[var(--border)]";
+  "rounded-lg bg-[var(--panel-bg)] border border-[var(--border)]";
 const labelStyle =
   "text-[10px] font-bold uppercase tracking-[0.15em] text-[var(--text-muted)]";
 const inputStyle =
-  "w-full rounded-none border border-[var(--border)] bg-[#0D0D14] px-3 py-2 text-[12px] text-white placeholder:text-[var(--text-dim)] focus:border-[var(--accent)] focus:outline-none transition-colors font-mono";
+  "w-full rounded-lg border border-[var(--border)] bg-[#0D0D14] px-3 py-2 text-[12px] text-white placeholder:text-[var(--text-dim)] focus:border-[var(--accent)] focus:outline-none transition-colors font-mono";
 
 function truncatePk(pk: string) {
   if (pk.length <= 12) return pk;
@@ -266,7 +266,7 @@ export function OracleAdminSection() {
               <button
                 onClick={handleSetOracleAuthority}
                 disabled={!canSubmit}
-                className="w-full rounded-none bg-[var(--accent)] px-4 py-2.5 text-[11px] font-bold uppercase tracking-[0.15em] text-white hover:opacity-90 transition-opacity disabled:opacity-40 disabled:cursor-not-allowed"
+                className="w-full rounded-lg bg-[var(--accent)] px-4 py-2.5 text-[11px] font-bold uppercase tracking-[0.15em] text-white hover:opacity-90 transition-opacity disabled:opacity-40 disabled:cursor-not-allowed"
               >
                 {submitting || actionLoading === "setOracleAuthority"
                   ? "Signing…"

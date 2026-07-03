@@ -103,7 +103,7 @@ export const MarketStatsCard: FC = () => {
 
   if (loading || !engine || !config || !params) {
     return (
-      <div className="relative rounded-none border border-[var(--border)]/50 bg-[var(--bg)]/80 p-3">
+      <div className="relative rounded-lg border border-[var(--border)]/50 bg-[var(--bg)]/80 p-3">
         <p className="text-[10px] text-[var(--text-secondary)]">{loading ? "Loading..." : "Market not loaded"}</p>
       </div>
     );
@@ -232,7 +232,7 @@ export const MarketStatsCard: FC = () => {
   return (
     <div className="space-y-1.5">
       {/* P3-4: Market Stats Grid — 3×3, improved label/value hierarchy */}
-      <div className="relative rounded-none border border-[var(--border)]/50 bg-[var(--bg)]/80 p-3">
+      <div className="relative rounded-lg border border-[var(--border)]/50 bg-[var(--bg)]/80 p-3">
         <div className="grid grid-cols-3 gap-x-4 gap-y-3">
           {stats.map((s) => (
             <div
@@ -268,7 +268,7 @@ export const MarketStatsCard: FC = () => {
           <FundingRateCard slabAddress={slabAddress} />
 
           {/* Funding Chart Toggle */}
-          <div className="rounded-none border border-[var(--border)]/50 bg-[var(--bg)]/80">
+          <div className="rounded-lg border border-[var(--border)]/50 bg-[var(--bg)]/80">
             <button
               onClick={() => setShowFundingChart(!showFundingChart)}
               className="flex w-full items-center justify-between px-2 py-1 text-left text-[9px] font-medium uppercase tracking-[0.15em] text-[var(--text-secondary)] transition-colors hover:text-[var(--text)]"

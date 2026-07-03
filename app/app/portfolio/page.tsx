@@ -141,7 +141,7 @@ export default function PortfolioPage() {
               <p className="mt-3 text-sm sm:text-base text-white/70 max-w-xl leading-relaxed font-inter">
                 All positions across Percolator markets
                 {atRiskCount > 0 && (
-                   <span className="ml-2 inline-flex items-center gap-1 rounded-sm bg-[var(--short)]/10 px-2 py-0.5 text-[10px] font-bold text-[var(--short)] normal-case">
+                   <span className="ml-2 inline-flex items-center gap-1 rounded-lg bg-[var(--short)]/10 px-2 py-0.5 text-[10px] font-bold text-[var(--short)] normal-case">
                     ⚠ {atRiskCount} at risk
                   </span>
                 )}
@@ -151,7 +151,7 @@ export default function PortfolioPage() {
               <button
                 onClick={() => { refresh(); lpPositions.refresh(); }}
                 disabled={loading || lpPositions.loading || isRefreshing}
-                className="rounded-sm border border-[var(--border)] bg-[var(--panel-bg)] px-4 py-2 text-xs text-[var(--text-secondary)] transition-all hover:border-[var(--accent)]/40 hover:text-[var(--text)] disabled:opacity-40"
+                className="rounded-lg border border-[var(--border)] bg-[var(--panel-bg)] px-4 py-2 text-xs text-[var(--text-secondary)] transition-all hover:border-[var(--accent)]/40 hover:text-[var(--text)] disabled:opacity-40"
               >
                 Refresh
               </button>
@@ -372,9 +372,9 @@ export default function PortfolioPage() {
                               <span
                                 className={`inline-block h-1.5 w-1.5 rounded-full ${
                                   severity === "danger"
-                                    ? "bg-[var(--short)] shadow-[0_0_6px_var(--short)]"
+                                    ? "bg-[var(--short)] "
                                     : severity === "warning"
-                                    ? "bg-[var(--warning)] shadow-[0_0_6px_var(--warning)]"
+                                    ? "bg-[var(--warning)] "
                                     : "bg-[var(--long)]"
                                 }`}
                               />

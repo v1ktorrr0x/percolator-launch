@@ -57,7 +57,7 @@ export const Footer: FC = () => {
               href="https://github.com/dcccrypto/percolator-launch"
               target="_blank"
               rel="noopener noreferrer"
-              className="flex h-7 w-7 items-center justify-center rounded-sm border border-[var(--border)] text-[var(--text-muted)] transition-all hover:border-[var(--border-hover)] hover:text-[var(--text)] hover:bg-[var(--bg-elevated)]"
+              className="flex h-7 w-7 items-center justify-center rounded-lg border border-[var(--border)] text-[var(--text-muted)] transition-all hover:border-[var(--border-hover)] hover:text-[var(--text)] hover:bg-[var(--bg-elevated)]"
               title="GitHub"
             >
               <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
@@ -68,7 +68,7 @@ export const Footer: FC = () => {
               href="https://x.com/PercolatorTrade"
               target="_blank"
               rel="noopener noreferrer"
-              className="flex h-7 w-7 items-center justify-center rounded-sm border border-[var(--border)] text-[var(--text-muted)] transition-all hover:border-[var(--border-hover)] hover:text-[var(--text)] hover:bg-[var(--bg-elevated)]"
+              className="flex h-7 w-7 items-center justify-center rounded-lg border border-[var(--border)] text-[var(--text-muted)] transition-all hover:border-[var(--border-hover)] hover:text-[var(--text)] hover:bg-[var(--bg-elevated)]"
               title="X / Twitter"
             >
               <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor">
@@ -79,7 +79,7 @@ export const Footer: FC = () => {
               href="https://discord.gg/fJa4BDBxPN"
               target="_blank"
               rel="noopener noreferrer"
-              className="flex h-7 w-7 items-center justify-center rounded-sm border border-[var(--border)] text-[var(--text-muted)] transition-all hover:border-[#5865F2]/40 hover:text-[#5865F2] hover:bg-[#5865F2]/[0.06]"
+              className="flex h-7 w-7 items-center justify-center rounded-lg border border-[var(--border)] text-[var(--text-muted)] transition-all hover:border-[#5865F2]/40 hover:text-[#5865F2] hover:bg-[#5865F2]/[0.06]"
               title="Discord"
             >
               <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
@@ -90,7 +90,7 @@ export const Footer: FC = () => {
               href="https://t.me/+fFHf5lGRAbk4OGEx"
               target="_blank"
               rel="noopener noreferrer"
-              className="flex h-7 w-7 items-center justify-center rounded-sm border border-[var(--border)] text-[var(--text-muted)] transition-all hover:border-[#229ED9]/40 hover:text-[#229ED9] hover:bg-[#229ED9]/[0.06]"
+              className="flex h-7 w-7 items-center justify-center rounded-lg border border-[var(--border)] text-[var(--text-muted)] transition-all hover:border-[#229ED9]/40 hover:text-[#229ED9] hover:bg-[#229ED9]/[0.06]"
               title="Telegram"
             >
               <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">

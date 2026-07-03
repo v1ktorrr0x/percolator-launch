@@ -21,20 +21,20 @@ export default function EarnLoading() {
 
       {/* Content skeleton */}
       <div className="mx-auto max-w-6xl px-4 pb-16">
-        <div className="h-20 bg-[var(--panel-bg)] border border-[var(--border)] rounded-sm animate-pulse mb-8" />
+        <div className="h-20 bg-[var(--panel-bg)] border border-[var(--border)] rounded-lg animate-pulse mb-8" />
 
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
           <div className="lg:col-span-3 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {[1, 2, 3, 4, 5, 6].map((i) => (
               <div
                 key={i}
-                className="h-[280px] bg-[var(--panel-bg)] border border-[var(--border)] rounded-sm animate-pulse"
+                className="h-[280px] bg-[var(--panel-bg)] border border-[var(--border)] rounded-lg animate-pulse"
               />
             ))}
           </div>
           <div className="lg:col-span-1 space-y-6">
-            <div className="h-[320px] bg-[var(--panel-bg)] border border-[var(--border)] rounded-sm animate-pulse" />
-            <div className="h-[280px] bg-[var(--panel-bg)] border border-[var(--border)] rounded-sm animate-pulse" />
+            <div className="h-[320px] bg-[var(--panel-bg)] border border-[var(--border)] rounded-lg animate-pulse" />
+            <div className="h-[280px] bg-[var(--panel-bg)] border border-[var(--border)] rounded-lg animate-pulse" />
           </div>
         </div>
       </div>
