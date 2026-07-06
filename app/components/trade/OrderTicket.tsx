@@ -732,8 +732,8 @@ const OrderTicketInner: FC<{ slabAddress: string }> = ({ slabAddress }) => {
       {/* Single validation banner (highest-priority issue only) */}
       {blockingIssue && (
         <div className="mb-3 rounded-none border border-[var(--warning)]/30 bg-[var(--warning)]/5 p-2.5">
-          <p className="text-[9px] font-bold uppercase tracking-[0.15em] text-[var(--warning)]">{blockingIssue.title}</p>
-          <p className="mt-1 text-[9px] leading-relaxed text-[var(--text-secondary)]">{blockingIssue.message}</p>
+          <p className="label-small !text-[var(--warning)]">{blockingIssue.title}</p>
+          <p className="mt-1 label-caption">{blockingIssue.message}</p>
         </div>
       )}
 
@@ -826,14 +826,14 @@ const OrderTicketInner: FC<{ slabAddress: string }> = ({ slabAddress }) => {
       {/* Account row: balance / buying power / deposit link */}
       <div className="mt-3 flex items-center justify-between border-t border-[var(--border)]/30 pt-2.5 text-[10px]">
         <div>
-          <div className="flex items-center gap-1 text-[9px] uppercase tracking-[0.1em] text-[var(--text-secondary)]">
+          <div className="flex items-center gap-1 label-small !text-[var(--text-dim)]">
             Avail Bal
             <InfoIcon tooltip="Account balance minus margin already locked by an open position on this market." />
           </div>
           <div className="font-mono tabular-nums text-[var(--text)]">{formatTokenAmount(effectiveBalance, decimals)} {collateralSymbol}</div>
         </div>
         <div className="text-right">
-          <div className="flex items-center justify-end gap-1 text-[9px] uppercase tracking-[0.1em] text-[var(--text-secondary)]">
+          <div className="flex items-center justify-end gap-1 label-small !text-[var(--text-dim)]">
             Buying power
             <InfoIcon tooltip="Available balance x max leverage - the largest notional you could open right now." />
           </div>
