@@ -1,7 +1,6 @@
 "use client";
 
 import { useRef, useEffect, useState } from "react";
-import gsap from "gsap";
 
 interface AnimatedNumberProps {
   value: number;
@@ -35,18 +34,32 @@ export function AnimatedNumber({
       return;
     }
 
-    gsap.to(numRef.current, {
-      val: value,
-      duration,
-      ease: "power2.out",
-      onUpdate: () => {
-        if (spanRef.current) {
-          const v = numRef.current.val;
-          const formatted = decimals > 0 ? v.toFixed(decimals) : Math.round(v).toLocaleString();
-          spanRef.current.textContent = `${prefix}${formatted}${suffix}`;
-        }
-      },
-    });
+    let startTimestamp: number | null = null;
+    const startVal = numRef.current.val;
+    const endVal = value;
+    let animationFrameId: number;
+
+    const step = (timestamp: number) => {
+      if (!startTimestamp) startTimestamp = timestamp;
+      const elapsed = timestamp - startTimestamp;
+      const progress = Math.min(elapsed / (duration * 1000), 1);
+      
+      const easeProgress = progress * (2 - progress);
+      const currentVal = startVal + (endVal - startVal) * easeProgress;
+      numRef.current.val = currentVal;
+
+      if (spanRef.current) {
+        const formatted = decimals > 0 ? currentVal.toFixed(decimals) : Math.round(currentVal).toLocaleString();
+        spanRef.current.textContent = `${prefix}${formatted}${suffix}`;
+      }
+
+      if (progress < 1) {
+        animationFrameId = requestAnimationFrame(step);
+      }
+    };
+
+    animationFrameId = requestAnimationFrame(step);
+    return () => cancelAnimationFrame(animationFrameId);
   }, [value, prefix, suffix, decimals, duration, prefersReduced]);
 
   return (

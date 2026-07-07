@@ -2,7 +2,6 @@
 
 import { FC, useEffect, useRef, useState, useMemo } from "react";
 import { createPortal } from "react-dom";
-import gsap from "gsap";
 import { usePrefersReducedMotion } from "@/hooks/usePrefersReducedMotion";
 import { useLockBodyScroll } from "@/hooks/useLockBodyScroll";
 import { formatTokenAmount, formatUsdPriceE6 } from "@/lib/format";
@@ -60,7 +59,6 @@ export const ClosePositionModal: FC<ClosePositionModalProps> = ({
   onConfirm,
   onCancel,
 }) => {
-  const overlayRef = useRef<HTMLDivElement>(null);
   const modalRef = useRef<HTMLDivElement>(null);
   const prefersReduced = usePrefersReducedMotion();
   useLockBodyScroll();
@@ -88,26 +86,8 @@ export const ClosePositionModal: FC<ClosePositionModalProps> = ({
   }, []);
 
   useEffect(() => {
-    const overlay = overlayRef.current;
     const modal = modalRef.current;
-    if (!overlay || !modal) return;
-
-    if (prefersReduced) {
-      overlay.style.opacity = "1";
-      modal.style.opacity = "1";
-      modal.style.transform = "scale(1)";
-    } else {
-      gsap.fromTo(
-        overlay,
-        { opacity: 0 },
-        { opacity: 1, duration: 0.2, ease: "power2.out" },
-      );
-      gsap.fromTo(
-        modal,
-        { opacity: 0, scale: 0.95 },
-        { opacity: 1, scale: 1, duration: 0.25, ease: "power2.out" },
-      );
-    }
+    if (!modal) return;
 
     // Move initial focus inside the dialog (APG dialog pattern) so Tab starts trapped.
     const focusable = modal.querySelectorAll<HTMLElement>(FOCUSABLE_SELECTOR);
@@ -134,8 +114,7 @@ export const ClosePositionModal: FC<ClosePositionModalProps> = ({
     };
     document.addEventListener("keydown", handleKeyDown);
     return () => document.removeEventListener("keydown", handleKeyDown);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [prefersReduced]);
+  }, []);
 
   const handleOverlayClick = (e: React.MouseEvent) => {
     if (e.target === e.currentTarget) onCancel();
@@ -193,18 +172,19 @@ export const ClosePositionModal: FC<ClosePositionModalProps> = ({
 
   const content = (
     <div
-      ref={overlayRef}
       onClick={handleOverlayClick}
-      className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/80 p-4"
-    style={{ opacity: 0 }}
+      className={`fixed inset-0 z-[9999] flex items-center justify-center bg-black/80 p-4 ${
+        prefersReduced ? "" : "animate-overlay-enter"
+      }`}
     >
       <div
         ref={modalRef}
         role="dialog"
         aria-modal="true"
         aria-labelledby="close-position-title"
-        className="relative w-full max-w-md rounded-none border border-[var(--border)] bg-[var(--bg)] p-6 shadow-2xl"
-      style={{ opacity: 0 }}
+        className={`relative w-full max-w-md rounded-none border border-[var(--border)] bg-[var(--bg)] p-6 shadow-2xl ${
+          prefersReduced ? "" : "animate-modal-enter"
+        }`}
       >
         {/* Header */}
         <div className="mb-4 flex items-center justify-between">

@@ -3,7 +3,6 @@
 import { FC, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { PublicKey } from "@solana/web3.js";
-import gsap from "gsap";
 import { usePrefersReducedMotion } from "@/hooks/usePrefersReducedMotion";
 import { useLockBodyScroll } from "@/hooks/useLockBodyScroll";
 
@@ -43,7 +42,6 @@ export const SendPositionNftModal: FC<SendPositionNftModalProps> = ({
   onConfirm,
   onCancel,
 }) => {
-  const overlayRef = useRef<HTMLDivElement>(null);
   const modalRef = useRef<HTMLDivElement>(null);
   const prefersReduced = usePrefersReducedMotion();
   useLockBodyScroll();
@@ -89,30 +87,25 @@ export const SendPositionNftModal: FC<SendPositionNftModalProps> = ({
     first?.focus();
   }, []);
 
-  // Enter/scale animation matching ClosePositionModal
-  useEffect(() => {
-    if (prefersReduced) return;
-    const overlay = overlayRef.current;
-    const modal = modalRef.current;
-    if (!overlay || !modal) return;
-    gsap.fromTo(overlay, { opacity: 0 }, { opacity: 1, duration: 0.15 });
-    gsap.fromTo(modal, { opacity: 0, scale: 0.98 }, { opacity: 1, scale: 1, duration: 0.18, ease: "power2.out" });
-  }, [prefersReduced]);
+
 
   const body = (
     <div
-      ref={overlayRef}
       onClick={(e) => {
         if (e.target === e.currentTarget && !loading) onCancel();
       }}
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-[2px] p-4"
+      className={`fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-[2px] p-4 ${
+        prefersReduced ? "" : "animate-overlay-enter"
+      }`}
       aria-modal="true"
       role="dialog"
       aria-label="Send Position NFT"
     >
       <div
         ref={modalRef}
-        className="relative w-full max-w-sm rounded-none border border-[var(--border)] bg-[var(--bg)] shadow-xl"
+        className={`relative w-full max-w-sm rounded-none border border-[var(--border)] bg-[var(--bg)] shadow-xl ${
+          prefersReduced ? "" : "animate-modal-enter"
+        }`}
       >
         <div className="flex items-center gap-2 px-4 py-3 border-l-2 border-l-[var(--accent)] bg-[var(--accent)]/[0.06]">
           <span className="text-[13px] leading-none text-[var(--accent)]">◆</span>

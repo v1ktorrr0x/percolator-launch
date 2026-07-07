@@ -1,8 +1,7 @@
 "use client";
 
-import { FC, useState, useEffect, useRef, useMemo } from "react";
+import { FC, useState, useEffect, useMemo } from "react";
 import Link from "next/link";
-import gsap from "gsap";
 import { useWalletCompat, useConnectionCompat } from "@/hooks/useWalletCompat";
 import { PublicKey } from "@solana/web3.js";
 import { ShimmerSkeleton } from "@/components/ui/ShimmerSkeleton";
@@ -473,16 +472,7 @@ const MyMarketsPage: FC = () => {
   const [insuranceMintMap, setInsuranceMintMap] = useState<Record<string, boolean>>({});
   const [insuranceMintChecking, setInsuranceMintChecking] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
-  const pageRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    if (!pageRef.current) return;
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-      pageRef.current.style.opacity = "1";
-      return;
-    }
-    gsap.fromTo(pageRef.current, { opacity: 0 }, { opacity: 1, duration: 0.3, ease: "power2.out" });
-  }, []);
 
   const handleRefresh = async () => {
     setRefreshing(true);
@@ -631,7 +621,7 @@ const MyMarketsPage: FC = () => {
   return (
     <div className="min-h-[calc(100dvh-48px)] relative">
       <div className="absolute inset-x-0 top-0 h-48 bg-grid pointer-events-none" />
-      <main ref={pageRef} className="relative mx-auto max-w-4xl px-4 py-10 gsap-fade">
+      <main className="relative mx-auto max-w-4xl px-4 py-10 motion-safe:animate-fade-in">
         {/* Page Title */}
         <div className="mb-2 text-[10px] font-medium uppercase tracking-[0.25em] text-[var(--accent)]/60">// admin</div>
         <h1 className="text-xl font-medium tracking-[-0.01em] text-[var(--text)] sm:text-2xl" style={{ fontFamily: "var(--font-heading)" }}>

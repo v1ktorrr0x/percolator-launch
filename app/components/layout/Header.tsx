@@ -5,7 +5,6 @@ import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
 import dynamic from "next/dynamic";
-import gsap from "gsap";
 import { type Network, getConfig, setNetwork } from "@/lib/config";
 import { usePrefersReducedMotion } from "@/hooks/usePrefersReducedMotion";
 import { NavDropdown, type NavItem } from "./NavDropdown";
@@ -77,7 +76,6 @@ export const Header: FC = () => {
   const pathname = usePathname();
   const prefersReduced = usePrefersReducedMotion();
   const headerRef = useRef<HTMLElement>(null);
-  const mobileMenuRef = useRef<HTMLDivElement>(null);
   const badgeRef = useRef<HTMLSpanElement>(null);
 
   useEffect(() => { setNet(getConfig().network); }, []);
@@ -99,36 +97,7 @@ export const Header: FC = () => {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  // Mobile menu animation
-  useEffect(() => {
-    const menu = mobileMenuRef.current;
-    if (!menu) return;
 
-    if (prefersReduced) {
-      // Skip animation but still toggle visibility for reduced-motion users
-      menu.style.display = mobileOpen ? "block" : "none";
-      menu.style.height = mobileOpen ? "auto" : "0px";
-      menu.style.opacity = mobileOpen ? "1" : "0";
-      return;
-    }
-
-    if (mobileOpen) {
-      menu.style.display = "block";
-      gsap.fromTo(
-        menu,
-        { height: 0, opacity: 0 },
-        { height: "auto", opacity: 1, duration: 0.3, ease: "power2.out" }
-      );
-    } else {
-      gsap.to(menu, {
-        height: 0,
-        opacity: 0,
-        duration: 0.2,
-        ease: "power2.in",
-        onComplete: () => { menu.style.display = "none"; },
-      });
-    }
-  }, [mobileOpen, prefersReduced]);
 
   // Close mobile on route change
   useEffect(() => {
@@ -219,14 +188,15 @@ export const Header: FC = () => {
         </div>
       </div>
 
-      {/* Mobile nav — accordion groups */}
       <nav
-        ref={mobileMenuRef}
-        className="overflow-hidden border-t border-[var(--border)] bg-[var(--bg)] md:hidden"
-        style={{ display: "none", height: 0 }}
+        className={`grid transition-all duration-300 ease-in-out md:hidden ${
+          mobileOpen ? "grid-rows-[1fr] opacity-100 border-t border-[var(--border)]" : "grid-rows-[0fr] opacity-0 pointer-events-none invisible"
+        }`}
         aria-label="Mobile navigation"
+        aria-hidden={!mobileOpen}
       >
-        <div className="flex flex-col gap-0.5 p-3">
+        <div className="overflow-hidden">
+          <div className="flex flex-col gap-0.5 p-3">
           {mobileGroupsAll.map((g) => {
             const groupKey = g.label.toLowerCase() as "trade" | "build" | "community";
             return { ...g, items: filterForWaitlistHost(filterForNetwork(g.items, network), groupKey, isWaitlistHost) };
@@ -333,6 +303,7 @@ export const Header: FC = () => {
               </svg>
             </a>
           </div>
+        </div>
         </div>
       </nav>
     </header>

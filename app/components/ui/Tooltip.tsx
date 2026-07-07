@@ -2,7 +2,6 @@
 
 import { FC, useState, useRef, useEffect } from "react";
 import { createPortal } from "react-dom";
-import gsap from "gsap";
 import { usePrefersReducedMotion } from "@/hooks/usePrefersReducedMotion";
 
 interface TooltipProps {
@@ -26,54 +25,27 @@ export const Tooltip: FC<TooltipProps> = ({ text, children, className = "" }) =>
       const pos = rect.top < 80 ? "bottom" : "top";
       const el = tooltipRef.current;
       const left = Math.max(8, Math.min(window.innerWidth - 264, rect.left + rect.width / 2 - 128));
+      el.style.top = `${rect.top - 8}px`;
+      el.style.left = `${left}px`;
       if (pos === "top") {
-        el.style.top = `${rect.top - 8}px`;
-        el.style.left = `${left}px`;
-        el.style.transform = "translateY(-100%)";
+        el.style.translate = "0 -100%";
       } else {
         el.style.top = `${rect.bottom + 8}px`;
-        el.style.left = `${left}px`;
-        el.style.transform = "translateY(0)";
+        el.style.translate = "0 0";
       }
     }
   }, [show]);
 
-  useEffect(() => {
-    const el = tooltipRef.current;
-    if (!el) return;
-
-    if (show) {
-      if (prefersReduced) {
-        el.style.opacity = "1";
-        el.style.visibility = "visible";
-      } else {
-        gsap.fromTo(
-          el,
-          { opacity: 0, scale: 0.95, visibility: "visible" },
-          { opacity: 1, scale: 1, duration: 0.15, ease: "power2.out" }
-        );
-      }
-    } else {
-      if (prefersReduced) {
-        el.style.visibility = "hidden";
-        el.style.opacity = "0";
-      } else {
-        gsap.to(el, {
-          opacity: 0,
-          scale: 0.95,
-          duration: 0.1,
-          ease: "power2.in",
-          onComplete: () => { el.style.visibility = "hidden"; },
-        });
-      }
-    }
-  }, [show, prefersReduced]);
-
   const tooltipEl = (
     <span
       ref={tooltipRef}
-      className="fixed z-[9999] w-64 rounded-sm border border-[var(--border)] bg-[var(--panel-bg)] px-3 py-2 text-xs leading-relaxed text-[var(--text-secondary)] shadow-xl pointer-events-none"
-      style={{ visibility: "hidden", opacity: 0 }}
+      className="fixed z-[9999] w-64 rounded-sm border border-[var(--border)] bg-[var(--panel-bg)] px-3 py-2 text-xs leading-relaxed text-[var(--text-secondary)] shadow-xl transition-[opacity,scale] duration-150 ease-out"
+      style={{
+        opacity: show ? 1 : 0,
+        scale: prefersReduced ? "1" : (show ? "1" : "0.95"),
+        pointerEvents: show ? "auto" : "none",
+        visibility: show || prefersReduced ? "visible" : "hidden",
+      }}
     >
       {text}
     </span>

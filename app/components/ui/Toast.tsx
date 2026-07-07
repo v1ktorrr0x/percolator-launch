@@ -1,7 +1,6 @@
 "use client";
 
-import { FC, useEffect, useRef } from "react";
-import gsap from "gsap";
+import { FC, useEffect, useRef, useState, useCallback } from "react";
 import { useToastContext, type ToastItem } from "@/hooks/useToast";
 import { usePrefersReducedMotion } from "@/hooks/usePrefersReducedMotion";
 
@@ -23,65 +22,41 @@ const SingleToast: FC<{ item: ToastItem; onDismiss: (id: string) => void }> = ({
   item,
   onDismiss,
 }) => {
-  const elRef = useRef<HTMLDivElement>(null);
+  const [dismissing, setDismissing] = useState(false);
   const prefersReduced = usePrefersReducedMotion();
 
-  useEffect(() => {
-    const el = elRef.current;
-    if (!el) return;
-
+  const handleDismiss = useCallback(() => {
     if (prefersReduced) {
-      el.style.opacity = "1";
-      el.style.transform = "none";
+      onDismiss(item.id);
     } else {
-      gsap.fromTo(
-        el,
-        { opacity: 0, scale: 0.95, x: 40 },
-        { opacity: 1, scale: 1, x: 0, duration: 0.5, ease: "elastic.out(1, 0.5)" }
-      );
+      setDismissing(true);
     }
-
-    const timer = setTimeout(() => {
-      if (!prefersReduced && el) {
-        gsap.to(el, {
-          opacity: 0,
-          x: 40,
-          scale: 0.95,
-          duration: 0.3,
-          ease: "power2.in",
-          onComplete: () => onDismiss(item.id),
-        });
-      } else {
-        onDismiss(item.id);
-      }
-    }, 5000);
-
-    return () => clearTimeout(timer);
   }, [item.id, onDismiss, prefersReduced]);
 
-  const c = COLORS[item.type];
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      handleDismiss();
+    }, 5000);
+    return () => clearTimeout(timer);
+  }, [handleDismiss]);
 
-  const handleDismiss = () => {
-    const el = elRef.current;
-    if (!prefersReduced && el) {
-      gsap.to(el, {
-        opacity: 0,
-        x: 40,
-        scale: 0.95,
-        duration: 0.3,
-        ease: "power2.in",
-        onComplete: () => onDismiss(item.id),
-      });
-    } else {
-      onDismiss(item.id);
+  useEffect(() => {
+    if (dismissing) {
+      const timer = setTimeout(() => {
+        onDismiss(item.id);
+      }, 250);
+      return () => clearTimeout(timer);
     }
-  };
+  }, [dismissing, item.id, onDismiss]);
+
+  const c = COLORS[item.type];
+  const animationClass = prefersReduced
+    ? ""
+    : (dismissing ? "animate-slide-out-toast" : "animate-slide-in-toast");
 
   return (
     <div
-      ref={elRef}
-      className={`pointer-events-auto flex items-center gap-3 rounded-sm border px-4 py-3 shadow-lg bg-[var(--panel-bg)] ${c.border}`}
-      style={{ opacity: 0 }}
+      className={`pointer-events-auto flex items-center gap-3 rounded-sm border px-4 py-3 shadow-lg bg-[var(--panel-bg)] ${c.border} ${animationClass}`}
     >
       <span className={`text-base font-bold ${TEXT_COLORS[item.type]}`}>{c.icon}</span>
       <span className="text-sm text-[var(--text)]">{item.message}</span>
@@ -99,10 +74,28 @@ export const ToastContainer: FC = () => {
   const { toasts, dismiss } = useToastContext();
 
   return (
-    <div className="pointer-events-none fixed right-4 top-20 z-[100] flex flex-col gap-2">
-      {toasts.map((t) => (
-        <SingleToast key={t.id} item={t} onDismiss={dismiss} />
-      ))}
-    </div>
+    <>
+      <style dangerouslySetInnerHTML={{ __html: `
+        @keyframes slideInToast {
+          0% { opacity: 0; transform: translate3d(40px, 0, 0) scale(0.95); }
+          100% { opacity: 1; transform: translate3d(0, 0, 0) scale(1); }
+        }
+        @keyframes slideOutToast {
+          0% { opacity: 1; transform: translate3d(0, 0, 0) scale(1); }
+          100% { opacity: 0; transform: translate3d(40px, 0, 0) scale(0.95); }
+        }
+        .animate-slide-in-toast {
+          animation: slideInToast 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+        }
+        .animate-slide-out-toast {
+          animation: slideOutToast 0.25s ease-in forwards;
+        }
+      `}} />
+      <div className="pointer-events-none fixed right-4 top-20 z-[100] flex flex-col gap-2">
+        {toasts.map((t) => (
+          <SingleToast key={t.id} item={t} onDismiss={dismiss} />
+        ))}
+      </div>
+    </>
   );
 };

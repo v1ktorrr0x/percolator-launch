@@ -1,8 +1,7 @@
 "use client";
 
-import { FC, useEffect, useRef } from "react";
+import { FC, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
-import gsap from "gsap";
 import { usePrefersReducedMotion } from "@/hooks/usePrefersReducedMotion";
 
 interface FundingExplainerModalProps {
@@ -10,7 +9,6 @@ interface FundingExplainerModalProps {
 }
 
 export const FundingExplainerModal: FC<FundingExplainerModalProps> = ({ onClose }) => {
-  const overlayRef = useRef<HTMLDivElement>(null);
   const modalRef = useRef<HTMLDivElement>(null);
   const prefersReduced = usePrefersReducedMotion();
 
@@ -25,30 +23,12 @@ export const FundingExplainerModal: FC<FundingExplainerModalProps> = ({ onClose 
   onCloseRef.current = onClose;
 
   useEffect(() => {
-    const overlay = overlayRef.current;
-    const modal = modalRef.current;
-    if (!overlay || !modal) return;
-
-    if (prefersReduced) {
-      overlay.style.opacity = "1";
-      modal.style.opacity = "1";
-      modal.style.transform = "scale(1)";
-    } else {
-      gsap.fromTo(overlay, { opacity: 0 }, { opacity: 1, duration: 0.2, ease: "power2.out" });
-      gsap.fromTo(
-        modal,
-        { opacity: 0, scale: 0.95 },
-        { opacity: 1, scale: 1, duration: 0.25, ease: "power2.out" }
-      );
-    }
-
     const handleEscape = (e: KeyboardEvent) => {
       if (e.key === "Escape") onCloseRef.current();
     };
     document.addEventListener("keydown", handleEscape);
     return () => document.removeEventListener("keydown", handleEscape);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [prefersReduced]);
+  }, []);
 
   const handleOverlayClick = (e: React.MouseEvent) => {
     if (e.target === e.currentTarget) onClose();
@@ -56,15 +36,16 @@ export const FundingExplainerModal: FC<FundingExplainerModalProps> = ({ onClose 
 
   const content = (
     <div
-      ref={overlayRef}
-      className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/80 p-4 backdrop-blur-sm"
+      className={`fixed inset-0 z-[9999] flex items-center justify-center bg-black/80 p-4 backdrop-blur-sm ${
+        prefersReduced ? "" : "animate-overlay-enter"
+      }`}
       onClick={handleOverlayClick}
-    style={{ opacity: 0 }}
     >
       <div
         ref={modalRef}
-        className="max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-sm border border-[var(--border)] bg-[var(--bg)] shadow-2xl"
-      style={{ opacity: 0 }}
+        className={`max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-sm border border-[var(--border)] bg-[var(--bg)] shadow-2xl ${
+          prefersReduced ? "" : "animate-modal-enter"
+        }`}
       >
         {/* Header */}
         <div className="sticky top-0 flex items-center justify-between border-b border-[var(--border)]/50 bg-[var(--bg)] px-4 py-3">

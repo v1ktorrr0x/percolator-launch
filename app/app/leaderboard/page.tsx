@@ -2,7 +2,6 @@
 
 import { useEffect, useState, useCallback, useMemo, useRef } from "react";
 import Link from "next/link";
-import gsap from "gsap";
 import { useWalletCompat } from "@/hooks/useWalletCompat";
 import { usePrefersReducedMotion } from "@/hooks/usePrefersReducedMotion";
 import { ShimmerSkeleton } from "@/components/ui/ShimmerSkeleton";
@@ -256,7 +255,6 @@ export default function LeaderboardPage() {
   const divisor = useMemo(() => Math.pow(10, collateralDecimals), [collateralDecimals]);
 
   const prefersReduced = usePrefersReducedMotion();
-  const rowsRef = useRef<HTMLDivElement | null>(null);
 
   const fetchLeaderboard = useCallback(async (p: Period) => {
     setLoading(true);
@@ -291,18 +289,7 @@ export default function LeaderboardPage() {
   // uses (ShareButton dropdown, ScrollReveal). Skipped entirely for
   // prefers-reduced-motion users: rows are visible by default and only
   // animate FROM hidden when motion is allowed, so there's no flash either way.
-  useEffect(() => {
-    if (loading || prefersReduced || !rowsRef.current) return;
-    const rows = rowsRef.current.children;
-    if (rows.length === 0) return;
-    gsap.fromTo(
-      rows,
-      { opacity: 0, y: 8 },
-      // clearProps must list ONLY what gsap set — "all" would wipe React's
-      // inline gridTemplateColumns/fontFamily and collapse the row grid.
-      { opacity: 1, y: 0, duration: 0.35, ease: "power2.out", stagger: 0.03, clearProps: "opacity,transform" },
-    );
-  }, [loading, entries, prefersReduced]);
+
 
   const noData = !loading && !error && entries.length === 0;
 
@@ -455,8 +442,8 @@ export default function LeaderboardPage() {
             </div>
 
             {/* Data rows */}
-            <div ref={rowsRef}>
-              {entries.map((entry) => {
+            <div>
+              {entries.map((entry, index) => {
                 const isTop3 = entry.rank <= 3;
                 const isMe = myEntry != null && entry.trader === myEntry.trader;
                 const volNum = Number(entry.totalVolume);
@@ -468,8 +455,13 @@ export default function LeaderboardPage() {
                     key={entry.trader}
                     className={`relative grid items-center border-b border-[var(--border)]/40 px-4 py-2.5 text-[13px] transition-colors last:border-b-0 hover:bg-[var(--bg-elevated)] ${
                       entry.rank === 1 ? "lb-rank1-sweep bg-[var(--accent)]/[0.04]" : isTop3 ? "bg-[var(--accent)]/[0.02]" : ""
-                    } ${isMe ? "border-l-2 border-l-[var(--accent)]" : ""}`}
-                    style={{ gridTemplateColumns: "3.5rem 1fr 6rem 7rem 6rem", fontFamily: "var(--font-mono)" }}
+                    } ${isMe ? "border-l-2 border-l-[var(--accent)]" : ""} ${prefersReduced ? "" : "animate-fade-in-up"}`}
+                    style={{
+                      gridTemplateColumns: "3.5rem 1fr 6rem 7rem 6rem",
+                      fontFamily: "var(--font-mono)",
+                      animationDelay: prefersReduced ? undefined : `${index * 30}ms`,
+                      animationFillMode: prefersReduced ? undefined : "both"
+                    }}
                   >
                     {/* Relative-volume depth bar — quiet, right-aligned under the
                         volume column region, terminal order-book style. */}

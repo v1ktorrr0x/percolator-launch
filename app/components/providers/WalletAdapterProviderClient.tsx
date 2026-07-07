@@ -17,7 +17,6 @@ import {
   ConnectionProvider,
   WalletProvider as SolanaWalletProvider,
 } from "@solana/wallet-adapter-react";
-import { SolflareWalletAdapter } from "@solana/wallet-adapter-wallets";
 import { getConfig } from "@/lib/config";
 
 interface Props {
@@ -30,14 +29,7 @@ export const WalletAdapterProviderClient: FC<Props> = ({ children }) => {
   }, []);
 
   const wallets = useMemo(
-    () => [
-      // Legacy adapter that auto-detects the extension. Wallet Standard wallets
-      // (modern Phantom / Solflare / Backpack) self-register via the standard
-      // adapter bridge. Phantom's legacy adapter is intentionally omitted — Phantom
-      // is always Standard-compliant now and double-registering logs a console
-      // warning ("Phantom was registered as a Standard Wallet…") on every load.
-      new SolflareWalletAdapter(),
-    ],
+    () => [],
     [],
   );
 

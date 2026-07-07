@@ -19,13 +19,6 @@ vi.mock("next/dynamic", () => ({
   default: () => () => <div data-testid="connect-button" />,
 }));
 
-vi.mock("gsap", () => ({
-  default: {
-    fromTo: vi.fn(),
-    to: vi.fn(),
-    set: vi.fn(),
-  },
-}));
 
 vi.mock("@/hooks/usePrefersReducedMotion", () => ({
   usePrefersReducedMotion: () => true,

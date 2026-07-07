@@ -1,29 +1,10 @@
-"use client";
-
 import Link from "next/link";
-import { useEffect, useRef } from "react";
-import gsap from "gsap";
 
 export default function NotFound() {
-  const containerRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    if (!containerRef.current) return;
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-      containerRef.current.style.opacity = "1";
-      return;
-    }
-    gsap.fromTo(
-      containerRef.current,
-      { opacity: 0, y: 20 },
-      { opacity: 1, y: 0, duration: 0.6, ease: "power3.out" }
-    );
-  }, []);
-
   return (
     <div className="min-h-[calc(100dvh-48px)] relative flex items-center justify-center">
       <div className="absolute inset-x-0 top-0 h-48 bg-grid pointer-events-none" />
-      <div ref={containerRef} className="relative mx-auto max-w-xl px-4 py-20 text-center" style={{ opacity: 0 }}>
+      <div className="relative mx-auto max-w-xl px-4 py-20 text-center animate-fade-in-up">
         <div className="mb-4">
           <span className="text-[80px] font-bold text-[var(--accent)] leading-none" style={{ fontFamily: "var(--font-heading)" }}>
             404

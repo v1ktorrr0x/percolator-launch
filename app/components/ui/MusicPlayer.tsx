@@ -2,7 +2,6 @@
 
 import { useState, useRef, useEffect, useCallback } from "react";
 import { usePathname } from "next/navigation";
-import gsap from "gsap";
 import { usePrefersReducedMotion } from "@/hooks/usePrefersReducedMotion";
 
 /* ─── Inline SVG Icons ─── */
@@ -123,15 +122,10 @@ export function MusicPlayer() {
     if (audioRef.current) audioRef.current.volume = volume;
   }, [volume]);
 
+  const [mounted, setMounted] = useState(false);
   useEffect(() => {
-    const el = containerRef.current;
-    if (!el) return;
-    if (prefersReduced) {
-      el.style.opacity = "1";
-    } else {
-      gsap.fromTo(el, { opacity: 0, y: 8 }, { opacity: 1, y: 0, duration: 0.4, ease: "power2.out" });
-    }
-  }, [prefersReduced]);
+    setMounted(true);
+  }, []);
 
   const handleTimeUpdate = useCallback(() => {
     const audio = audioRef.current;
@@ -179,14 +173,19 @@ export function MusicPlayer() {
   return (
     <div
       ref={containerRef}
-      className={`fixed z-[90] gsap-fade${hideOnMobile ? " hidden sm:block" : ""}${
+      className={`fixed z-[90]${hideOnMobile ? " hidden sm:block" : ""}${
         moveToTop
           ? " top-[80px] right-3 sm:top-[72px] sm:right-5"
           : moveToBottomLeftLg
           ? " bottom-3 right-3 sm:bottom-5 sm:right-5 lg:bottom-5 lg:right-auto lg:left-5"
           : " bottom-[72px] right-3 md:bottom-3 sm:right-5"
       }`}
-      style={{ opacity: 0 }}
+      style={{
+        opacity: prefersReduced ? 1 : (mounted ? 1 : 0),
+        transform: prefersReduced ? "none" : (mounted ? "translate3d(0, 0, 0)" : "translate3d(0, 8px, 0)"),
+        transition: prefersReduced ? "none" : "opacity 0.4s ease-out, transform 0.4s ease-out",
+        willChange: "transform, opacity",
+      }}
     >
       <audio
         ref={audioRef}

@@ -24,7 +24,6 @@ import {
   createCreateMetadataAccountV3Instruction,
   PROGRAM_ID as TOKEN_METADATA_PROGRAM_ID,
 } from "@/lib/mpl-token-metadata-stub";
-import gsap from "gsap";
 import Link from "next/link";
 import { ScrollReveal } from "@/components/ui/ScrollReveal";
 import { ShimmerSkeleton } from "@/components/ui/ShimmerSkeleton";
@@ -48,7 +47,6 @@ const PUBLIC_DEVNET_RPC = "https://api.devnet.solana.com";
 const DevnetMintContent: FC = () => {
   const { publicKey, signTransaction } = useWalletCompat();
   const prefersReducedMotion = usePrefersReducedMotion();
-  const successCardRef = useRef<HTMLDivElement>(null);
   const searchParams = useSearchParams();
 
   // ── Get Market Tokens (via /api/devnet-airdrop) ──────────────────────────────
@@ -170,16 +168,7 @@ const DevnetMintContent: FC = () => {
     refreshBalance();
   }, [refreshBalance]);
 
-  // GSAP scale-in for success card
-  useEffect(() => {
-    const el = successCardRef.current;
-    if (!el || !mintAddress) return;
-    if (prefersReducedMotion) {
-      gsap.set(el, { opacity: 1, scale: 1 });
-      return;
-    }
-    gsap.fromTo(el, { opacity: 0, scale: 0.85 }, { opacity: 1, scale: 1, duration: 0.5, ease: "back.out(1.4)" });
-  }, [mintAddress, prefersReducedMotion]);
+
 
   // Airdrop 2 SOL — uses public devnet RPC (more reliable for airdrops)
   const handleAirdrop = useCallback(async () => {
@@ -759,7 +748,7 @@ const DevnetMintContent: FC = () => {
           {/* Step 4 — Create & Mint (no ScrollReveal — interactive form must always be visible) */}
           {mintAddress ? (
             /* ── Success card ── */
-            <div ref={successCardRef} className={`${cardClass} border-[var(--accent)]/30`} style={prefersReducedMotion ? undefined : { opacity: 0 }}>
+            <div className={`${cardClass} border-[var(--accent)]/30 ${prefersReducedMotion ? "" : "animate-scale-in"}`}>
               <div className="mb-4 flex items-center gap-2">
                 {mintColor && (
                   <span className="inline-block h-6 w-6 rounded-full border border-[var(--border)]" style={{ backgroundColor: mintColor }} />
