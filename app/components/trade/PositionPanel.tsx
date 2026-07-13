@@ -94,10 +94,11 @@ interface AddMarginModalProps {
   userIdx: number;
   symbol: string;
   decimals: number;
+  portfolioPk?: import("@solana/web3.js").PublicKey;
   onClose: () => void;
 }
 
-const AddMarginModal: FC<AddMarginModalProps> = ({ slabAddress, userIdx, symbol, decimals, onClose }) => {
+const AddMarginModal: FC<AddMarginModalProps> = ({ slabAddress, userIdx, symbol, decimals, portfolioPk, onClose }) => {
   const [amount, setAmount] = useState("");
   const [lastSig, setLastSig] = useState<string | null>(null);
   const { deposit, loading, error } = useDeposit(slabAddress);
@@ -117,7 +118,7 @@ const AddMarginModal: FC<AddMarginModalProps> = ({ slabAddress, userIdx, symbol,
   async function handleDeposit() {
     if (!canSubmit) return;
     try {
-      const sig = await deposit({ userIdx, amount: parsedAmount, accountExists: true });
+      const sig = await deposit({ userIdx, amount: parsedAmount, accountExists: true, portfolioPk });
       setLastSig(sig ?? null);
       setAmount("");
     } catch {
@@ -696,6 +697,7 @@ export const PositionPanel: FC<{ slabAddress: string }> = ({ slabAddress }) => {
           userIdx={userAccount.idx}
           symbol={symbol}
           decimals={decimals}
+          portfolioPk={userAccount.pubkey}
           onClose={() => setShowAddMarginModal(false)}
         />
       )}

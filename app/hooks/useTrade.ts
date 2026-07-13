@@ -158,7 +158,7 @@ export function useTrade(slabAddress: string) {
   }, []);
 
   const trade = useCallback(
-    async (params: { lpIdx: number; userIdx: number; size: bigint; limitPriceE6?: bigint }) => {
+    async (params: { lpIdx: number; userIdx: number; size: bigint; limitPriceE6?: bigint; userPortfolioPk?: PublicKey }) => {
       if (inflightRef.current) throw new Error("Trade already in progress");
       inflightRef.current = true;
       setLoading(true);
@@ -330,7 +330,7 @@ export function useTrade(slabAddress: string) {
           matcherDelegate = delegatePk;
 
           // Find taker's portfolio (accountA).
-          const userPortfolioPk = await findV17Portfolio(connection, programId, slabPk, wallet.publicKey);
+          const userPortfolioPk = params.userPortfolioPk ?? await findV17Portfolio(connection, programId, slabPk, wallet.publicKey);
           if (!userPortfolioPk) {
             throw new Error(
               "No portfolio account found for your wallet on this market. " +
@@ -405,8 +405,8 @@ export function useTrade(slabAddress: string) {
         // the balance/position reflect the trade within ~1-2s instead of waiting
         // on the (30s when WS-active) background poll. Fixes "balance doesn't
         // update after I trade". Mirrors useDeposit/useWithdraw.
-        refreshSlab();
-        [1200, 2200, 3500].forEach((ms) => setTimeout(() => refreshSlab(), ms));
+        refreshSlab?.();
+        [1200, 2200, 3500].forEach((ms) => setTimeout(() => refreshSlab?.(), ms));
         return sig;
       } catch (e) {
         const msg = e instanceof Error ? e.message : String(e);
@@ -417,7 +417,7 @@ export function useTrade(slabAddress: string) {
         if (mountedRef.current) setLoading(false);
       }
     },
-    [connection, wallet, mktConfig, accounts, raw, slabAddress, slabProgramId, refreshSlab]
+    [connection, wallet, mktConfig, accounts, raw, slabAddress, slabProgramId, refreshSlab, wrapperConfigV17]
   );
 
   return { trade, loading, error };

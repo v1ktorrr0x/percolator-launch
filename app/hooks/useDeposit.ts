@@ -92,7 +92,7 @@ export function useDeposit(slabAddress: string) {
   const inflightRef = useRef(false);
 
   const deposit = useCallback(
-    async (params: { userIdx: number; amount: bigint; accountExists?: boolean }) => {
+    async (params: { userIdx: number; amount: bigint; accountExists?: boolean; portfolioPk?: PublicKey }) => {
       if (inflightRef.current) throw new Error("Deposit already in progress");
       inflightRef.current = true;
       setLoading(true);
@@ -188,7 +188,7 @@ export function useDeposit(slabAddress: string) {
           }
 
           // Find or create the user's portfolio account.
-          let portfolioPk = await findV17Portfolio(connection, programId, slabPk, wallet.publicKey);
+          let portfolioPk = params.portfolioPk ?? await findV17Portfolio(connection, programId, slabPk, wallet.publicKey);
 
           if (!portfolioPk && !params.accountExists) {
             // No portfolio for this user — create one and run InitPortfolio (tag 1).
@@ -321,8 +321,8 @@ export function useDeposit(slabAddress: string) {
 
         // Force immediate slab re-read so balance updates without waiting for
         // the next poll cycle (which can be up to 30 s when WS is active).
-        refreshSlab();
-        setTimeout(() => refreshSlab(), 2000);
+        refreshSlab?.();
+        setTimeout(() => refreshSlab?.(), 2000);
         return sig;
       } catch (e) {
         setError(humanizeError(e instanceof Error ? e.message : String(e)));

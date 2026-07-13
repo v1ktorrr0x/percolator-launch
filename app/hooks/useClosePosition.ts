@@ -88,10 +88,17 @@ export function useClosePosition(slabAddress: string): UseClosePositionReturn {
         let freshPositionSize = userAccount.account.positionSize;
 
         if (isV17Market) {
-          // v17: re-fetch via getProgramAccounts + parsePortfolioV17.
+          // v17: re-fetch via getAccountInfo (fast) or fallback to getProgramAccounts.
           // parseAccount(bitmap, idx) is a v12-only function and throws on v17 data.
           try {
-            if (programId && publicKey) {
+            if (programId && userAccount.pubkey) {
+              const info = await connection.getAccountInfo(userAccount.pubkey);
+              if (info) {
+                const portfolio = parsePortfolioV17(new Uint8Array(info.data));
+                const activeLeg = portfolio.legs.find((l) => l.active);
+                freshPositionSize = activeLeg ? activeLeg.basisPosQ : 0n;
+              }
+            } else if (programId && publicKey) {
               const slabPk = new PublicKey(slabAddress);
               const results = await connection.getProgramAccounts(programId, {
                 filters: [
@@ -105,9 +112,6 @@ export function useClosePosition(slabAddress: string): UseClosePositionReturn {
                 const portfolio = parsePortfolioV17(
                   data instanceof Buffer ? data : Buffer.from(data),
                 );
-                // Defense-in-depth: re-verify the mutable owner actually matches
-                // after fetch — memcmp filters are advisory server-side; don't
-                // trust them blindly. Otherwise fall through and use cached state.
                 if (portfolio.owner.equals(publicKey)) {
                   const activeLeg = portfolio.legs.find((l) => l.active);
                   freshPositionSize = activeLeg ? activeLeg.basisPosQ : 0n;
@@ -181,7 +185,7 @@ export function useClosePosition(slabAddress: string): UseClosePositionReturn {
         // resolves accountA via findV17Portfolio + accountB via GPA scan.
         // v12: pass the real lpIdx and userAccount.idx as before.
         const sig = await withTransientRetry(
-          async () => trade({ lpIdx, userIdx: userAccount.idx, size: closeSize }),
+          async () => trade({ lpIdx, userIdx: userAccount.idx, size: closeSize, userPortfolioPk: userAccount.pubkey }),
           { maxRetries: 2, delayMs: 3000 },
         );
 

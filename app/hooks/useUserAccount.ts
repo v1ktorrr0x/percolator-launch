@@ -9,6 +9,7 @@ import { AccountKind, isV17Account, parsePortfolioV17, type Account } from "@per
 export interface UserAccountInfo {
   idx: number;
   account: Account;
+  pubkey?: PublicKey;
 }
 
 // ---------------------------------------------------------------------------
@@ -101,7 +102,7 @@ export function useUserAccount(): UserAccountInfo | null {
     const found = accounts.find(
       ({ account }) => account.kind === AccountKind.User && account.owner.toBase58() === pkStr,
     );
-    return found ? { idx: found.idx, account: found.account } : null;
+    return found ? { idx: found.idx, account: found.account, pubkey: publicKey } : null;
   }, [publicKey, accounts, isV17Market]);
 
   // v17 path: scan getProgramAccounts for the user's standalone portfolio.
@@ -153,7 +154,7 @@ export function useUserAccount(): UserAccountInfo | null {
           setV17Account(null);
           return;
         }
-        setV17Account({ idx: 0, account: portfolioV17ToAccount(portfolio) });
+        setV17Account({ idx: 0, account: portfolioV17ToAccount(portfolio), pubkey: sorted[0].pubkey });
       } catch {
         if (!cancelled) setV17Account(null);
       }
